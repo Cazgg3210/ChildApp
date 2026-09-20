@@ -1,0 +1,935 @@
+{
+  "common": {
+    "appName": "Child Care Passport",
+    "tagline": "Crea una vez. Controla siempre. Comparte donde sea.",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "continue": "Continuar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "finish": "Finalizar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Agregar",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "loading": "Cargando…",
+    "saving": "Guardando…",
+    "search": "Buscar",
+    "none": "Ninguno",
+    "yes": "Sí",
+    "no": "No",
+    "optional": "opcional",
+    "viewAll": "Ver todo",
+    "retry": "Reintentar",
+    "logout": "Cerrar sesión",
+    "language": "Idioma",
+    "skip": "Omitir por ahora",
+    "today": "Hoy",
+    "years": "{count, plural, =1 {1 año} other {# años}}",
+    "months": "{count, plural, =1 {1 mes} other {# meses}}",
+    "ageYearsMonths": "{years} años y {months} meses",
+    "unknownError": "Algo salió mal. Inténtalo de nuevo.",
+    "notFound": "No encontramos lo que buscas.",
+    "notFoundHint": "Puede que el enlace sea incorrecto o que ya no tengas acceso.",
+    "goHome": "Ir al inicio",
+    "demoBadge": "Demo"
+  },
+  "nav": {
+    "dashboard": "Inicio",
+    "children": "Hijos",
+    "network": "Red de cuidado",
+    "activity": "Actividad",
+    "notifications": "Notificaciones",
+    "institution": "Institución",
+    "myInstitutions": "Mis instituciones",
+    "settings": "Cuenta",
+    "overview": "Resumen",
+    "profile": "Perfil",
+    "shares": "Accesos",
+    "careSessions": "Sesiones de cuidado",
+    "proposals": "Propuestas",
+    "documents": "Documentos",
+    "openMenu": "Abrir menú"
+  },
+  "landing": {
+    "eyebrow": "Para familias, cuidadores e instituciones",
+    "title": "La información de cuidado de tu hijo, creada una sola vez y compartida con quien tú decidas.",
+    "subtitle": "Alergias, medicamentos, contactos de emergencia, rutinas y lo que lo tranquiliza. Un perfil que viaja con tu hijo a la guardería, la escuela, el campamento o la niñera, siempre bajo tu control.",
+    "ctaPrimary": "Crear el perfil de mi hijo",
+    "ctaSecondary": "Ya tengo cuenta",
+    "pillars": {
+      "create": {
+        "title": "Crea una vez",
+        "body": "Deja de repetir la misma información en cada formulario. Escríbela una vez y mantenla al día."
+      },
+      "control": {
+        "title": "Controla siempre",
+        "body": "Decide qué comparte cada acceso, hasta cuándo, y revócalo en un clic. Ve quién consultó qué y cuándo."
+      },
+      "share": {
+        "title": "Comparte donde sea",
+        "body": "Un enlace o un QR con lo que la niñera o la maestra necesita, en su celular, sin registro."
+      }
+    },
+    "howTitle": "Cómo funciona",
+    "steps": {
+      "one": {
+        "title": "Completa el perfil",
+        "body": "Empieza por lo importante: seguridad, comida, sueño y confort. Completa el resto cuando quieras."
+      },
+      "two": {
+        "title": "Elige qué compartir",
+        "body": "Familia, niñera o institución: cada acceso muestra solo lo necesario y expira automáticamente."
+      },
+      "three": {
+        "title": "Ellos consultan, tú ves quién",
+        "body": "El cuidador confirma que revisó lo crítico. Tú recibes el registro de accesos."
+      }
+    },
+    "institutionsTitle": "Para guarderías, kínderes y academias",
+    "institutionsBody": "Recibe perfiles completos y actualizados por las familias, con consentimiento verificable y confirmaciones de lectura de la información crítica. Sin formularios en papel.",
+    "institutionsCta": "Crear una institución",
+    "trustNote": "La información se comparte solo con quien tú autorizas, durante el tiempo que tú defines, y cada acceso queda registrado.",
+    "footer": "Child Care Passport · MVP"
+  },
+  "auth": {
+    "login": {
+      "title": "Bienvenido de nuevo",
+      "subtitle": "Inicia sesión para administrar los perfiles de tus hijos.",
+      "submit": "Iniciar sesión",
+      "noAccount": "¿No tienes cuenta?",
+      "register": "Crear cuenta",
+      "forgot": "¿Olvidaste tu contraseña?",
+      "resetDone": "Tu contraseña fue actualizada. Inicia sesión con la nueva.",
+      "verified": "Tu correo fue confirmado.",
+      "invalidCredentials": "El correo o la contraseña no son correctos."
+    },
+    "register": {
+      "title": "Crea tu cuenta",
+      "subtitle": "Empieza con lo básico. Podrás completar el perfil de tu hijo en minutos.",
+      "submit": "Crear cuenta",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "login": "Iniciar sesión",
+      "consent": "Al crear la cuenta aceptas que tú eres el responsable de la información de tus hijos y de con quién la compartes."
+    },
+    "forgot": {
+      "title": "Recuperar contraseña",
+      "subtitle": "Te enviaremos un enlace para restablecerla.",
+      "submit": "Enviar enlace",
+      "sent": "Si existe una cuenta con ese correo, recibirás un enlace en unos minutos.",
+      "backToLogin": "Volver a iniciar sesión"
+    },
+    "reset": {
+      "title": "Nueva contraseña",
+      "subtitle": "Elige una contraseña de al menos 10 caracteres.",
+      "submit": "Guardar contraseña"
+    },
+    "verify": {
+      "title": "Confirmación de correo",
+      "success": "¡Listo! Tu correo quedó confirmado.",
+      "invalid": "Este enlace de confirmación no es válido o ya fue usado.",
+      "expired": "Este enlace de confirmación expiró.",
+      "goToApp": "Ir a mi cuenta"
+    },
+    "fields": {
+      "name": "Tu nombre",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "newPassword": "Nueva contraseña",
+      "passwordHint": "Mínimo 10 caracteres."
+    },
+    "demo": {
+      "title": "Cuentas de demostración",
+      "hint": "Contraseña para todas: {password}",
+      "parent": "Tutor (Luis)",
+      "coGuardian": "Co-tutora (Andrea)",
+      "institutionAdmin": "Admin institución (Mariana)",
+      "teacher": "Maestra (Sofía)"
+    }
+  },
+  "dashboard": {
+    "greeting": "{period, select, morning {Buenos días} afternoon {Buenas tardes} other {Buenas noches}}, {name}",
+    "welcome": "Tu cuenta está lista. Crea el perfil de tu hijo para empezar a compartir con confianza.",
+    "yourChildren": "Tus hijos",
+    "addChild": "Agregar hijo",
+    "createFirst": "Crear el primer perfil",
+    "emptyTitle": "Aún no has creado ningún perfil",
+    "emptyBody": "Empieza con lo básico; podrás completar el resto después.",
+    "stats": {
+      "caregivers": "{count, plural, =0 {Sin accesos activos} =1 {1 persona con acceso} other {# personas con acceso}}",
+      "institutions": "{count, plural, =0 {Sin instituciones} =1 {1 institución conectada} other {# instituciones conectadas}}",
+      "changes": "{count, plural, =0 {Sin cambios esta semana} =1 {1 cambio esta semana} other {# cambios esta semana}}",
+      "criticalUpdated": "Información crítica actualizada {when}",
+      "profileVersion": "Versión {version}"
+    },
+    "upcoming": "Accesos por vencer",
+    "upcomingEmpty": "Ningún acceso vence en los próximos 7 días.",
+    "expiresAt": "Vence {when}",
+    "alerts": "Pendientes",
+    "alertsEmpty": "Nada pendiente. Todo en orden.",
+    "pendingProposals": "{count, plural, =1 {1 propuesta por revisar} other {# propuestas por revisar}}",
+    "pendingInstitution": "Invitación pendiente de aceptación por {name}",
+    "unverifiedEmail": "Confirma tu correo para recuperar tu cuenta si olvidas la contraseña.",
+    "recentActivity": "Actividad reciente",
+    "recentEmpty": "Cuando alguien consulte o cambie información, aparecerá aquí.",
+    "review": "Revisar",
+    "openChild": "Abrir perfil"
+  },
+  "children": {
+    "title": "Hijos",
+    "listEmptyTitle": "Sin perfiles todavía",
+    "listEmptyBody": "Crea el perfil de tu hijo en cinco pasos cortos.",
+    "new": "Nuevo perfil",
+    "create": {
+      "title": "Crear perfil",
+      "steps": {
+        "basics": "Datos básicos",
+        "safety": "Seguridad",
+        "food": "Alimentación",
+        "sleep": "Sueño y confort",
+        "ready": "Listo para compartir"
+      },
+      "basicsTitle": "Empecemos por lo básico",
+      "basicsHint": "Solo lo esencial. El resto lo completas después.",
+      "safetyTitle": "¿Hay algo que debamos saber para su seguridad?",
+      "safetyHint": "Alergias, medicamentos y a quién llamar. Es lo primero que verá cualquier cuidador.",
+      "foodTitle": "¿Qué come y qué no?",
+      "foodHint": "Restricciones, preferencias y rutina de comidas.",
+      "sleepTitle": "Sueño y lo que lo tranquiliza",
+      "sleepHint": "Horarios, rutina y objetos de confort.",
+      "readyTitle": "{name} ya tiene su perfil",
+      "readyBody": "Puedes completar más información cuando quieras. Ahora ya puedes compartir lo importante con quien lo cuide.",
+      "shareNow": "Compartir cuidado",
+      "goToProfile": "Ver el perfil",
+      "addAllergy": "Agregar alergia",
+      "addMedication": "Agregar medicamento",
+      "addContact": "Agregar contacto de emergencia",
+      "noAllergies": "Sin alergias conocidas",
+      "skipHint": "Puedes omitir este paso y completarlo después.",
+      "napLabel": "Siesta"
+    },
+    "fields": {
+      "firstName": "Nombre",
+      "lastName": "Apellidos",
+      "preferredName": "Cómo le gusta que le llamen",
+      "dateOfBirth": "Fecha de nacimiento",
+      "primaryLanguage": "Idioma principal",
+      "secondaryLanguages": "Otros idiomas",
+      "secondaryLanguagesHint": "Separados por coma",
+      "photo": "Fotografía",
+      "photoHint": "Privada. Solo se muestra a quien tú autorices."
+    },
+    "overview": {
+      "title": "Resumen",
+      "critical": "Información crítica",
+      "criticalEmpty": "No has registrado alergias, medicamentos ni contactos de emergencia.",
+      "addCritical": "Agregar información crítica",
+      "completeness": "Perfil completado",
+      "sections": "Secciones",
+      "network": "Red de cuidado",
+      "networkEmpty": "Nadie tiene acceso todavía.",
+      "activity": "Actividad reciente",
+      "lastUpdated": "Última actualización {when}",
+      "shareCare": "Compartir cuidado",
+      "quickActions": "Acciones rápidas"
+    },
+    "guardians": {
+      "title": "Tutores",
+      "owner": "Tutor principal",
+      "coGuardian": "Co-tutor",
+      "add": "Agregar tutor",
+      "addHint": "La persona debe tener una cuenta con ese correo.",
+      "relationship": "Relación (p. ej. Madre, Tutor legal)",
+      "remove": "Quitar",
+      "cannotRemoveLastOwner": "Debe quedar al menos un tutor principal.",
+      "you": "(tú)"
+    },
+    "delete": {
+      "title": "Eliminar perfil",
+      "body": "Se revocarán todos los accesos y el perfil dejará de estar visible. Esta acción se puede deshacer contactando soporte durante 30 días.",
+      "confirm": "Eliminar perfil de {name}"
+    }
+  },
+  "profile": {
+    "title": "Perfil de cuidado",
+    "sections": {
+      "EMERGENCY": {
+        "name": "Emergencia",
+        "short": "Emergencia",
+        "description": "Contactos, hospital y pediatra."
+      },
+      "HEALTH": {
+        "name": "Salud",
+        "short": "Salud",
+        "description": "Alergias, medicamentos, condiciones, vacunas e instrucciones."
+      },
+      "NUTRITION": {
+        "name": "Alimentación",
+        "short": "Comida",
+        "description": "Qué come, qué no, y su rutina."
+      },
+      "SLEEP": {
+        "name": "Sueño",
+        "short": "Sueño",
+        "description": "Horarios, rutina y objetos de confort."
+      },
+      "BATHROOM": {
+        "name": "Baño",
+        "short": "Baño",
+        "description": "Control de esfínteres, pañal e instrucciones."
+      },
+      "COMMUNICATION": {
+        "name": "Comunicación",
+        "short": "Comunicación",
+        "description": "Cómo expresa necesidades y pide ayuda."
+      },
+      "COMFORT": {
+        "name": "Confort",
+        "short": "Confort",
+        "description": "Qué lo tranquiliza y qué puede incomodarlo."
+      },
+      "PLAY": {
+        "name": "Juego e intereses",
+        "short": "Intereses",
+        "description": "Juguetes, personajes, música y actividades."
+      },
+      "SOCIAL": {
+        "name": "Interacción social",
+        "short": "Social",
+        "description": "Observaciones sobre cómo se relaciona, sin etiquetas."
+      }
+    },
+    "groups": {
+      "identity": "Identidad",
+      "emergency": "Emergencia",
+      "health": "Salud",
+      "food": "Alimentación",
+      "routine": "Rutina",
+      "wellbeing": "Comunicación y confort",
+      "interests": "Intereses y social"
+    },
+    "itemTypes": {
+      "CONTACT": "Contacto de emergencia",
+      "HOSPITAL": "Hospital preferido",
+      "DOCTOR": "Pediatra / médico",
+      "EMERGENCY_NUMBER": "Número adicional",
+      "ALLERGY": "Alergia",
+      "MEDICATION": "Medicamento",
+      "CONDITION": "Condición relevante",
+      "VACCINE": "Vacuna",
+      "SPECIAL_NEED": "Necesidad especial",
+      "MEDICAL_INSTRUCTION": "Instrucción médica",
+      "ALLOWED_FOOD": "Alimento permitido",
+      "RESTRICTED_FOOD": "Alimento restringido",
+      "FOOD_ALLERGY": "Alergia alimentaria",
+      "PREFERENCE": "Preferencia",
+      "INTOLERANCE": "Intolerancia",
+      "FEEDING_ROUTINE": "Rutina de alimentación",
+      "SCHEDULE": "Horario",
+      "DURATION": "Duración",
+      "ROUTINE": "Rutina",
+      "COMFORT_OBJECT": "Objeto de confort",
+      "NEED": "Necesidad particular",
+      "TOILET_TRAINING": "Control de esfínteres",
+      "DIAPER": "Pañal",
+      "FREQUENCY": "Frecuencia",
+      "INSTRUCTION": "Instrucción",
+      "WORD": "Palabra que usa",
+      "LANGUAGE": "Idioma",
+      "NEED_EXPRESSION": "Cómo expresa necesidades",
+      "NONVERBAL_CUE": "Señal no verbal",
+      "HELP_REQUEST": "Cómo pide ayuda",
+      "PREFERRED_OBJECT": "Objeto preferido",
+      "TRIGGER": "Situación que lo incomoda",
+      "SOOTHING_STRATEGY": "Lo que lo tranquiliza",
+      "TOY": "Juguete",
+      "GAME": "Juego",
+      "CHARACTER": "Personaje",
+      "STORY": "Historia",
+      "MUSIC": "Música",
+      "ACTIVITY": "Actividad",
+      "INTEREST": "Interés",
+      "OBSERVATION": "Observación"
+    },
+    "criticality": {
+      "CRITICAL": "Crítico",
+      "IMPORTANT": "Importante",
+      "INFORMATIONAL": "Informativo"
+    },
+    "provenance": {
+      "SELF_DECLARED": "Declarado",
+      "OBSERVED": "Observado",
+      "DOCUMENTED": "Documentado",
+      "VERIFIED": "Verificado",
+      "label": "Procedencia",
+      "source": "Fuente",
+      "sourceType": {
+        "GUARDIAN": "Tutor",
+        "FAMILY": "Familiar",
+        "CAREGIVER": "Cuidador",
+        "INSTITUTION": "Institución",
+        "PROFESSIONAL": "Profesional",
+        "DOCUMENT": "Documento"
+      },
+      "updated": "Actualizado {when}",
+      "verifiedAt": "Verificado {when}"
+    },
+    "fields": {
+      "type": "Tipo",
+      "label": "Título",
+      "details": "Detalles",
+      "detailsHint": "Instrucciones claras para quien lo cuide.",
+      "phone": "Teléfono",
+      "relationship": "Relación",
+      "dose": "Dosis",
+      "schedule": "Horario",
+      "time": "Hora",
+      "reaction": "Reacción / qué hacer",
+      "severity": "Gravedad",
+      "severe": "Grave",
+      "moderate": "Moderada",
+      "mild": "Leve",
+      "criticality": "Prioridad",
+      "sourceLabel": "Quién lo indicó (p. ej. Dra. Pérez)",
+      "provenanceStatus": "Estado de la información"
+    },
+    "actions": {
+      "addItem": "Agregar",
+      "editItem": "Editar",
+      "deleteItem": "Eliminar",
+      "deleteConfirm": "¿Eliminar este dato del perfil?",
+      "saved": "Guardado",
+      "deleted": "Eliminado"
+    },
+    "empty": {
+      "EMERGENCY": "Agrega al menos un contacto de emergencia. Es lo primero que verá cualquier cuidador.",
+      "HEALTH": "¿Alergias, medicamentos o instrucciones médicas? Regístralos aquí.",
+      "NUTRITION": "Qué puede comer, qué no, y cómo son sus comidas.",
+      "SLEEP": "Horarios de siesta, rutina para dormir y objetos que necesita.",
+      "BATHROOM": "Pañal, control de esfínteres e instrucciones.",
+      "COMMUNICATION": "Palabras que usa, cómo pide ayuda, señales no verbales.",
+      "COMFORT": "Qué lo tranquiliza y qué situaciones pueden incomodarlo.",
+      "PLAY": "Sus juguetes, personajes, música y actividades favoritas.",
+      "SOCIAL": "Observaciones contextuales sobre cómo se relaciona. Evita etiquetas."
+    },
+    "socialGuidance": "Describe situaciones, no rasgos. Por ejemplo: «En ambientes nuevos suele observar antes de integrarse». Evita palabras como «aislado» o «poco sociable».",
+    "visibleTo": {
+      "title": "¿Quién puede ver esto?",
+      "guardians": "Tutores",
+      "nobody": "Nadie más tiene acceso a esta sección.",
+      "can": "puede ver",
+      "cannot": "no puede ver"
+    },
+    "version": "Versión {version}",
+    "assistant": {
+      "title": "Asistente para estructurar información",
+      "hint": "Escribe con tus palabras. Te propondremos datos estructurados; tú decides qué guardar.",
+      "placeholder": "Ejemplo: Mateo no puede comer cacahuates, duerme normalmente a las dos, y cuando se pone nervioso busca su dinosaurio azul.",
+      "analyze": "Proponer datos",
+      "reviewTitle": "Revisa antes de guardar",
+      "nothingFound": "No encontramos datos que estructurar. Intenta con frases más concretas.",
+      "saveSelected": "Guardar seleccionados",
+      "disclaimer": "El asistente no diagnostica ni evalúa. Solo organiza lo que tú escribes."
+    }
+  },
+  "sharing": {
+    "title": "Compartir cuidado",
+    "network": {
+      "title": "Red de cuidado",
+      "subtitle": "Quién tiene acceso a la información de {name}, qué puede ver y hasta cuándo.",
+      "emptyTitle": "Aún no hay cuidadores",
+      "emptyBody": "Comparte la información de cuidado de {name} con alguien de confianza.",
+      "cta": "Compartir cuidado",
+      "active": "Activos",
+      "pending": "Pendientes",
+      "inactive": "Expirados y revocados",
+      "guardiansTitle": "Tutores"
+    },
+    "kinds": {
+      "FAMILY": "Familia",
+      "BABYSITTER": "Niñera / cuidador",
+      "INSTITUTION": "Institución",
+      "OTHER": "Otro",
+      "descriptions": {
+        "FAMILY": "Abuelos, tíos, hermanos mayores. Acceso estable a rutina y emergencia.",
+        "BABYSITTER": "Acceso temporal para una tarde o unos días.",
+        "INSTITUTION": "Guardería, kínder, escuela, academia. Recibe el perfil y puede proponer observaciones.",
+        "OTHER": "Entrenadores, terapeutas, actividades puntuales."
+      }
+    },
+    "wizard": {
+      "stepWho": "¿Con quién?",
+      "stepWhat": "¿Qué información?",
+      "stepWhen": "¿Hasta cuándo?",
+      "stepPreview": "Revisa y comparte",
+      "recipientName": "Nombre de la persona o institución",
+      "recipientNameHint": "Así aparecerá en el registro de accesos.",
+      "recipientEmail": "Correo (opcional)",
+      "institutionCode": "Código de la institución",
+      "institutionCodeHint": "Pídelo a la institución. Ejemplo: ARC-7K3P9Q",
+      "institutionFound": "Institución encontrada: {name}",
+      "institutionNotFound": "No encontramos una institución con ese código.",
+      "categoriesHint": "Por defecto compartimos lo mínimo necesario para ese tipo de cuidado. Puedes ajustarlo.",
+      "capabilities": "Lo que podrá hacer",
+      "startsAt": "Inicia",
+      "expiresAt": "Expira",
+      "noExpiration": "Sin fecha de expiración",
+      "noExpirationWarning": "Recomendamos definir una expiración. Podrás revocar el acceso en cualquier momento.",
+      "presets": {
+        "hours4": "4 horas",
+        "tonight": "Esta noche",
+        "days7": "7 días",
+        "months6": "6 meses",
+        "year1": "1 año",
+        "custom": "Personalizado"
+      },
+      "pin": "PIN de acceso (opcional)",
+      "pinHint": "4 a 6 dígitos. Compártelo por otro canal, no junto al enlace.",
+      "singleUse": "Acceso único",
+      "singleUseHint": "El enlace deja de funcionar tras abrirse una vez.",
+      "note": "Nota para el cuidador (opcional)",
+      "create": "Generar enlace y QR",
+      "createInstitution": "Enviar invitación a la institución"
+    },
+    "categories": {
+      "IDENTITY": "Nombre y edad",
+      "PHOTO": "Fotografía",
+      "EMERGENCY": "Emergencia",
+      "ALLERGIES": "Alergias",
+      "MEDICATION": "Medicamentos",
+      "HEALTH": "Historial médico",
+      "NUTRITION": "Alimentación",
+      "SLEEP": "Sueño",
+      "BATHROOM": "Baño",
+      "COMMUNICATION": "Comunicación",
+      "COMFORT": "Confort",
+      "PLAY": "Juego e intereses",
+      "SOCIAL": "Interacción social",
+      "DOCUMENTS": "Documentos"
+    },
+    "capabilities": {
+      "ACKNOWLEDGE": "Confirmar lectura de la información crítica",
+      "RUN_CARE_SESSION": "Registrar sesiones de cuidado",
+      "PROPOSE_CHANGES": "Proponer observaciones al perfil",
+      "VIEW_DOCUMENTS": "Ver documentos"
+    },
+    "preview": {
+      "willSee": "{name} podrá ver:",
+      "willNotSee": "{name} NO podrá ver:",
+      "canDo": "{name} podrá:",
+      "accessStarts": "El acceso inicia:",
+      "accessExpires": "El acceso expira:",
+      "autoExpire": "Este acceso expirará automáticamente.",
+      "never": "No expira (puedes revocarlo cuando quieras)",
+      "pinProtected": "Protegido con PIN",
+      "singleUse": "Un solo uso",
+      "confirm": "Confirmo que quiero compartir esta información"
+    },
+    "result": {
+      "title": "Listo para compartir",
+      "body": "Envía el enlace o muestra el QR. {name} verá solo la información que autorizaste.",
+      "link": "Enlace de acceso",
+      "qr": "Código QR",
+      "qrHint": "El QR solo contiene el enlace. Nunca datos del perfil.",
+      "pinReminder": "Recuerda compartir el PIN por otro canal.",
+      "institutionSent": "Invitación enviada. La institución verá a {name} cuando acepte.",
+      "done": "Ir a la red de cuidado",
+      "share": "Compartir"
+    },
+    "status": {
+      "PENDING": "Pendiente",
+      "ACTIVE": "Activo",
+      "REVOKED": "Revocado",
+      "EXPIRED": "Expirado",
+      "NOT_STARTED": "Programado",
+      "EXHAUSTED": "Usado"
+    },
+    "grant": {
+      "validUntil": "Válido hasta {when}",
+      "validFrom": "Inicia {when}",
+      "noExpiry": "Sin expiración",
+      "sharedBy": "Compartido por {name}",
+      "lastOpened": "Último acceso {when}",
+      "neverOpened": "Aún no se ha abierto",
+      "uses": "{count, plural, =1 {1 apertura} other {# aperturas}}",
+      "revoke": "Revocar acceso",
+      "revokeConfirm": "El enlace dejará de funcionar de inmediato. ¿Revocar el acceso de {name}?",
+      "revoked": "Acceso revocado",
+      "viewLink": "Ver enlace y QR",
+      "categories": "Puede ver",
+      "acknowledged": "Confirmó lectura {when}",
+      "notAcknowledged": "No ha confirmado lectura"
+    }
+  },
+  "care": {
+    "pass": {
+      "title": "Pase de cuidado",
+      "important": "IMPORTANTE",
+      "sharedBy": "Compartido por {name}",
+      "validUntil": "Acceso válido hasta {when}",
+      "noExpiry": "Acceso sin fecha de expiración",
+      "yearsOld": "{count, plural, =1 {1 año} other {# años}}",
+      "reviewed": "Revisado {when}",
+      "acknowledge": "He revisado la información crítica de {name}",
+      "acknowledgeHint": "Confirmar deja registro de que leíste alergias, medicamentos y contactos.",
+      "acknowledgeName": "Tu nombre",
+      "acknowledged": "Gracias. Tu confirmación quedó registrada.",
+      "whatsChanged": "{count, plural, =1 {1 cambio desde tu última revisión} other {# cambios desde tu última revisión}}",
+      "changeLabels": {
+        "ADDED": "Nuevo",
+        "UPDATED": "Actualizado",
+        "REMOVED": "Eliminado"
+      },
+      "startSession": "Iniciar sesión de cuidado",
+      "continueSession": "Continuar sesión de cuidado",
+      "noCritical": "No hay alergias, medicamentos ni contactos registrados.",
+      "call": "Llamar",
+      "notShared": "Esta información no fue compartida contigo.",
+      "footer": "Solo ves la información autorizada por el tutor. Cada consulta queda registrada.",
+      "pinTitle": "Este acceso está protegido con un PIN",
+      "pinHint": "Pídeselo al tutor de {name}.",
+      "pinLabel": "PIN",
+      "pinSubmit": "Entrar",
+      "pinInvalid": "El PIN no es correcto. {remaining, plural, =1 {Te queda 1 intento} other {Te quedan # intentos}}.",
+      "pinLocked": "Este enlace se bloqueó por demasiados intentos. Pide un nuevo enlace al tutor."
+    },
+    "denied": {
+      "ACCESS_EXPIRED": {
+        "title": "Este acceso ya expiró",
+        "body": "Solicita al padre o tutor un nuevo enlace."
+      },
+      "ACCESS_REVOKED": {
+        "title": "Este acceso fue revocado",
+        "body": "El tutor retiró el acceso. Si crees que es un error, contáctalo directamente."
+      },
+      "ACCESS_NOT_STARTED": {
+        "title": "Este acceso aún no inicia",
+        "body": "Podrás abrirlo a partir de la fecha acordada con el tutor."
+      },
+      "ACCESS_EXHAUSTED": {
+        "title": "Este enlace ya fue utilizado",
+        "body": "Era de un solo uso. Solicita un nuevo enlace al tutor."
+      },
+      "ACCESS_PENDING": {
+        "title": "Acceso pendiente",
+        "body": "El tutor aún no ha completado este acceso."
+      },
+      "INVALID_TOKEN": {
+        "title": "Enlace no válido",
+        "body": "Revisa que el enlace esté completo o solicita uno nuevo."
+      },
+      "PIN_LOCKED": {
+        "title": "Enlace bloqueado",
+        "body": "Se superó el número de intentos de PIN. Solicita un nuevo enlace al tutor."
+      },
+      "default": {
+        "title": "No es posible mostrar esta información",
+        "body": "Solicita al padre o tutor un nuevo enlace."
+      }
+    },
+    "session": {
+      "title": "Sesión de cuidado",
+      "child": "Niño",
+      "caregiver": "Cuidador",
+      "start": "Inicio",
+      "expectedEnd": "Fin previsto",
+      "ended": "Finalizada",
+      "active": "En curso",
+      "startTitle": "Iniciar sesión de cuidado",
+      "startBody": "Registra lo que pase mientras cuidas a {name}. El tutor verá la línea de tiempo.",
+      "caregiverName": "Tu nombre",
+      "expectedEndLabel": "Hora prevista de fin (opcional)",
+      "startButton": "Iniciar",
+      "endButton": "Finalizar sesión",
+      "endConfirm": "¿Finalizar la sesión de cuidado?",
+      "record": "Registrar",
+      "timeline": "Línea de tiempo",
+      "timelineEmpty": "Aún no hay eventos. Registra comida, sueño, baño o una nota.",
+      "note": "Nota (opcional)",
+      "noteRequired": "Describe lo ocurrido",
+      "recorded": "Registrado",
+      "backToPass": "Volver al pase de cuidado",
+      "duration": "Duración",
+      "list": "Sesiones de cuidado",
+      "listEmpty": "Cuando un cuidador inicie una sesión, aparecerá aquí.",
+      "events": {
+        "SESSION_STARTED": "Sesión iniciada",
+        "INFO_REVIEWED": "Información de cuidado revisada",
+        "FOOD": "Comida",
+        "WATER": "Agua",
+        "BATHROOM": "Baño",
+        "SLEEP": "Se durmió",
+        "WAKE": "Despertó",
+        "MEDICATION": "Medicamento",
+        "ACTIVITY": "Actividad",
+        "NOTE": "Comentario",
+        "INCIDENT": "Incidente",
+        "SESSION_ENDED": "Sesión finalizada"
+      }
+    }
+  },
+  "institution": {
+    "title": "Institución",
+    "create": {
+      "title": "Crear institución",
+      "subtitle": "Recibe perfiles de cuidado compartidos por las familias. Sin formularios en papel.",
+      "name": "Nombre",
+      "type": "Tipo",
+      "submit": "Crear institución",
+      "types": {
+        "DAYCARE": "Guardería",
+        "KINDERGARTEN": "Kínder",
+        "SCHOOL": "Escuela",
+        "CAMP": "Campamento",
+        "ACADEMY": "Academia",
+        "SPORTS": "Deportes",
+        "THERAPY": "Terapia",
+        "OTHER": "Otro"
+      }
+    },
+    "none": {
+      "title": "No perteneces a ninguna institución",
+      "body": "Crea una para recibir perfiles compartidos por las familias, o pide a un administrador que te agregue."
+    },
+    "switch": "Cambiar de institución",
+    "dashboard": {
+      "children": "Niños",
+      "criticalAlerts": "Alertas críticas",
+      "updatedProfiles": "Perfiles actualizados",
+      "updatedHint": "Últimos 7 días",
+      "pendingAcks": "Confirmaciones pendientes",
+      "pendingRequests": "Solicitudes pendientes",
+      "inviteCode": "Código para familias",
+      "inviteCodeHint": "Las familias usan este código para compartir el perfil de su hijo con la institución.",
+      "recent": "Actividad reciente",
+      "emptyTitle": "Todavía no hay niños compartidos",
+      "emptyBody": "Pide a las familias que compartan el perfil usando el código {code}."
+    },
+    "children": {
+      "title": "Niños",
+      "filters": {
+        "all": "Todos",
+        "allergies": "Con alergias",
+        "updated": "Actualizados",
+        "new": "Nuevos",
+        "expiring": "Acceso por vencer"
+      },
+      "columns": {
+        "child": "Niño",
+        "age": "Edad",
+        "critical": "Alergias críticas",
+        "updated": "Última actualización",
+        "consent": "Consentimiento",
+        "ack": "Lectura"
+      },
+      "empty": "No hay niños que coincidan con el filtro.",
+      "consentUntil": "Hasta {when}",
+      "consentNoExpiry": "Sin expiración",
+      "ackDone": "Confirmada",
+      "ackPending": "Pendiente"
+    },
+    "child": {
+      "sharedBy": "Compartido por",
+      "validUntil": "Permiso válido hasta",
+      "lastUpdated": "Última actualización",
+      "acknowledge": "Confirmo que revisé la información crítica de {name}",
+      "acknowledgedBy": "Confirmado por {name} {when}",
+      "propose": "Proponer observación",
+      "proposeTitle": "Proponer una observación",
+      "proposeBody": "La familia recibirá la propuesta y decidirá si se agrega al perfil. La institución nunca edita el perfil directamente.",
+      "proposeSection": "Sección",
+      "proposeLabel": "Resumen",
+      "proposeDetails": "Observación",
+      "proposePlaceholder": "Ejemplo: Ha mostrado interés repetido por los instrumentos musicales.",
+      "proposeSubmit": "Enviar a la familia",
+      "proposed": "Propuesta enviada a la familia.",
+      "proposals": "Propuestas de esta institución"
+    },
+    "requests": {
+      "title": "Solicitudes pendientes",
+      "empty": "No hay solicitudes pendientes.",
+      "body": "{guardian} quiere compartir el perfil de {child} con la institución.",
+      "accept": "Aceptar",
+      "decline": "Rechazar",
+      "accepted": "Relación aceptada. {child} ya aparece en la lista.",
+      "declined": "Solicitud rechazada."
+    },
+    "alerts": {
+      "title": "Alertas",
+      "subtitle": "Niños con información crítica que el equipo debe conocer.",
+      "empty": "No hay alertas críticas.",
+      "pendingAck": "Lectura pendiente",
+      "expiringSoon": "Acceso vence {when}"
+    },
+    "proposals": {
+      "title": "Propuestas",
+      "empty": "Aún no se han propuesto observaciones.",
+      "status": {
+        "PROPOSED": "Pendiente",
+        "ACCEPTED": "Aceptada",
+        "REJECTED": "Rechazada"
+      }
+    },
+    "members": {
+      "title": "Equipo",
+      "add": "Agregar miembro",
+      "addHint": "La persona debe tener una cuenta con ese correo.",
+      "role": "Rol",
+      "roles": {
+        "ADMIN": "Administrador",
+        "MEMBER": "Miembro"
+      },
+      "titleLabel": "Puesto (p. ej. Maestra)",
+      "remove": "Quitar"
+    }
+  },
+  "proposals": {
+    "title": "Propuestas de cambio",
+    "subtitle": "Las instituciones pueden proponer observaciones. Tú decides qué se agrega al perfil.",
+    "empty": "No hay propuestas por revisar.",
+    "from": "{institution} observó:",
+    "fromPerson": "Propuesto por {name}",
+    "question": "¿Quieres agregar esto al perfil de {name}?",
+    "accept": "Aceptar",
+    "reject": "Rechazar",
+    "accepted": "Agregado al perfil con procedencia «Observado».",
+    "rejected": "Propuesta rechazada.",
+    "reviewed": "Revisadas",
+    "pending": "Pendientes"
+  },
+  "audit": {
+    "title": "¿Quién accedió a la información de {name}?",
+    "subtitle": "Cada consulta, confirmación y sesión de cuidado queda registrada.",
+    "empty": "Todavía nadie ha consultado el perfil.",
+    "viewed": "Consultó",
+    "filters": {
+      "access": "Accesos",
+      "all": "Todo"
+    },
+    "types": {
+      "USER_REGISTERED": "Cuenta creada",
+      "LOGIN_SUCCEEDED": "Inicio de sesión",
+      "LOGIN_FAILED": "Intento de inicio de sesión fallido",
+      "PASSWORD_RESET_REQUESTED": "Solicitud de restablecer contraseña",
+      "PASSWORD_RESET_COMPLETED": "Contraseña restablecida",
+      "EMAIL_VERIFIED": "Correo confirmado",
+      "CHILD_CREATED": "Perfil creado",
+      "CHILD_UPDATED": "Datos del niño actualizados",
+      "CHILD_DELETED": "Perfil eliminado",
+      "GUARDIAN_ADDED": "Tutor agregado",
+      "GUARDIAN_REMOVED": "Tutor eliminado",
+      "PROFILE_VIEWED": "Consultó el perfil",
+      "CRITICAL_DATA_VIEWED": "Consultó información crítica",
+      "PROFILE_UPDATED": "Perfil actualizado",
+      "CRITICAL_DATA_CHANGED": "Información crítica modificada",
+      "ACCESS_GRANTED": "Acceso otorgado",
+      "ACCESS_REVOKED": "Acceso revocado",
+      "ACCESS_EXPIRED": "Acceso expirado",
+      "SHARE_LINK_OPENED": "Abrió el enlace",
+      "SHARE_LINK_DENIED": "Intento de acceso denegado",
+      "PIN_FAILED": "PIN incorrecto",
+      "PIN_LOCKED": "Enlace bloqueado por PIN",
+      "INSTITUTION_CREATED": "Institución creada",
+      "INSTITUTION_MEMBER_ADDED": "Miembro agregado",
+      "INSTITUTION_MEMBER_REMOVED": "Miembro eliminado",
+      "INSTITUTION_CONNECTED": "Institución conectada",
+      "INSTITUTION_DECLINED": "Institución rechazó la invitación",
+      "CARE_SESSION_STARTED": "Inició sesión de cuidado",
+      "CARE_EVENT_RECORDED": "Registró un evento de cuidado",
+      "CARE_SESSION_ENDED": "Finalizó sesión de cuidado",
+      "ACKNOWLEDGEMENT_COMPLETED": "Confirmó lectura de información crítica",
+      "CHANGE_PROPOSED": "Propuso una observación",
+      "CHANGE_REVIEWED": "Revisó una propuesta",
+      "DOCUMENT_UPLOADED": "Documento subido",
+      "DOCUMENT_VIEWED": "Consultó un documento",
+      "DOCUMENT_DELETED": "Documento eliminado",
+      "DATA_EXPORTED": "Datos exportados"
+    }
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "empty": "No tienes notificaciones.",
+    "markAllRead": "Marcar todas como leídas",
+    "unread": "{count, plural, =1 {1 sin leer} other {# sin leer}}",
+    "types": {
+      "ACCESS_GRANTED": "Acceso otorgado",
+      "ACCESS_EXPIRING": "Un acceso está por vencer",
+      "ACCESS_REVOKED": "{institutionName}: la familia revocó el acceso a un perfil",
+      "PROFILE_CHANGED": "El perfil de {childName} fue actualizado",
+      "CRITICAL_DATA_CHANGED": "Información crítica de {childName} modificada",
+      "CHANGE_PROPOSED": "{institutionName} propuso una observación para {childName}",
+      "CHANGE_REVIEWED": "{actorName} {decision, select, ACCEPTED {aceptó} other {rechazó}} tu observación",
+      "CARE_SESSION_STARTED": "{actorName} inició una sesión de cuidado con {childName}",
+      "CARE_SESSION_ENDED": "{actorName} finalizó la sesión de cuidado con {childName}",
+      "ACKNOWLEDGEMENT_COMPLETED": "{actorName} confirmó la lectura de la información crítica de {childName}",
+      "INSTITUTION_REQUEST": "{actorName} quiere compartir el perfil de {childName} con tu institución",
+      "INSTITUTION_CONNECTED": "{institutionName} aceptó el perfil de {childName}",
+      "SHARE_OPENED": "Un enlace de cuidado fue abierto"
+    }
+  },
+  "documents": {
+    "title": "Documentos",
+    "subtitle": "Vacunas, certificados, seguros y autorizaciones. Almacenamiento privado con enlaces temporales.",
+    "empty": "No hay documentos todavía.",
+    "upload": "Subir documento",
+    "titleLabel": "Título",
+    "category": "Categoría",
+    "file": "Archivo",
+    "fileHint": "PDF o imagen, máximo 10 MB.",
+    "open": "Abrir",
+    "openHint": "El enlace expira en 5 minutos.",
+    "categories": {
+      "VACCINATION": "Vacunas",
+      "CERTIFICATE": "Certificado",
+      "INSURANCE": "Seguro",
+      "AUTHORIZATION": "Autorización",
+      "MEDICAL": "Médico",
+      "OTHER": "Otro"
+    }
+  },
+  "settings": {
+    "title": "Cuenta",
+    "profile": "Tus datos",
+    "name": "Nombre",
+    "email": "Correo",
+    "language": "Idioma",
+    "timezone": "Zona horaria",
+    "saved": "Cambios guardados",
+    "data": "Tus datos y privacidad",
+    "export": "Exportar mis datos",
+    "exportHint": "Descarga un JSON con los perfiles, accesos, consentimientos y registros de tus hijos.",
+    "deleteAccount": "Eliminar cuenta",
+    "deleteHint": "Disponible próximamente. Escríbenos para eliminar tu cuenta y la información de tus hijos.",
+    "emailVerified": "Correo confirmado",
+    "emailUnverified": "Correo sin confirmar",
+    "resendVerification": "Reenviar confirmación",
+    "verificationSent": "Te enviamos un nuevo enlace de confirmación."
+  },
+  "errors": {
+    "VALIDATION_ERROR": "Revisa los campos marcados.",
+    "NOT_AUTHENTICATED": "Inicia sesión para continuar.",
+    "ACCESS_DENIED": "No tienes permiso para hacer esto.",
+    "ACCESS_EXPIRED": "Este acceso ya expiró.",
+    "ACCESS_NOT_STARTED": "Este acceso aún no inicia.",
+    "ACCESS_REVOKED": "Este acceso fue revocado.",
+    "ACCESS_EXHAUSTED": "Este enlace ya fue utilizado.",
+    "ACCESS_PENDING": "Este acceso está pendiente.",
+    "CATEGORY_NOT_SHARED": "Esta información no fue compartida contigo.",
+    "CAPABILITY_MISSING": "No tienes permiso para esta acción.",
+    "PIN_REQUIRED": "Este acceso requiere PIN.",
+    "PIN_INVALID": "El PIN no es correcto.",
+    "PIN_LOCKED": "Enlace bloqueado por demasiados intentos.",
+    "EMAIL_NOT_VERIFIED": "Confirma tu correo para continuar.",
+    "NOT_FOUND": "No encontramos lo que buscas.",
+    "CONFLICT": "Ya existe un registro con esos datos.",
+    "INVALID_TOKEN": "El enlace no es válido.",
+    "TOKEN_EXPIRED": "El enlace expiró.",
+    "RATE_LIMITED": "Demasiados intentos. Espera unos minutos.",
+    "INVALID_STATE": "Esta acción ya no es posible.",
+    "FEATURE_DISABLED": "Esta función no está disponible.",
+    "INTERNAL_ERROR": "Algo salió mal. Inténtalo de nuevo."
+  }
+}

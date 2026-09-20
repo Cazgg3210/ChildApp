@@ -1,0 +1,13 @@
+# Caddy obtiene y renueva el certificado TLS automáticamente (Let's Encrypt).
+# SITE_ADDRESS: tu dominio (app.midominio.com) o, sin dominio, <IP>.sslip.io
+{$SITE_ADDRESS} {
+	encode zstd gzip
+	reverse_proxy app:3000 {
+		header_up X-Forwarded-Proto {scheme}
+		header_up X-Forwarded-For {remote_host}
+	}
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+	}
+}

@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Child Care Passport — MVP
 
-## Getting Started
+> **Create once. Control always. Share anywhere.**
+>
+> Plataforma B2B2C donde los tutores crean una sola vez el perfil de cuidado de sus hijos y lo comparten de forma selectiva, temporal, revocable y auditable con familiares, cuidadores e instituciones.
 
-First, run the development server:
+Nombre provisional. Documentación completa en [`/docs`](docs/) — empieza por [docs/00-project-analysis.md](docs/00-project-analysis.md).
+
+## Stack
+
+Next.js 16 (App Router) · TypeScript strict · Tailwind 4 + shadcn/ui · PostgreSQL 16 + Prisma 7 · Auth.js v5 · next-intl (es/en) · Vitest · Playwright · Docker · GitHub Actions.
+
+Arquitectura: **monolito modular** por bounded contexts (`src/modules/*`), ver [docs/07-architecture.md](docs/07-architecture.md).
+
+## Demo en 3 comandos
+
+Requisitos: Node ≥ 20.9, Docker.
 
 ```bash
+cp .env.example .env            # ajusta AUTH_SECRET si lo deseas
+docker compose up -d postgres   # PostgreSQL en el puerto 5470
+npm install && npm run db:migrate && npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre <http://localhost:3000>. El seed imprime en consola los enlaces de Care Pass de la demo (los tokens no se almacenan en texto plano; se muestran una sola vez).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> Si el puerto 3000 está ocupado: `npm run dev -- -p 3100` y ajusta `APP_URL` en `.env`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Credenciales demo
 
-## Learn More
+| Rol                                          | Email                     | Contraseña        |
+| -------------------------------------------- | ------------------------- | ----------------- |
+| Tutor (Luis)                                 | `parent@example.com`      | `Demo1234!secure` |
+| Co-tutora (Andrea)                           | `andrea@example.com`      | `Demo1234!secure` |
+| Admin institución (Mariana, Kinder Arcoíris) | `institution@example.com` | `Demo1234!secure` |
+| Maestra (Sofía, Kinder Arcoíris)             | `teacher@example.com`     | `Demo1234!secure` |
 
-To learn more about Next.js, take a look at the following resources:
+Cuidadoras sin cuenta: **Abuela Rosa** (enlace sin PIN) y **Carla** (enlace con PIN `2468`). Los enlaces se imprimen al ejecutar `npm run db:seed`. La contraseña demo solo se crea con `SEED_DEMO=true`; el seed se niega a correr en producción.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Guion de la demo (≈10 minutos)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Luis** (`/app`) → _Agregar hijo_ → onboarding de 5 pasos: alergia, contacto, comida, sueño, objeto de confort.
+2. Perfil → secciones con criticidad y procedencia; prueba el **asistente** con: _"Mateo no puede comer cacahuates, duerme normalmente a las dos, y cuando se pone nervioso busca su dinosaurio azul."_
+3. **Compartir cuidado** → Niñera _Carla_ → categorías por defecto → vigencia + PIN → **Permission Preview** → enlace + QR.
+4. Abre el enlace desde el celular (o modo móvil): PIN → **Care Mode** (IMPORTANTE arriba) → _He revisado la información crítica_ → **Sesión de cuidado** → registrar comida → finalizar.
+5. Luis → _Actividad_: "¿Quién accedió a la información de Mateo?" y _Sesiones de cuidado_.
+6. Compartir con **Kinder Arcoíris** (código en el dashboard de la institución) → **Mariana** acepta en _Solicitudes_ → Mateo aparece en la lista.
+7. **Sofía** revisa el perfil, confirma lectura y _propone una observación_ → **Luis** la acepta en _Propuestas_ → aparece en el perfil con procedencia _Observado · Kinder Arcoíris_.
+8. Luis edita una alergia → Carla, al volver a abrir el enlace, ve **"1 cambio desde tu última revisión"**.
+9. Luis **revoca** el acceso de Carla → el enlace deja de funcionar de inmediato.
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Comando                                                                   | Qué hace                                                    |
+| ------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `npm run dev`                                                             | Servidor de desarrollo (Turbopack).                         |
+| `npm run build` / `npm start`                                             | Build de producción (`output: standalone`) y arranque.      |
+| `npm run lint` · `npm run typecheck`                                      | ESLint · `next typegen && tsc --noEmit`.                    |
+| `npm run test`                                                            | Tests unitarios (Vitest).                                   |
+| `npm run test:integration`                                                | Tests de integración contra PostgreSQL (`DATABASE_URL`).    |
+| `npm run test:e2e`                                                        | Playwright (3 journeys + seguridad). Requiere seed cargado. |
+| `npm run db:migrate` · `db:deploy` · `db:seed` · `db:reset` · `db:studio` | Prisma.                                                     |
+| `npm run icons`                                                           | Regenera los iconos PWA.                                    |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Estructura
+
+```
+src/app/          rutas (public · (parent)/app · (institution)/institution · s/[token] · api/v1)
+src/modules/      identity · children · profiles · authorization · sharing · consent · care
+                  institutions · audit · documents · notifications · ai · analytics · integrations
+src/shared/       config (env, flags) · db · errors · http · i18n · logging · security · domain
+prisma/           schema.prisma · migrations · seed.ts
+messages/         es.json · en.json
+tests/            unit · integration · e2e
+docs/             producto, arquitectura, seguridad, permisos, API, testing, deploy, ADRs
+```
+
+## Seguridad en dos líneas
+
+Los enlaces compartidos usan tokens de 256 bits almacenados como SHA-256, con expiración, PIN opcional, acceso único y revocación inmediata; cada apertura queda auditada. Toda lectura/escritura pasa por `AuthorizationService` (RBAC + ABAC): las instituciones **nunca** editan el perfil, solo proponen. Detalles: [docs/09-security-model.md](docs/09-security-model.md) y [docs/10-permissions-model.md](docs/10-permissions-model.md).
+
+## Despliegue
+
+`Dockerfile` multi-stage + `docker-compose.yml` (perfil `full` levanta app + postgres). Guía: [docs/14-deployment.md](docs/14-deployment.md).
+
+```bash
+docker compose --profile full up --build
+```
+
+## Estado
+
+MVP completo según [docs/05-functional-requirements.md](docs/05-functional-requirements.md) y criterios de aceptación A–I. Roadmap V1/V2 en [docs/15-roadmap.md](docs/15-roadmap.md).

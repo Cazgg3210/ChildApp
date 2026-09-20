@@ -1,0 +1,935 @@
+{
+  "common": {
+    "appName": "Child Care Passport",
+    "tagline": "Create once. Control always. Share anywhere.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Finish",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "confirm": "Confirm",
+    "copy": "Copy",
+    "copied": "Copied",
+    "loading": "Loading…",
+    "saving": "Saving…",
+    "search": "Search",
+    "none": "None",
+    "yes": "Yes",
+    "no": "No",
+    "optional": "optional",
+    "viewAll": "View all",
+    "retry": "Retry",
+    "logout": "Sign out",
+    "language": "Language",
+    "skip": "Skip for now",
+    "today": "Today",
+    "years": "{count, plural, =1 {1 year} other {# years}}",
+    "months": "{count, plural, =1 {1 month} other {# months}}",
+    "ageYearsMonths": "{years} years and {months} months",
+    "unknownError": "Something went wrong. Please try again.",
+    "notFound": "We could not find what you are looking for.",
+    "notFoundHint": "The link may be wrong or you may no longer have access.",
+    "goHome": "Go home",
+    "demoBadge": "Demo"
+  },
+  "nav": {
+    "dashboard": "Home",
+    "children": "Children",
+    "network": "Care network",
+    "activity": "Activity",
+    "notifications": "Notifications",
+    "institution": "Institution",
+    "myInstitutions": "My institutions",
+    "settings": "Account",
+    "overview": "Overview",
+    "profile": "Profile",
+    "shares": "Access",
+    "careSessions": "Care sessions",
+    "proposals": "Proposals",
+    "documents": "Documents",
+    "openMenu": "Open menu"
+  },
+  "landing": {
+    "eyebrow": "For families, caregivers and institutions",
+    "title": "Your child's care information, created once and shared with whoever you choose.",
+    "subtitle": "Allergies, medication, emergency contacts, routines and what calms them down. One profile that travels with your child to daycare, school, camp or the babysitter — always under your control.",
+    "ctaPrimary": "Create my child's profile",
+    "ctaSecondary": "I already have an account",
+    "pillars": {
+      "create": {
+        "title": "Create once",
+        "body": "Stop repeating the same information on every form. Write it once and keep it current."
+      },
+      "control": {
+        "title": "Control always",
+        "body": "Decide what each access can see and until when, and revoke it in one click. See who viewed what and when."
+      },
+      "share": {
+        "title": "Share anywhere",
+        "body": "A link or a QR code with what the babysitter or teacher needs, on their phone, no sign-up required."
+      }
+    },
+    "howTitle": "How it works",
+    "steps": {
+      "one": {
+        "title": "Complete the profile",
+        "body": "Start with what matters: safety, food, sleep and comfort. Fill in the rest whenever you want."
+      },
+      "two": {
+        "title": "Choose what to share",
+        "body": "Family, babysitter or institution: each access shows only what is needed and expires automatically."
+      },
+      "three": {
+        "title": "They review, you see who",
+        "body": "The caregiver confirms they reviewed the critical information. You get the access log."
+      }
+    },
+    "institutionsTitle": "For daycares, kindergartens and academies",
+    "institutionsBody": "Receive complete, family-maintained profiles with verifiable consent and read confirmations for critical information. No paper forms.",
+    "institutionsCta": "Create an institution",
+    "trustNote": "Information is shared only with the people you authorize, for the time you define, and every access is logged.",
+    "footer": "Child Care Passport · MVP"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to manage your children's profiles.",
+      "submit": "Sign in",
+      "noAccount": "Don't have an account?",
+      "register": "Create account",
+      "forgot": "Forgot your password?",
+      "resetDone": "Your password was updated. Sign in with the new one.",
+      "verified": "Your email is confirmed.",
+      "invalidCredentials": "Email or password is incorrect."
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Start with the basics. You can complete your child's profile in minutes.",
+      "submit": "Create account",
+      "hasAccount": "Already have an account?",
+      "login": "Sign in",
+      "consent": "By creating an account you confirm you are responsible for your children's information and for whom you share it with."
+    },
+    "forgot": {
+      "title": "Recover password",
+      "subtitle": "We will send you a link to reset it.",
+      "submit": "Send link",
+      "sent": "If an account exists for that email, you will receive a link in a few minutes.",
+      "backToLogin": "Back to sign in"
+    },
+    "reset": {
+      "title": "New password",
+      "subtitle": "Choose a password of at least 10 characters.",
+      "submit": "Save password"
+    },
+    "verify": {
+      "title": "Email confirmation",
+      "success": "Done! Your email is confirmed.",
+      "invalid": "This confirmation link is not valid or was already used.",
+      "expired": "This confirmation link has expired.",
+      "goToApp": "Go to my account"
+    },
+    "fields": {
+      "name": "Your name",
+      "email": "Email",
+      "password": "Password",
+      "newPassword": "New password",
+      "passwordHint": "At least 10 characters."
+    },
+    "demo": {
+      "title": "Demo accounts",
+      "hint": "Password for all: {password}",
+      "parent": "Guardian (Luis)",
+      "coGuardian": "Co-guardian (Andrea)",
+      "institutionAdmin": "Institution admin (Mariana)",
+      "teacher": "Teacher (Sofía)"
+    }
+  },
+  "dashboard": {
+    "greeting": "{period, select, morning {Good morning} afternoon {Good afternoon} other {Good evening}}, {name}",
+    "welcome": "Your account is ready. Create your child's profile to start sharing with confidence.",
+    "yourChildren": "Your children",
+    "addChild": "Add child",
+    "createFirst": "Create the first profile",
+    "emptyTitle": "No profiles yet",
+    "emptyBody": "Start with the basics; you can complete the rest later.",
+    "stats": {
+      "caregivers": "{count, plural, =0 {No active access} =1 {1 person with access} other {# people with access}}",
+      "institutions": "{count, plural, =0 {No institutions} =1 {1 institution connected} other {# institutions connected}}",
+      "changes": "{count, plural, =0 {No changes this week} =1 {1 change this week} other {# changes this week}}",
+      "criticalUpdated": "Critical information updated {when}",
+      "profileVersion": "Version {version}"
+    },
+    "upcoming": "Access expiring soon",
+    "upcomingEmpty": "No access expires in the next 7 days.",
+    "expiresAt": "Expires {when}",
+    "alerts": "Pending",
+    "alertsEmpty": "Nothing pending. All good.",
+    "pendingProposals": "{count, plural, =1 {1 proposal to review} other {# proposals to review}}",
+    "pendingInstitution": "Invitation pending acceptance by {name}",
+    "unverifiedEmail": "Confirm your email so you can recover your account if you forget your password.",
+    "recentActivity": "Recent activity",
+    "recentEmpty": "When someone views or changes information, it will show up here.",
+    "review": "Review",
+    "openChild": "Open profile"
+  },
+  "children": {
+    "title": "Children",
+    "listEmptyTitle": "No profiles yet",
+    "listEmptyBody": "Create your child's profile in five short steps.",
+    "new": "New profile",
+    "create": {
+      "title": "Create profile",
+      "steps": {
+        "basics": "Basics",
+        "safety": "Safety",
+        "food": "Food",
+        "sleep": "Sleep & comfort",
+        "ready": "Ready to share"
+      },
+      "basicsTitle": "Let's start with the basics",
+      "basicsHint": "Just the essentials. You can fill in the rest later.",
+      "safetyTitle": "Anything we should know for safety?",
+      "safetyHint": "Allergies, medication and who to call. It is the first thing any caregiver sees.",
+      "foodTitle": "What do they eat, and what not?",
+      "foodHint": "Restrictions, preferences and meal routine.",
+      "sleepTitle": "Sleep and what calms them",
+      "sleepHint": "Schedules, routine and comfort objects.",
+      "readyTitle": "{name} now has a profile",
+      "readyBody": "You can complete more information whenever you want. You can already share what matters with whoever cares for them.",
+      "shareNow": "Share care",
+      "goToProfile": "View profile",
+      "addAllergy": "Add allergy",
+      "addMedication": "Add medication",
+      "addContact": "Add emergency contact",
+      "noAllergies": "No known allergies",
+      "skipHint": "You can skip this step and complete it later.",
+      "napLabel": "Nap"
+    },
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "preferredName": "Preferred name",
+      "dateOfBirth": "Date of birth",
+      "primaryLanguage": "Primary language",
+      "secondaryLanguages": "Other languages",
+      "secondaryLanguagesHint": "Comma separated",
+      "photo": "Photo",
+      "photoHint": "Private. Only shown to people you authorize."
+    },
+    "overview": {
+      "title": "Overview",
+      "critical": "Critical information",
+      "criticalEmpty": "You have not recorded allergies, medication or emergency contacts.",
+      "addCritical": "Add critical information",
+      "completeness": "Profile completed",
+      "sections": "Sections",
+      "network": "Care network",
+      "networkEmpty": "Nobody has access yet.",
+      "activity": "Recent activity",
+      "lastUpdated": "Last updated {when}",
+      "shareCare": "Share care",
+      "quickActions": "Quick actions"
+    },
+    "guardians": {
+      "title": "Guardians",
+      "owner": "Primary guardian",
+      "coGuardian": "Co-guardian",
+      "add": "Add guardian",
+      "addHint": "The person must have an account with that email.",
+      "relationship": "Relationship (e.g. Mother, Legal guardian)",
+      "remove": "Remove",
+      "cannotRemoveLastOwner": "At least one primary guardian must remain.",
+      "you": "(you)"
+    },
+    "delete": {
+      "title": "Delete profile",
+      "body": "All access will be revoked and the profile will no longer be visible. This can be undone by contacting support within 30 days.",
+      "confirm": "Delete {name}'s profile"
+    }
+  },
+  "profile": {
+    "title": "Care profile",
+    "sections": {
+      "EMERGENCY": {
+        "name": "Emergency",
+        "short": "Emergency",
+        "description": "Contacts, hospital and pediatrician."
+      },
+      "HEALTH": {
+        "name": "Health",
+        "short": "Health",
+        "description": "Allergies, medication, conditions, vaccines and instructions."
+      },
+      "NUTRITION": {
+        "name": "Food",
+        "short": "Food",
+        "description": "What they eat, what not, and their routine."
+      },
+      "SLEEP": {
+        "name": "Sleep",
+        "short": "Sleep",
+        "description": "Schedules, routine and comfort objects."
+      },
+      "BATHROOM": {
+        "name": "Bathroom",
+        "short": "Bathroom",
+        "description": "Toilet training, diapers and instructions."
+      },
+      "COMMUNICATION": {
+        "name": "Communication",
+        "short": "Communication",
+        "description": "How they express needs and ask for help."
+      },
+      "COMFORT": {
+        "name": "Comfort",
+        "short": "Comfort",
+        "description": "What calms them and what may upset them."
+      },
+      "PLAY": {
+        "name": "Play & interests",
+        "short": "Interests",
+        "description": "Toys, characters, music and activities."
+      },
+      "SOCIAL": {
+        "name": "Social interaction",
+        "short": "Social",
+        "description": "Observations about how they relate, without labels."
+      }
+    },
+    "groups": {
+      "identity": "Identity",
+      "emergency": "Emergency",
+      "health": "Health",
+      "food": "Food",
+      "routine": "Routine",
+      "wellbeing": "Communication & comfort",
+      "interests": "Interests & social"
+    },
+    "itemTypes": {
+      "CONTACT": "Emergency contact",
+      "HOSPITAL": "Preferred hospital",
+      "DOCTOR": "Pediatrician / doctor",
+      "EMERGENCY_NUMBER": "Additional number",
+      "ALLERGY": "Allergy",
+      "MEDICATION": "Medication",
+      "CONDITION": "Relevant condition",
+      "VACCINE": "Vaccine",
+      "SPECIAL_NEED": "Special need",
+      "MEDICAL_INSTRUCTION": "Medical instruction",
+      "ALLOWED_FOOD": "Allowed food",
+      "RESTRICTED_FOOD": "Restricted food",
+      "FOOD_ALLERGY": "Food allergy",
+      "PREFERENCE": "Preference",
+      "INTOLERANCE": "Intolerance",
+      "FEEDING_ROUTINE": "Feeding routine",
+      "SCHEDULE": "Schedule",
+      "DURATION": "Duration",
+      "ROUTINE": "Routine",
+      "COMFORT_OBJECT": "Comfort object",
+      "NEED": "Particular need",
+      "TOILET_TRAINING": "Toilet training",
+      "DIAPER": "Diaper",
+      "FREQUENCY": "Frequency",
+      "INSTRUCTION": "Instruction",
+      "WORD": "Word they use",
+      "LANGUAGE": "Language",
+      "NEED_EXPRESSION": "How they express needs",
+      "NONVERBAL_CUE": "Non-verbal cue",
+      "HELP_REQUEST": "How they ask for help",
+      "PREFERRED_OBJECT": "Preferred object",
+      "TRIGGER": "Situation that upsets them",
+      "SOOTHING_STRATEGY": "What calms them",
+      "TOY": "Toy",
+      "GAME": "Game",
+      "CHARACTER": "Character",
+      "STORY": "Story",
+      "MUSIC": "Music",
+      "ACTIVITY": "Activity",
+      "INTEREST": "Interest",
+      "OBSERVATION": "Observation"
+    },
+    "criticality": {
+      "CRITICAL": "Critical",
+      "IMPORTANT": "Important",
+      "INFORMATIONAL": "Informational"
+    },
+    "provenance": {
+      "SELF_DECLARED": "Declared",
+      "OBSERVED": "Observed",
+      "DOCUMENTED": "Documented",
+      "VERIFIED": "Verified",
+      "label": "Provenance",
+      "source": "Source",
+      "sourceType": {
+        "GUARDIAN": "Guardian",
+        "FAMILY": "Family",
+        "CAREGIVER": "Caregiver",
+        "INSTITUTION": "Institution",
+        "PROFESSIONAL": "Professional",
+        "DOCUMENT": "Document"
+      },
+      "updated": "Updated {when}",
+      "verifiedAt": "Verified {when}"
+    },
+    "fields": {
+      "type": "Type",
+      "label": "Title",
+      "details": "Details",
+      "detailsHint": "Clear instructions for whoever cares for them.",
+      "phone": "Phone",
+      "relationship": "Relationship",
+      "dose": "Dose",
+      "schedule": "Schedule",
+      "time": "Time",
+      "reaction": "Reaction / what to do",
+      "severity": "Severity",
+      "severe": "Severe",
+      "moderate": "Moderate",
+      "mild": "Mild",
+      "criticality": "Priority",
+      "sourceLabel": "Who stated it (e.g. Dr. Perez)",
+      "provenanceStatus": "Information status"
+    },
+    "actions": {
+      "addItem": "Add",
+      "editItem": "Edit",
+      "deleteItem": "Delete",
+      "deleteConfirm": "Remove this item from the profile?",
+      "saved": "Saved",
+      "deleted": "Deleted"
+    },
+    "empty": {
+      "EMERGENCY": "Add at least one emergency contact. It is the first thing any caregiver sees.",
+      "HEALTH": "Allergies, medication or medical instructions? Record them here.",
+      "NUTRITION": "What they can eat, what not, and how meals go.",
+      "SLEEP": "Nap times, bedtime routine and objects they need.",
+      "BATHROOM": "Diapers, toilet training and instructions.",
+      "COMMUNICATION": "Words they use, how they ask for help, non-verbal cues.",
+      "COMFORT": "What calms them and which situations may upset them.",
+      "PLAY": "Their favorite toys, characters, music and activities.",
+      "SOCIAL": "Contextual observations about how they relate. Avoid labels."
+    },
+    "socialGuidance": "Describe situations, not traits. For example: \"In new environments they usually observe before joining\". Avoid words like \"isolated\" or \"unsociable\".",
+    "visibleTo": {
+      "title": "Who can see this?",
+      "guardians": "Guardians",
+      "nobody": "Nobody else has access to this section.",
+      "can": "can see",
+      "cannot": "cannot see"
+    },
+    "version": "Version {version}",
+    "assistant": {
+      "title": "Assistant to structure information",
+      "hint": "Write in your own words. We will propose structured data; you decide what to save.",
+      "placeholder": "Example: Mateo cannot eat peanuts, usually naps at two, and looks for his blue dinosaur when nervous.",
+      "analyze": "Propose data",
+      "reviewTitle": "Review before saving",
+      "nothingFound": "We found nothing to structure. Try more concrete sentences.",
+      "saveSelected": "Save selected",
+      "disclaimer": "The assistant does not diagnose or assess. It only organizes what you write."
+    }
+  },
+  "sharing": {
+    "title": "Share care",
+    "network": {
+      "title": "Care network",
+      "subtitle": "Who has access to {name}'s information, what they can see and until when.",
+      "emptyTitle": "No caregivers yet",
+      "emptyBody": "Share {name}'s care information with someone you trust.",
+      "cta": "Share care",
+      "active": "Active",
+      "pending": "Pending",
+      "inactive": "Expired and revoked",
+      "guardiansTitle": "Guardians"
+    },
+    "kinds": {
+      "FAMILY": "Family",
+      "BABYSITTER": "Babysitter / caregiver",
+      "INSTITUTION": "Institution",
+      "OTHER": "Other",
+      "descriptions": {
+        "FAMILY": "Grandparents, uncles, older siblings. Stable access to routine and emergency.",
+        "BABYSITTER": "Temporary access for an evening or a few days.",
+        "INSTITUTION": "Daycare, kindergarten, school, academy. Receives the profile and can propose observations.",
+        "OTHER": "Coaches, therapists, one-off activities."
+      }
+    },
+    "wizard": {
+      "stepWho": "With whom?",
+      "stepWhat": "What information?",
+      "stepWhen": "Until when?",
+      "stepPreview": "Review and share",
+      "recipientName": "Name of the person or institution",
+      "recipientNameHint": "This is how it will appear in the access log.",
+      "recipientEmail": "Email (optional)",
+      "institutionCode": "Institution code",
+      "institutionCodeHint": "Ask the institution for it. Example: ARC-7K3P9Q",
+      "institutionFound": "Institution found: {name}",
+      "institutionNotFound": "We could not find an institution with that code.",
+      "categoriesHint": "By default we share the minimum needed for that kind of care. You can adjust it.",
+      "capabilities": "What they will be able to do",
+      "startsAt": "Starts",
+      "expiresAt": "Expires",
+      "noExpiration": "No expiration date",
+      "noExpirationWarning": "We recommend setting an expiration. You can revoke access at any time.",
+      "presets": {
+        "hours4": "4 hours",
+        "tonight": "Tonight",
+        "days7": "7 days",
+        "months6": "6 months",
+        "year1": "1 year",
+        "custom": "Custom"
+      },
+      "pin": "Access PIN (optional)",
+      "pinHint": "4 to 6 digits. Share it through another channel, not with the link.",
+      "singleUse": "Single use",
+      "singleUseHint": "The link stops working after it is opened once.",
+      "note": "Note for the caregiver (optional)",
+      "create": "Generate link and QR",
+      "createInstitution": "Send invitation to the institution"
+    },
+    "categories": {
+      "IDENTITY": "Name and age",
+      "PHOTO": "Photo",
+      "EMERGENCY": "Emergency",
+      "ALLERGIES": "Allergies",
+      "MEDICATION": "Medication",
+      "HEALTH": "Medical history",
+      "NUTRITION": "Food",
+      "SLEEP": "Sleep",
+      "BATHROOM": "Bathroom",
+      "COMMUNICATION": "Communication",
+      "COMFORT": "Comfort",
+      "PLAY": "Play & interests",
+      "SOCIAL": "Social interaction",
+      "DOCUMENTS": "Documents"
+    },
+    "capabilities": {
+      "ACKNOWLEDGE": "Confirm reading of critical information",
+      "RUN_CARE_SESSION": "Record care sessions",
+      "PROPOSE_CHANGES": "Propose observations to the profile",
+      "VIEW_DOCUMENTS": "View documents"
+    },
+    "preview": {
+      "willSee": "{name} will be able to see:",
+      "willNotSee": "{name} will NOT see:",
+      "canDo": "{name} will be able to:",
+      "accessStarts": "Access starts:",
+      "accessExpires": "Access expires:",
+      "autoExpire": "This access will automatically expire.",
+      "never": "Does not expire (you can revoke it any time)",
+      "pinProtected": "PIN protected",
+      "singleUse": "Single use",
+      "confirm": "I confirm I want to share this information"
+    },
+    "result": {
+      "title": "Ready to share",
+      "body": "Send the link or show the QR code. {name} will only see the information you authorized.",
+      "link": "Access link",
+      "qr": "QR code",
+      "qrHint": "The QR only contains the link. Never profile data.",
+      "pinReminder": "Remember to share the PIN through another channel.",
+      "institutionSent": "Invitation sent. The institution will see {name} once it accepts.",
+      "done": "Go to the care network",
+      "share": "Share"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "ACTIVE": "Active",
+      "REVOKED": "Revoked",
+      "EXPIRED": "Expired",
+      "NOT_STARTED": "Scheduled",
+      "EXHAUSTED": "Used"
+    },
+    "grant": {
+      "validUntil": "Valid until {when}",
+      "validFrom": "Starts {when}",
+      "noExpiry": "No expiration",
+      "sharedBy": "Shared by {name}",
+      "lastOpened": "Last opened {when}",
+      "neverOpened": "Not opened yet",
+      "uses": "{count, plural, =1 {1 opening} other {# openings}}",
+      "revoke": "Revoke access",
+      "revokeConfirm": "The link will stop working immediately. Revoke {name}'s access?",
+      "revoked": "Access revoked",
+      "viewLink": "View link and QR",
+      "categories": "Can see",
+      "acknowledged": "Confirmed reading {when}",
+      "notAcknowledged": "Has not confirmed reading"
+    }
+  },
+  "care": {
+    "pass": {
+      "title": "Care pass",
+      "important": "IMPORTANT",
+      "sharedBy": "Shared by {name}",
+      "validUntil": "Access valid until {when}",
+      "noExpiry": "Access with no expiration date",
+      "yearsOld": "{count, plural, =1 {1 year old} other {# years old}}",
+      "reviewed": "Reviewed {when}",
+      "acknowledge": "I have reviewed {name}'s critical care information",
+      "acknowledgeHint": "Confirming records that you read allergies, medication and contacts.",
+      "acknowledgeName": "Your name",
+      "acknowledged": "Thank you. Your confirmation was recorded.",
+      "whatsChanged": "{count, plural, =1 {1 change since your last review} other {# changes since your last review}}",
+      "changeLabels": {
+        "ADDED": "New",
+        "UPDATED": "Updated",
+        "REMOVED": "Removed"
+      },
+      "startSession": "Start care session",
+      "continueSession": "Continue care session",
+      "noCritical": "No allergies, medication or contacts recorded.",
+      "call": "Call",
+      "notShared": "This information was not shared with you.",
+      "footer": "You only see the information authorized by the guardian. Every view is logged.",
+      "pinTitle": "This access is protected with a PIN",
+      "pinHint": "Ask {name}'s guardian for it.",
+      "pinLabel": "PIN",
+      "pinSubmit": "Enter",
+      "pinInvalid": "The PIN is incorrect. {remaining, plural, =1 {1 attempt left} other {# attempts left}}.",
+      "pinLocked": "This link was locked after too many attempts. Ask the guardian for a new link."
+    },
+    "denied": {
+      "ACCESS_EXPIRED": {
+        "title": "This access has expired",
+        "body": "Ask the parent or guardian for a new link."
+      },
+      "ACCESS_REVOKED": {
+        "title": "This access was revoked",
+        "body": "The guardian withdrew the access. If you think this is a mistake, contact them directly."
+      },
+      "ACCESS_NOT_STARTED": {
+        "title": "This access has not started yet",
+        "body": "You will be able to open it from the date agreed with the guardian."
+      },
+      "ACCESS_EXHAUSTED": {
+        "title": "This link was already used",
+        "body": "It was single use. Ask the guardian for a new link."
+      },
+      "ACCESS_PENDING": {
+        "title": "Access pending",
+        "body": "The guardian has not completed this access yet."
+      },
+      "INVALID_TOKEN": {
+        "title": "Invalid link",
+        "body": "Check that the link is complete or ask for a new one."
+      },
+      "PIN_LOCKED": {
+        "title": "Link locked",
+        "body": "Too many PIN attempts. Ask the guardian for a new link."
+      },
+      "default": {
+        "title": "This information cannot be shown",
+        "body": "Ask the parent or guardian for a new link."
+      }
+    },
+    "session": {
+      "title": "Care session",
+      "child": "Child",
+      "caregiver": "Caregiver",
+      "start": "Start",
+      "expectedEnd": "Expected end",
+      "ended": "Ended",
+      "active": "In progress",
+      "startTitle": "Start care session",
+      "startBody": "Record what happens while you care for {name}. The guardian will see the timeline.",
+      "caregiverName": "Your name",
+      "expectedEndLabel": "Expected end time (optional)",
+      "startButton": "Start",
+      "endButton": "End session",
+      "endConfirm": "End the care session?",
+      "record": "Record",
+      "timeline": "Timeline",
+      "timelineEmpty": "No events yet. Record food, sleep, bathroom or a note.",
+      "note": "Note (optional)",
+      "noteRequired": "Describe what happened",
+      "recorded": "Recorded",
+      "backToPass": "Back to care pass",
+      "duration": "Duration",
+      "list": "Care sessions",
+      "listEmpty": "When a caregiver starts a session, it will show up here.",
+      "events": {
+        "SESSION_STARTED": "Session started",
+        "INFO_REVIEWED": "Care information reviewed",
+        "FOOD": "Food",
+        "WATER": "Water",
+        "BATHROOM": "Bathroom",
+        "SLEEP": "Fell asleep",
+        "WAKE": "Woke up",
+        "MEDICATION": "Medication",
+        "ACTIVITY": "Activity",
+        "NOTE": "Comment",
+        "INCIDENT": "Incident",
+        "SESSION_ENDED": "Session ended"
+      }
+    }
+  },
+  "institution": {
+    "title": "Institution",
+    "create": {
+      "title": "Create institution",
+      "subtitle": "Receive care profiles shared by families. No paper forms.",
+      "name": "Name",
+      "type": "Type",
+      "submit": "Create institution",
+      "types": {
+        "DAYCARE": "Daycare",
+        "KINDERGARTEN": "Kindergarten",
+        "SCHOOL": "School",
+        "CAMP": "Camp",
+        "ACADEMY": "Academy",
+        "SPORTS": "Sports",
+        "THERAPY": "Therapy",
+        "OTHER": "Other"
+      }
+    },
+    "none": {
+      "title": "You do not belong to any institution",
+      "body": "Create one to receive profiles shared by families, or ask an administrator to add you."
+    },
+    "switch": "Switch institution",
+    "dashboard": {
+      "children": "Children",
+      "criticalAlerts": "Critical alerts",
+      "updatedProfiles": "Updated profiles",
+      "updatedHint": "Last 7 days",
+      "pendingAcks": "Pending acknowledgements",
+      "pendingRequests": "Pending requests",
+      "inviteCode": "Code for families",
+      "inviteCodeHint": "Families use this code to share their child's profile with the institution.",
+      "recent": "Recent activity",
+      "emptyTitle": "No children shared yet",
+      "emptyBody": "Ask families to share the profile using the code {code}."
+    },
+    "children": {
+      "title": "Children",
+      "filters": {
+        "all": "All",
+        "allergies": "With allergies",
+        "updated": "Updated",
+        "new": "New",
+        "expiring": "Access expiring"
+      },
+      "columns": {
+        "child": "Child",
+        "age": "Age",
+        "critical": "Critical allergies",
+        "updated": "Last updated",
+        "consent": "Consent",
+        "ack": "Reviewed"
+      },
+      "empty": "No children match the filter.",
+      "consentUntil": "Until {when}",
+      "consentNoExpiry": "No expiration",
+      "ackDone": "Confirmed",
+      "ackPending": "Pending"
+    },
+    "child": {
+      "sharedBy": "Shared by",
+      "validUntil": "Permission valid until",
+      "lastUpdated": "Last updated",
+      "acknowledge": "I confirm I reviewed {name}'s critical information",
+      "acknowledgedBy": "Confirmed by {name} {when}",
+      "propose": "Propose observation",
+      "proposeTitle": "Propose an observation",
+      "proposeBody": "The family will receive the proposal and decide whether to add it to the profile. The institution never edits the profile directly.",
+      "proposeSection": "Section",
+      "proposeLabel": "Summary",
+      "proposeDetails": "Observation",
+      "proposePlaceholder": "Example: Has shown repeated interest in musical instruments.",
+      "proposeSubmit": "Send to the family",
+      "proposed": "Proposal sent to the family.",
+      "proposals": "Proposals from this institution"
+    },
+    "requests": {
+      "title": "Pending requests",
+      "empty": "No pending requests.",
+      "body": "{guardian} wants to share {child}'s profile with the institution.",
+      "accept": "Accept",
+      "decline": "Decline",
+      "accepted": "Relationship accepted. {child} now appears in the list.",
+      "declined": "Request declined."
+    },
+    "alerts": {
+      "title": "Alerts",
+      "subtitle": "Children with critical information the team must know about.",
+      "empty": "No critical alerts.",
+      "pendingAck": "Review pending",
+      "expiringSoon": "Access expires {when}"
+    },
+    "proposals": {
+      "title": "Proposals",
+      "empty": "No observations proposed yet.",
+      "status": {
+        "PROPOSED": "Pending",
+        "ACCEPTED": "Accepted",
+        "REJECTED": "Rejected"
+      }
+    },
+    "members": {
+      "title": "Team",
+      "add": "Add member",
+      "addHint": "The person must have an account with that email.",
+      "role": "Role",
+      "roles": {
+        "ADMIN": "Administrator",
+        "MEMBER": "Member"
+      },
+      "titleLabel": "Title (e.g. Teacher)",
+      "remove": "Remove"
+    }
+  },
+  "proposals": {
+    "title": "Change proposals",
+    "subtitle": "Institutions can propose observations. You decide what gets added to the profile.",
+    "empty": "No proposals to review.",
+    "from": "{institution} observed:",
+    "fromPerson": "Proposed by {name}",
+    "question": "Would you like to add this to {name}'s profile?",
+    "accept": "Accept",
+    "reject": "Reject",
+    "accepted": "Added to the profile with provenance \"Observed\".",
+    "rejected": "Proposal rejected.",
+    "reviewed": "Reviewed",
+    "pending": "Pending"
+  },
+  "audit": {
+    "title": "Who accessed {name}'s information?",
+    "subtitle": "Every view, acknowledgement and care session is recorded.",
+    "empty": "Nobody has viewed the profile yet.",
+    "viewed": "Viewed",
+    "filters": {
+      "access": "Access",
+      "all": "Everything"
+    },
+    "types": {
+      "USER_REGISTERED": "Account created",
+      "LOGIN_SUCCEEDED": "Signed in",
+      "LOGIN_FAILED": "Failed sign-in attempt",
+      "PASSWORD_RESET_REQUESTED": "Password reset requested",
+      "PASSWORD_RESET_COMPLETED": "Password reset",
+      "EMAIL_VERIFIED": "Email confirmed",
+      "CHILD_CREATED": "Profile created",
+      "CHILD_UPDATED": "Child details updated",
+      "CHILD_DELETED": "Profile deleted",
+      "GUARDIAN_ADDED": "Guardian added",
+      "GUARDIAN_REMOVED": "Guardian removed",
+      "PROFILE_VIEWED": "Viewed the profile",
+      "CRITICAL_DATA_VIEWED": "Viewed critical information",
+      "PROFILE_UPDATED": "Profile updated",
+      "CRITICAL_DATA_CHANGED": "Critical information changed",
+      "ACCESS_GRANTED": "Access granted",
+      "ACCESS_REVOKED": "Access revoked",
+      "ACCESS_EXPIRED": "Access expired",
+      "SHARE_LINK_OPENED": "Opened the link",
+      "SHARE_LINK_DENIED": "Access attempt denied",
+      "PIN_FAILED": "Wrong PIN",
+      "PIN_LOCKED": "Link locked by PIN",
+      "INSTITUTION_CREATED": "Institution created",
+      "INSTITUTION_MEMBER_ADDED": "Member added",
+      "INSTITUTION_MEMBER_REMOVED": "Member removed",
+      "INSTITUTION_CONNECTED": "Institution connected",
+      "INSTITUTION_DECLINED": "Institution declined the invitation",
+      "CARE_SESSION_STARTED": "Started a care session",
+      "CARE_EVENT_RECORDED": "Recorded a care event",
+      "CARE_SESSION_ENDED": "Ended a care session",
+      "ACKNOWLEDGEMENT_COMPLETED": "Confirmed reading critical information",
+      "CHANGE_PROPOSED": "Proposed an observation",
+      "CHANGE_REVIEWED": "Reviewed a proposal",
+      "DOCUMENT_UPLOADED": "Document uploaded",
+      "DOCUMENT_VIEWED": "Viewed a document",
+      "DOCUMENT_DELETED": "Document deleted",
+      "DATA_EXPORTED": "Data exported"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "You have no notifications.",
+    "markAllRead": "Mark all as read",
+    "unread": "{count, plural, =1 {1 unread} other {# unread}}",
+    "types": {
+      "ACCESS_GRANTED": "Access granted",
+      "ACCESS_EXPIRING": "An access is about to expire",
+      "ACCESS_REVOKED": "{institutionName}: the family revoked access to a profile",
+      "PROFILE_CHANGED": "{childName}'s profile was updated",
+      "CRITICAL_DATA_CHANGED": "{childName}'s critical information changed",
+      "CHANGE_PROPOSED": "{institutionName} proposed an observation for {childName}",
+      "CHANGE_REVIEWED": "{actorName} {decision, select, ACCEPTED {accepted} other {rejected}} your observation",
+      "CARE_SESSION_STARTED": "{actorName} started a care session with {childName}",
+      "CARE_SESSION_ENDED": "{actorName} ended the care session with {childName}",
+      "ACKNOWLEDGEMENT_COMPLETED": "{actorName} confirmed reading {childName}'s critical information",
+      "INSTITUTION_REQUEST": "{actorName} wants to share {childName}'s profile with your institution",
+      "INSTITUTION_CONNECTED": "{institutionName} accepted {childName}'s profile",
+      "SHARE_OPENED": "A care link was opened"
+    }
+  },
+  "documents": {
+    "title": "Documents",
+    "subtitle": "Vaccines, certificates, insurance and authorizations. Private storage with temporary links.",
+    "empty": "No documents yet.",
+    "upload": "Upload document",
+    "titleLabel": "Title",
+    "category": "Category",
+    "file": "File",
+    "fileHint": "PDF or image, up to 10 MB.",
+    "open": "Open",
+    "openHint": "The link expires in 5 minutes.",
+    "categories": {
+      "VACCINATION": "Vaccination",
+      "CERTIFICATE": "Certificate",
+      "INSURANCE": "Insurance",
+      "AUTHORIZATION": "Authorization",
+      "MEDICAL": "Medical",
+      "OTHER": "Other"
+    }
+  },
+  "settings": {
+    "title": "Account",
+    "profile": "Your details",
+    "name": "Name",
+    "email": "Email",
+    "language": "Language",
+    "timezone": "Time zone",
+    "saved": "Changes saved",
+    "data": "Your data and privacy",
+    "export": "Export my data",
+    "exportHint": "Download a JSON with your children's profiles, access, consents and logs.",
+    "deleteAccount": "Delete account",
+    "deleteHint": "Coming soon. Contact us to delete your account and your children's information.",
+    "emailVerified": "Email confirmed",
+    "emailUnverified": "Email not confirmed",
+    "resendVerification": "Resend confirmation",
+    "verificationSent": "We sent you a new confirmation link."
+  },
+  "errors": {
+    "VALIDATION_ERROR": "Please review the highlighted fields.",
+    "NOT_AUTHENTICATED": "Sign in to continue.",
+    "ACCESS_DENIED": "You do not have permission to do this.",
+    "ACCESS_EXPIRED": "This access has expired.",
+    "ACCESS_NOT_STARTED": "This access has not started yet.",
+    "ACCESS_REVOKED": "This access was revoked.",
+    "ACCESS_EXHAUSTED": "This link was already used.",
+    "ACCESS_PENDING": "This access is pending.",
+    "CATEGORY_NOT_SHARED": "This information was not shared with you.",
+    "CAPABILITY_MISSING": "You do not have permission for this action.",
+    "PIN_REQUIRED": "This access requires a PIN.",
+    "PIN_INVALID": "The PIN is incorrect.",
+    "PIN_LOCKED": "Link locked after too many attempts.",
+    "EMAIL_NOT_VERIFIED": "Confirm your email to continue.",
+    "NOT_FOUND": "We could not find what you are looking for.",
+    "CONFLICT": "A record with those details already exists.",
+    "INVALID_TOKEN": "The link is not valid.",
+    "TOKEN_EXPIRED": "The link has expired.",
+    "RATE_LIMITED": "Too many attempts. Please wait a few minutes.",
+    "INVALID_STATE": "This action is no longer possible.",
+    "FEATURE_DISABLED": "This feature is not available.",
+    "INTERNAL_ERROR": "Something went wrong. Please try again."
+  }
+}

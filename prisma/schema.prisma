@@ -1,0 +1,658 @@
+// Child Care Passport — Prisma schema
+// Rationale for every model lives in docs/08-data-model.md
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum GuardianRole {
+  OWNER
+  CO_GUARDIAN
+}
+
+enum AuthTokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+enum ProfileSection {
+  EMERGENCY
+  HEALTH
+  NUTRITION
+  SLEEP
+  BATHROOM
+  COMMUNICATION
+  COMFORT
+  PLAY
+  SOCIAL
+}
+
+enum Criticality {
+  CRITICAL
+  IMPORTANT
+  INFORMATIONAL
+}
+
+enum ProvenanceStatus {
+  SELF_DECLARED
+  OBSERVED
+  DOCUMENTED
+  VERIFIED
+}
+
+enum SourceType {
+  GUARDIAN
+  FAMILY
+  CAREGIVER
+  INSTITUTION
+  PROFESSIONAL
+  DOCUMENT
+}
+
+enum GrantSubjectType {
+  USER
+  INSTITUTION
+  LINK
+}
+
+enum RecipientKind {
+  FAMILY
+  BABYSITTER
+  INSTITUTION
+  OTHER
+}
+
+enum GrantStatus {
+  PENDING
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum ShareLinkStatus {
+  ACTIVE
+  REVOKED
+}
+
+enum ConsentStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+enum CareSessionStatus {
+  ACTIVE
+  ENDED
+}
+
+enum CareEventType {
+  SESSION_STARTED
+  INFO_REVIEWED
+  FOOD
+  WATER
+  BATHROOM
+  SLEEP
+  WAKE
+  MEDICATION
+  ACTIVITY
+  NOTE
+  INCIDENT
+  SESSION_ENDED
+}
+
+enum InstitutionType {
+  DAYCARE
+  KINDERGARTEN
+  SCHOOL
+  CAMP
+  ACADEMY
+  SPORTS
+  THERAPY
+  OTHER
+}
+
+enum InstitutionRole {
+  ADMIN
+  MEMBER
+}
+
+enum ChildInstitutionStatus {
+  PENDING
+  ACTIVE
+  REVOKED
+  ENDED
+}
+
+enum ChangeProposalStatus {
+  PROPOSED
+  ACCEPTED
+  REJECTED
+}
+
+enum DocumentCategory {
+  VACCINATION
+  CERTIFICATE
+  INSURANCE
+  AUTHORIZATION
+  MEDICAL
+  OTHER
+}
+
+enum ActorType {
+  USER
+  LINK
+  SYSTEM
+}
+
+// ---------------------------------------------------------------------------
+// Identity
+// ---------------------------------------------------------------------------
+
+model User {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  passwordHash     String?
+  name             String
+  image            String?
+  emailVerifiedAt  DateTime?
+  locale           String    @default("es")
+  timezone         String    @default("America/Mexico_City")
+  country          String    @default("MX")
+  regulatoryRegion String    @default("MX")
+  sessionVersion   Int       @default(1)
+  isDemo           Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+
+  accounts                  Account[]
+  authTokens                AuthToken[]
+  guardianships             ChildGuardian[]
+  institutionMembers        InstitutionMember[]
+  notifications             Notification[]
+  createdChildren           Child[]               @relation("ChildCreatedBy")
+  grantsGiven               AccessGrant[]         @relation("GrantGrantedBy")
+  grantsReceived            AccessGrant[]         @relation("GrantSubjectUser")
+  grantsRevoked             AccessGrant[]         @relation("GrantRevokedBy")
+  consents                  Consent[]
+  careSessions              CareSession[]
+  acknowledgements          Acknowledgement[]
+  proposalsMade             ChangeProposal[]      @relation("ProposalProposedBy")
+  proposalsReviewed         ChangeProposal[]      @relation("ProposalReviewedBy")
+  documents                 Document[]
+  auditEvents               AuditEvent[]
+  profileVersions           ChildProfileVersion[]
+  institutionsCreated       Institution[]
+  childInstitutionsAccepted ChildInstitution[]
+
+  @@index([deletedAt])
+}
+
+/// OAuth accounts (Google / Apple). Empty in the MVP; the table exists so that
+/// adding a provider does not require a data-model change.
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  provider          String
+  providerAccountId String
+  type              String
+  refreshToken      String?
+  accessToken       String?
+  expiresAt         Int?
+  tokenType         String?
+  scope             String?
+  idToken           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model AuthToken {
+  id        String        @id @default(cuid())
+  userId    String
+  type      AuthTokenType
+  tokenHash String        @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime      @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+}
+
+// ---------------------------------------------------------------------------
+// Children & guardianship
+// ---------------------------------------------------------------------------
+
+model Child {
+  id                 String    @id @default(cuid())
+  firstName          String
+  lastName           String
+  preferredName      String?
+  dateOfBirth        DateTime  @db.Date
+  photoKey           String?
+  primaryLanguage    String    @default("es")
+  secondaryLanguages String[]  @default([])
+  country            String    @default("MX")
+  timezone           String    @default("America/Mexico_City")
+  profileVersion     Int       @default(1)
+  createdById        String
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+
+  createdBy        User                  @relation("ChildCreatedBy", fields: [createdById], references: [id])
+  guardians        ChildGuardian[]
+  profileItems     ProfileItem[]
+  profileVersions  ChildProfileVersion[]
+  accessGrants     AccessGrant[]
+  consents         Consent[]
+  institutions     ChildInstitution[]
+  careSessions     CareSession[]
+  acknowledgements Acknowledgement[]
+  changeProposals  ChangeProposal[]
+  documents        Document[]
+  auditEvents      AuditEvent[]
+
+  @@index([createdById])
+  @@index([deletedAt])
+}
+
+model ChildGuardian {
+  id                String       @id @default(cuid())
+  childId           String
+  userId            String
+  role              GuardianRole
+  relationshipLabel String?
+  createdAt         DateTime     @default(now())
+
+  child Child @relation(fields: [childId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([childId, userId])
+  @@index([userId])
+}
+
+// ---------------------------------------------------------------------------
+// Profile (care facts with provenance) + versioning
+// ---------------------------------------------------------------------------
+
+model ProfileItem {
+  id                  String           @id @default(cuid())
+  childId             String
+  section             ProfileSection
+  itemType            String
+  label               String
+  details             String?
+  data                Json?
+  criticality         Criticality
+  provenance          ProvenanceStatus @default(SELF_DECLARED)
+  sourceType          SourceType       @default(GUARDIAN)
+  sourceLabel         String?
+  sourceInstitutionId String?
+  documentId          String?
+  verifiedAt          DateTime?
+  sortOrder           Int              @default(0)
+  createdById         String?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  deletedAt           DateTime?
+
+  child             Child        @relation(fields: [childId], references: [id], onDelete: Cascade)
+  sourceInstitution Institution? @relation(fields: [sourceInstitutionId], references: [id])
+  document          Document?    @relation(fields: [documentId], references: [id])
+
+  @@index([childId, section])
+  @@index([childId, deletedAt])
+}
+
+model ChildProfileVersion {
+  id          String   @id @default(cuid())
+  childId     String
+  version     Int
+  snapshot    Json
+  changes     Json
+  summary     String
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  child     Child @relation(fields: [childId], references: [id], onDelete: Cascade)
+  createdBy User? @relation(fields: [createdById], references: [id])
+
+  @@unique([childId, version])
+  @@index([childId, createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Institutions
+// ---------------------------------------------------------------------------
+
+model Institution {
+  id          String          @id @default(cuid())
+  name        String
+  type        InstitutionType @default(OTHER)
+  country     String          @default("MX")
+  timezone    String          @default("America/Mexico_City")
+  inviteCode  String          @unique
+  createdById String
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  createdBy       User                @relation(fields: [createdById], references: [id])
+  members         InstitutionMember[]
+  children        ChildInstitution[]
+  accessGrants    AccessGrant[]
+  changeProposals ChangeProposal[]
+  profileItems    ProfileItem[]
+  auditEvents     AuditEvent[]
+}
+
+model InstitutionMember {
+  id            String          @id @default(cuid())
+  institutionId String
+  userId        String
+  role          InstitutionRole @default(MEMBER)
+  title         String?
+  createdAt     DateTime        @default(now())
+
+  institution Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([institutionId, userId])
+  @@index([userId])
+}
+
+model ChildInstitution {
+  id            String                 @id @default(cuid())
+  childId       String
+  institutionId String
+  accessGrantId String                 @unique
+  status        ChildInstitutionStatus @default(PENDING)
+  invitedAt     DateTime               @default(now())
+  acceptedAt    DateTime?
+  acceptedById  String?
+  endedAt       DateTime?
+
+  child       Child       @relation(fields: [childId], references: [id], onDelete: Cascade)
+  institution Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  accessGrant AccessGrant @relation(fields: [accessGrantId], references: [id], onDelete: Cascade)
+  acceptedBy  User?       @relation(fields: [acceptedById], references: [id])
+
+  @@unique([childId, institutionId])
+  @@index([institutionId, status])
+}
+
+// ---------------------------------------------------------------------------
+// Sharing & consent
+// ---------------------------------------------------------------------------
+
+model AccessGrant {
+  id                   String           @id @default(cuid())
+  childId              String
+  grantedById          String
+  subjectType          GrantSubjectType
+  subjectUserId        String?
+  subjectInstitutionId String?
+  recipientKind        RecipientKind
+  recipientName        String
+  recipientEmail       String?
+  dataCategories       String[]
+  capabilities         String[]
+  startsAt             DateTime         @default(now())
+  expiresAt            DateTime?
+  status               GrantStatus      @default(ACTIVE)
+  revokedAt            DateTime?
+  revokedById          String?
+  revokeReason         String?
+  note                 String?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  child              Child             @relation(fields: [childId], references: [id], onDelete: Cascade)
+  grantedBy          User              @relation("GrantGrantedBy", fields: [grantedById], references: [id])
+  subjectUser        User?             @relation("GrantSubjectUser", fields: [subjectUserId], references: [id])
+  subjectInstitution Institution?      @relation(fields: [subjectInstitutionId], references: [id])
+  revokedBy          User?             @relation("GrantRevokedBy", fields: [revokedById], references: [id])
+  shareLink          ShareLink?
+  consent            Consent?
+  childInstitution   ChildInstitution?
+  careSessions       CareSession[]
+  acknowledgements   Acknowledgement[]
+  auditEvents        AuditEvent[]
+
+  @@index([childId, status])
+  @@index([subjectUserId])
+  @@index([subjectInstitutionId, status])
+  @@index([expiresAt])
+}
+
+model ShareLink {
+  id            String          @id @default(cuid())
+  accessGrantId String          @unique
+  tokenHash     String          @unique
+  pinHash       String?
+  pinAttempts   Int             @default(0)
+  maxUses       Int?
+  useCount      Int             @default(0)
+  lastUsedAt    DateTime?
+  status        ShareLinkStatus @default(ACTIVE)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  accessGrant AccessGrant @relation(fields: [accessGrantId], references: [id], onDelete: Cascade)
+}
+
+/// Append-only consent ledger. Revocation updates status/revokedAt, never deletes.
+model Consent {
+  id             String        @id @default(cuid())
+  childId        String
+  guardianId     String
+  accessGrantId  String        @unique
+  recipientType  RecipientKind
+  recipientLabel String
+  purpose        String
+  dataCategories String[]
+  startsAt       DateTime
+  expiresAt      DateTime?
+  status         ConsentStatus @default(ACTIVE)
+  version        Int           @default(1)
+  createdAt      DateTime      @default(now())
+  revokedAt      DateTime?
+
+  child       Child       @relation(fields: [childId], references: [id], onDelete: Cascade)
+  guardian    User        @relation(fields: [guardianId], references: [id])
+  accessGrant AccessGrant @relation(fields: [accessGrantId], references: [id], onDelete: Cascade)
+
+  @@index([childId, status])
+}
+
+// ---------------------------------------------------------------------------
+// Care
+// ---------------------------------------------------------------------------
+
+model CareSession {
+  id                    String            @id @default(cuid())
+  childId               String
+  accessGrantId         String?
+  caregiverUserId       String?
+  caregiverName         String
+  startedAt             DateTime          @default(now())
+  expectedEndAt         DateTime?
+  endedAt               DateTime?
+  status                CareSessionStatus @default(ACTIVE)
+  profileVersionAtStart Int
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  child            Child             @relation(fields: [childId], references: [id], onDelete: Cascade)
+  accessGrant      AccessGrant?      @relation(fields: [accessGrantId], references: [id])
+  caregiverUser    User?             @relation(fields: [caregiverUserId], references: [id])
+  events           CareEvent[]
+  acknowledgements Acknowledgement[]
+  auditEvents      AuditEvent[]
+
+  @@index([childId, status])
+  @@index([accessGrantId])
+}
+
+model CareEvent {
+  id            String        @id @default(cuid())
+  careSessionId String
+  type          CareEventType
+  occurredAt    DateTime      @default(now())
+  note          String?
+  data          Json?
+  createdAt     DateTime      @default(now())
+
+  careSession CareSession @relation(fields: [careSessionId], references: [id], onDelete: Cascade)
+
+  @@index([careSessionId, occurredAt])
+}
+
+model Acknowledgement {
+  id             String   @id @default(cuid())
+  childId        String
+  accessGrantId  String?
+  careSessionId  String?
+  actorUserId    String?
+  actorName      String
+  profileVersion Int
+  acknowledgedAt DateTime @default(now())
+  ipAddress      String?
+  userAgent      String?
+
+  child       Child        @relation(fields: [childId], references: [id], onDelete: Cascade)
+  accessGrant AccessGrant? @relation(fields: [accessGrantId], references: [id])
+  careSession CareSession? @relation(fields: [careSessionId], references: [id])
+  actorUser   User?        @relation(fields: [actorUserId], references: [id])
+
+  @@index([childId, acknowledgedAt])
+  @@index([accessGrantId, acknowledgedAt])
+}
+
+// ---------------------------------------------------------------------------
+// Change proposals (institutions never edit the profile directly)
+// ---------------------------------------------------------------------------
+
+model ChangeProposal {
+  id              String               @id @default(cuid())
+  childId         String
+  institutionId   String?
+  proposedById    String
+  section         ProfileSection
+  itemType        String
+  label           String
+  details         String?
+  data            Json?
+  status          ChangeProposalStatus @default(PROPOSED)
+  reviewedById    String?
+  reviewedAt      DateTime?
+  reviewNote      String?
+  resultingItemId String?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  child       Child        @relation(fields: [childId], references: [id], onDelete: Cascade)
+  institution Institution? @relation(fields: [institutionId], references: [id])
+  proposedBy  User         @relation("ProposalProposedBy", fields: [proposedById], references: [id])
+  reviewedBy  User?        @relation("ProposalReviewedBy", fields: [reviewedById], references: [id])
+
+  @@index([childId, status])
+  @@index([institutionId, status])
+}
+
+// ---------------------------------------------------------------------------
+// Documents
+// ---------------------------------------------------------------------------
+
+model Document {
+  id           String           @id @default(cuid())
+  childId      String
+  uploadedById String
+  title        String
+  category     DocumentCategory @default(OTHER)
+  storageKey   String
+  mimeType     String
+  sizeBytes    Int
+  createdAt    DateTime         @default(now())
+  deletedAt    DateTime?
+
+  child        Child         @relation(fields: [childId], references: [id], onDelete: Cascade)
+  uploadedBy   User          @relation(fields: [uploadedById], references: [id])
+  profileItems ProfileItem[]
+
+  @@index([childId, deletedAt])
+}
+
+// ---------------------------------------------------------------------------
+// Audit (append-only), notifications, product analytics
+// ---------------------------------------------------------------------------
+
+model AuditEvent {
+  id             String    @id @default(cuid())
+  type           String
+  actorType      ActorType
+  actorUserId    String?
+  actorLabel     String
+  childId        String?
+  institutionId  String?
+  accessGrantId  String?
+  careSessionId  String?
+  resourceType   String?
+  resourceId     String?
+  dataCategories String[]  @default([])
+  ipAddress      String?
+  userAgent      String?
+  context        Json?
+  createdAt      DateTime  @default(now())
+
+  actorUser   User?        @relation(fields: [actorUserId], references: [id])
+  child       Child?       @relation(fields: [childId], references: [id], onDelete: Cascade)
+  institution Institution? @relation(fields: [institutionId], references: [id])
+  accessGrant AccessGrant? @relation(fields: [accessGrantId], references: [id])
+  careSession CareSession? @relation(fields: [careSessionId], references: [id])
+
+  @@index([childId, createdAt])
+  @@index([actorUserId, createdAt])
+  @@index([institutionId, createdAt])
+  @@index([type, createdAt])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  body      String?
+  data      Json?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt, createdAt])
+}
+
+model ProductEvent {
+  id            String   @id @default(cuid())
+  name          String
+  userId        String?
+  childId       String?
+  institutionId String?
+  props         Json?
+  createdAt     DateTime @default(now())
+
+  @@index([name, createdAt])
+}

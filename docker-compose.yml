@@ -1,0 +1,61 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ccp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ccp
+      POSTGRES_PASSWORD: ccp_dev_password
+      POSTGRES_DB: child_care_passport
+    ports:
+      - "5470:5432"
+    volumes:
+      - ccp_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ccp -d child_care_passport"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # One-off job: applies migrations (and `db seed` on demand). Profile "full" only.
+  migrate:
+    build:
+      context: .
+      target: migrate
+    profiles: ["full"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://ccp:ccp_dev_password@postgres:5432/child_care_passport?schema=public
+      AUTH_SECRET: ${AUTH_SECRET:-please-set-a-real-secret-of-at-least-32-characters}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      SEED_DEMO: ${SEED_DEMO:-true}
+
+  app:
+    build:
+      context: .
+      target: runtime
+    container_name: ccp-app
+    profiles: ["full"]
+    restart: unless-stopped
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      DATABASE_URL: postgresql://ccp:ccp_dev_password@postgres:5432/child_care_passport?schema=public
+      AUTH_SECRET: ${AUTH_SECRET:-please-set-a-real-secret-of-at-least-32-characters}
+      AUTH_TRUST_HOST: "true"
+      STORAGE_PROVIDER: local
+      STORAGE_LOCAL_DIR: /data/storage
+      SEED_DEMO: ${SEED_DEMO:-true}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ccp_storage:/data/storage
+
+volumes:
+  ccp_pgdata:
+  ccp_storage:
