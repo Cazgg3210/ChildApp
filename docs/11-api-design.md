@@ -41,6 +41,7 @@ Códigos y estados HTTP en `src/shared/errors/app-error.ts`. Nunca se devuelven 
 | GET/POST     | `/institutions`                        | Mis instituciones / crear.                                                        | sesión                              |
 | GET          | `/institutions/:id/children`           | Niños compartidos con la institución.                                             | miembro                             |
 | GET          | `/consents`                            | Ledger de consentimientos del tutor.                                              | sesión                              |
+| POST         | `/admin/seed`                          | Carga la demo (solo con `SEED_DEMO=true` y cabecera `X-Seed-Token`).              | token de despliegue                 |
 
 ## Contratos de entrada
 

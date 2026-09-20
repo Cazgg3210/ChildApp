@@ -41,6 +41,8 @@ const schema = z.object({
   SEED_DEMO: envBoolean(false),
   DEMO_PASSWORD: z.string().default("Demo1234!secure"),
   ALLOW_DEMO_SEED: envBoolean(false),
+  /** Enables POST /api/v1/admin/seed (hosted demos). Leave empty to disable the endpoint. */
+  SEED_TOKEN: z.string().min(16).optional(),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("info"),
 });
 

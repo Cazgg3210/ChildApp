@@ -82,7 +82,7 @@ Los enlaces compartidos usan tokens de 256 bits almacenados como SHA-256, con ex
 
 ## Despliegue
 
-`Dockerfile` multi-stage + `docker-compose.yml` (perfil `full` levanta app + postgres). Guía: [docs/14-deployment.md](docs/14-deployment.md).
+`Dockerfile` multi-stage (migraciones automáticas al arrancar) + `docker-compose.yml` (perfil `full`) + kit `deploy/` para VM con Caddy. Guías para **Dokploy**, Droplet y App Platform en [docs/14-deployment.md](docs/14-deployment.md). Demo en servidores sin shell: `POST /api/v1/admin/seed` con `X-Seed-Token`.
 
 ```bash
 docker compose --profile full up --build

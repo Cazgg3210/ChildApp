@@ -57,6 +57,20 @@ Logs: `docker compose -f deploy/docker-compose.prod.yml logs -f app`. Backup de 
 
 > HTTPS es obligatorio en producción: las cookies de sesión y de PIN llevan `Secure`; sin TLS el login no funciona. Caddy lo resuelve automáticamente.
 
+## Dokploy (recomendado si ya administras el Droplet con Dokploy)
+
+Dokploy pone Traefik + Let's Encrypt delante; no se usa el Caddy del kit. La imagen `runtime` aplica migraciones al arrancar y la demo se carga con un endpoint protegido por token.
+
+1. **Project** → _Create Project_ "ChildApp".
+2. **Database** → _PostgreSQL_ (nombre `childapp-db`, usuario `ccp`, contraseña generada) → _Deploy_. Copia la **Internal Connection URL** (`postgresql://ccp:...@childapp-db:5432/...`).
+3. **Application** → _Provider: GitHub_ (conecta la cuenta) o _Git_ con `https://github.com/Cazgg3210/ChildApp.git`, rama `main`. _Build Type: Dockerfile_ (ruta `Dockerfile`, contexto `.`).
+4. **Environment**: `NODE_ENV=production`, `DATABASE_URL=<Internal Connection URL>?schema=public`, `AUTH_SECRET` (`openssl rand -base64 48`), `APP_URL=https://<dominio>`, `AUTH_TRUST_HOST=true`, `STORAGE_PROVIDER=local`, `STORAGE_LOCAL_DIR=/data/storage`. Para la demo: `SEED_DEMO=true`, `ALLOW_DEMO_SEED=true`, `SEED_TOKEN=<openssl rand -hex 24>`.
+5. **Advanced → Volumes**: volumen `childapp-storage` montado en `/data/storage`.
+6. **Domains**: añade el dominio (o el `*.traefik.me` que genera Dokploy para probar), _Container Port_ `3000`, HTTPS activado (Let's Encrypt).
+7. **Deploy**. Comprueba `https://<dominio>/api/v1/health`.
+8. **Demo (opcional)**: `curl -X POST https://<dominio>/api/v1/admin/seed -H "X-Seed-Token: <SEED_TOKEN>"` → devuelve cuentas, código del kínder y enlaces de Care Pass. Después puedes borrar `SEED_TOKEN` para cerrar el endpoint.
+9. **Auto deploy**: en _General → Auto Deploy_ (webhook de GitHub) cada push a `main` reconstruye y redespliega.
+
 ## DigitalOcean App Platform / EasyPanel
 
 1. Crear un PostgreSQL administrado (o contenedor) y obtener `DATABASE_URL`.
