@@ -23,11 +23,13 @@ function buildProviders(): NextAuthConfig["providers"] {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const email = typeof credentials?.email === "string" ? credentials.email : "";
         const password = typeof credentials?.password === "string" ? credentials.password : "";
         if (!email || !password) return null;
-        const user = await identityService.authenticateWithPassword(email, password);
+        const forwarded = request.headers.get("x-forwarded-for");
+        const ip = (forwarded?.split(",")[0] ?? request.headers.get("x-real-ip") ?? "unknown").trim();
+        const user = await identityService.authenticateWithPassword(email, password, ip);
         if (!user) return null;
         return {
           id: user.id,

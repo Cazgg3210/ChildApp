@@ -50,6 +50,13 @@ test("institution journey end to end", async ({ browser }) => {
   await admin.page.goto(`/institution/${kinder.id}/children`);
   await expect(admin.page.getByRole("link", { name: /Emma/ }).first()).toBeVisible();
 
+  // The kinder works with rooms: until the admin assigns Emma to the teacher's room, the teacher cannot see her.
+  await teacher.page.goto(`/institution/${kinder.id}/children/${childId}`);
+  await expect(teacher.page.getByText(/No encontramos lo que buscas|This page could not be found|404/)).toBeVisible();
+  await admin.page.goto(`/institution/${kinder.id}/groups`);
+  await admin.page.getByRole("checkbox", { name: /Sala Azul: Emma/ }).click();
+  await expect(admin.page.getByRole("checkbox", { name: /Sala Azul: Emma/ })).toBeChecked();
+
   // Teacher reviews the profile (only shared categories), confirms and proposes.
   await teacher.page.goto(`/institution/${kinder.id}/children/${childId}`);
   await expect(teacher.page.getByText("Cacahuate")).toBeVisible();

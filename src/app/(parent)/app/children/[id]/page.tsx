@@ -3,12 +3,12 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { ArrowRight, Plus, Share2, ShieldAlert, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { ProfileItemCard } from "@/components/feature/profile-item-card";
+import { ReadinessCard } from "@/components/feature/readiness-card";
 import { EmptyState } from "@/components/feature/page-header";
 import { AuditRow } from "@/components/feature/audit-row";
 import { StatusPill } from "@/components/feature/badges";
-import { profileService, completeness, criticalItems } from "@/modules/profiles/application/profile.service";
+import { profileService, criticalItems } from "@/modules/profiles/application/profile.service";
 import { sharingService } from "@/modules/sharing/application/sharing.service";
 import { auditService } from "@/modules/audit/application/audit.service";
 import { SECTION_GROUPS } from "@/modules/profiles/domain/catalog";
@@ -30,7 +30,6 @@ export default async function ChildOverviewPage({ params }: PageProps<"/app/chil
   ]);
   const base = `/app/children/${id}`;
   const critical = criticalItems(items);
-  const done = completeness(items);
   const activeGrants = grants.filter((g) => g.effectiveStatus === "ACTIVE" || g.effectiveStatus === "PENDING");
   const displayName = child.preferredName ?? child.firstName;
 
@@ -72,10 +71,6 @@ export default async function ChildOverviewPage({ params }: PageProps<"/app/chil
             <h2 id="sections-heading" className="text-lg font-semibold">
               {t("sections")}
             </h2>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Progress value={done.percent} className="h-1.5 w-24" aria-label={t("completeness")} />
-              {done.percent}%
-            </div>
           </div>
           <ul className="grid gap-2 sm:grid-cols-2">
             {Object.entries(SECTION_GROUPS).map(([group, sections]) => {
@@ -104,6 +99,7 @@ export default async function ChildOverviewPage({ params }: PageProps<"/app/chil
       </div>
 
       <div className="space-y-6">
+        <ReadinessCard childId={id} items={items} editable />
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">{t("network")}</CardTitle>

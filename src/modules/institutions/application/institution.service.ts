@@ -4,7 +4,9 @@ import { AppError } from "@/shared/errors/app-error";
 import { generateInviteCode } from "@/shared/security/tokens";
 import type { RequestMeta } from "@/shared/security/request-context";
 import type { DataCategory, ProfileSectionValue } from "@/shared/domain/care-vocabulary";
-import type { InstitutionType } from "@/generated/prisma/enums";
+import type { InstitutionType, InstitutionVerificationStatus } from "@/generated/prisma/enums";
+import { identityService } from "@/modules/identity/application/identity.service";
+import { careReadiness, READINESS_KEY_BY_CATEGORY, type ReadinessKey } from "@/modules/profiles/domain/readiness";
 import type { Actor, UserActor } from "@/modules/identity/domain/types";
 import { authorizationService, toGrantView } from "@/modules/authorization/application/authorization.service";
 import { effectiveGrantStatus, evaluateGrantValidity, visibleCategories } from "@/modules/authorization/domain/policy";
@@ -16,7 +18,7 @@ import { profileRepository } from "@/modules/profiles/infrastructure/profile.rep
 import { filterItemsByCategories, profileService } from "@/modules/profiles/application/profile.service";
 import { categoryOf, isItemTypeOf } from "@/modules/profiles/domain/catalog";
 import { sharingRepository } from "@/modules/sharing/infrastructure/sharing.repository";
-import { institutionRepository } from "../infrastructure/institution.repository";
+import { institutionRepository, type InstitutionDetails } from "../infrastructure/institution.repository";
 
 const relationInclude = {
   child: {
@@ -33,7 +35,11 @@ const relationInclude = {
     },
   },
   accessGrant: { include: { shareLink: true, grantedBy: { select: { id: true, name: true } } } },
+  groups: { select: { group: { select: { id: true, name: true } } } },
 };
+
+/** Fields an institution must fill before asking for verification. */
+const VERIFICATION_REQUIRED: (keyof InstitutionDetails)[] = ["legalName", "contactName", "phone"];
 
 async function guardianIds(childId: string) {
   return (await prisma.childGuardian.findMany({ where: { childId }, select: { userId: true } })).map((g) => g.userId);
@@ -43,6 +49,7 @@ export const institutionService = {
   async create(actor: UserActor, input: { name: string; type: InstitutionType }, meta?: RequestMeta) {
     const name = input.name.trim();
     if (!name) throw new AppError("VALIDATION_ERROR", "Name is required.");
+    await identityService.assertVerified(actor.userId);
     const institution = await prisma.$transaction(async (tx) => {
       let inviteCode = generateInviteCode(name);
       // Extremely unlikely collision; retry once.
@@ -125,6 +132,182 @@ export const institutionService = {
   async listMembers(actor: Actor, institutionId: string) {
     await authorizationService.assertInstitution(actor, "institution.read", institutionId);
     return institutionRepository.listMembers(institutionId);
+  },
+
+  // ---------------------------------------------------------------------------
+  // Details & verification (manual, by the platform team — docs/16-decisions.md)
+  // ---------------------------------------------------------------------------
+
+  async updateDetails(actor: Actor, institutionId: string, input: InstitutionDetails, meta?: RequestMeta) {
+    await authorizationService.assertInstitution(actor, "institution.manage", institutionId);
+    const clean = (v: string | null | undefined) => (v === undefined ? undefined : v?.trim() || null);
+    const institution = await institutionRepository.updateDetails(institutionId, {
+      name: input.name?.trim() || undefined,
+      legalName: clean(input.legalName),
+      address: clean(input.address),
+      phone: clean(input.phone),
+      website: clean(input.website),
+      contactName: clean(input.contactName),
+    });
+    await auditService.record({
+      type: "INSTITUTION_UPDATED",
+      actor,
+      institutionId,
+      resourceType: "Institution",
+      resourceId: institutionId,
+      meta,
+    });
+    return institution;
+  },
+
+  async requestVerification(actor: Actor, institutionId: string, meta?: RequestMeta) {
+    await authorizationService.assertInstitution(actor, "institution.manage", institutionId);
+    const institution = await institutionRepository.findById(institutionId);
+    if (!institution) throw new AppError("NOT_FOUND", "Institution not found");
+    if (institution.verificationStatus === "VERIFIED") throw new AppError("INVALID_STATE", "Already verified.");
+    if (institution.verificationStatus === "SUSPENDED") throw new AppError("INVALID_STATE", "Suspended.");
+    const missing = VERIFICATION_REQUIRED.filter((k) => !institution[k]);
+    if (missing.length) throw new AppError("VALIDATION_ERROR", "Complete the institution details first.", { missing });
+    const updated = await institutionRepository.setVerification(institutionId, "VERIFICATION_PENDING");
+    await auditService.record({
+      type: "INSTITUTION_VERIFICATION_REQUESTED",
+      actor,
+      institutionId,
+      resourceType: "Institution",
+      resourceId: institutionId,
+      meta,
+    });
+    return updated;
+  },
+
+  /** Platform-side decision (admin token). Notifies the institution's administrators. */
+  async setVerificationStatus(institutionId: string, status: InstitutionVerificationStatus, meta?: RequestMeta) {
+    const institution = await institutionRepository.findById(institutionId);
+    if (!institution) throw new AppError("NOT_FOUND", "Institution not found");
+    const updated = await institutionRepository.setVerification(institutionId, status);
+    await auditService.record({
+      type: status === "VERIFIED" ? "INSTITUTION_VERIFIED" : "INSTITUTION_UPDATED",
+      actor: { type: "system" },
+      institutionId,
+      resourceType: "Institution",
+      resourceId: institutionId,
+      context: { verificationStatus: status },
+      meta,
+    });
+    if (status === "VERIFIED") {
+      const admins = (await institutionRepository.listMembers(institutionId)).filter((m) => m.role === "ADMIN");
+      await notificationService.notifyMany(
+        admins.map((m) => m.userId),
+        { type: "INSTITUTION_VERIFIED", title: institution.name, data: { institutionId, institutionName: institution.name } },
+      );
+    }
+    return updated;
+  },
+
+  // ---------------------------------------------------------------------------
+  // Groups / rooms: MEMBERs only see the children of their rooms
+  // ---------------------------------------------------------------------------
+
+  async listGroups(actor: Actor, institutionId: string) {
+    await authorizationService.assertInstitution(actor, "institution.read", institutionId);
+    return institutionRepository.listGroups(institutionId);
+  },
+
+  async createGroup(actor: Actor, institutionId: string, name: string, meta?: RequestMeta) {
+    await authorizationService.assertInstitution(actor, "institution.manage", institutionId);
+    const clean = name.trim();
+    if (clean.length < 2) throw new AppError("VALIDATION_ERROR", "Name is required.");
+    const group = await institutionRepository.createGroup(institutionId, clean).catch(() => {
+      throw new AppError("CONFLICT", "A room with that name already exists.");
+    });
+    await auditService.record({
+      type: "INSTITUTION_GROUP_CREATED",
+      actor,
+      institutionId,
+      resourceType: "InstitutionGroup",
+      resourceId: group.id,
+      context: { name: clean },
+      meta,
+    });
+    return group;
+  },
+
+  async deleteGroup(actor: Actor, institutionId: string, groupId: string, meta?: RequestMeta) {
+    await authorizationService.assertInstitution(actor, "institution.manage", institutionId);
+    const group = await institutionRepository.findGroup(institutionId, groupId);
+    if (!group) throw new AppError("NOT_FOUND", "Room not found");
+    await institutionRepository.deleteGroup(groupId);
+    await auditService.record({
+      type: "INSTITUTION_GROUP_DELETED",
+      actor,
+      institutionId,
+      resourceType: "InstitutionGroup",
+      resourceId: groupId,
+      context: { name: group.name },
+      meta,
+    });
+  },
+
+  async setGroupMember(
+    actor: Actor,
+    institutionId: string,
+    groupId: string,
+    memberId: string,
+    on: boolean,
+    meta?: RequestMeta,
+  ) {
+    await authorizationService.assertInstitution(actor, "institution.manage", institutionId);
+    const [group, member] = await Promise.all([
+      institutionRepository.findGroup(institutionId, groupId),
+      prisma.institutionMember.findFirst({ where: { id: memberId, institutionId } }),
+    ]);
+    if (!group || !member) throw new AppError("NOT_FOUND", "Room or member not found");
+    await institutionRepository.setGroupMember(groupId, memberId, on);
+    await auditService.record({
+      type: "INSTITUTION_GROUP_UPDATED",
+      actor,
+      institutionId,
+      resourceType: "InstitutionGroup",
+      resourceId: groupId,
+      context: { member: memberId, on },
+      meta,
+    });
+  },
+
+  async setGroupChild(
+    actor: Actor,
+    institutionId: string,
+    groupId: string,
+    relationId: string,
+    on: boolean,
+    meta?: RequestMeta,
+  ) {
+    await authorizationService.assertInstitution(actor, "institution.manage", institutionId);
+    const [group, relation] = await Promise.all([
+      institutionRepository.findGroup(institutionId, groupId),
+      prisma.childInstitution.findFirst({ where: { id: relationId, institutionId } }),
+    ]);
+    if (!group || !relation) throw new AppError("NOT_FOUND", "Room or child not found");
+    await institutionRepository.setGroupChild(groupId, relationId, on);
+    await auditService.record({
+      type: "INSTITUTION_GROUP_UPDATED",
+      actor,
+      institutionId,
+      childId: relation.childId,
+      resourceType: "InstitutionGroup",
+      resourceId: groupId,
+      context: { relation: relationId, on },
+      meta,
+    });
+  },
+
+  /** Null = sees every child (admin, or no rooms defined); otherwise the member's group ids. */
+  async roomScope(actor: Actor, institutionId: string): Promise<Set<string> | null> {
+    if (actor.type !== "user") return null;
+    const membership = await institutionRepository.memberGroupIds(institutionId, actor.userId);
+    if (!membership || membership.role === "ADMIN") return null;
+    if ((await institutionRepository.countGroups(institutionId)) === 0) return null;
+    return new Set(membership.groupIds);
   },
 
   // ---------------------------------------------------------------------------
@@ -215,8 +398,12 @@ export const institutionService = {
       include: relationInclude,
       orderBy: { acceptedAt: "desc" },
     });
+    const scope = await this.roomScope(actor, institutionId);
     const live = relations.filter(
-      (r) => !r.child.deletedAt && evaluateGrantValidity(toGrantView(r.accessGrant), now).valid,
+      (r) =>
+        !r.child.deletedAt &&
+        evaluateGrantValidity(toGrantView(r.accessGrant), now).valid &&
+        (scope === null || r.groups.some((g) => scope.has(g.group.id))),
     );
     const childIds = live.map((r) => r.childId);
     if (childIds.length === 0) return [];
@@ -243,11 +430,18 @@ export const institutionService = {
           (a) => a.accessGrantId === r.accessGrantId && (a.actorUserId ? memberIds.includes(a.actorUserId) : true),
         ) ?? null;
       const lastUpdated = visible.reduce<Date>((max, i) => (i.updatedAt > max ? i.updatedAt : max), r.child.createdAt);
+      // Care Readiness restricted to the safety checks this institution was allowed to see.
+      const readinessKeys = categories
+        .map((c) => READINESS_KEY_BY_CATEGORY[c])
+        .filter((k): k is ReadinessKey => Boolean(k));
+      const readiness = careReadiness(visible, { now, only: readinessKeys });
       return {
         relation: r,
         child: r.child,
         grant: r.accessGrant,
+        groups: r.groups.map((g) => g.group),
         categories,
+        readiness,
         criticalAllergies,
         criticalCount: visible.filter((i) => i.criticality === "CRITICAL").length,
         lastUpdated,
@@ -276,6 +470,9 @@ export const institutionService = {
       criticalAlerts: children.filter((c) => c.criticalCount > 0).length,
       updatedProfiles: children.filter((c) => c.updatedRecently).length,
       pendingAcks: children.filter((c) => !c.acknowledgedCurrent).length,
+      readyProfiles: children.filter((c) => c.readiness.ready).length,
+      needsReview: children.filter((c) => c.readiness.needsReview || !c.readiness.ready).length,
+      expiringConsents: children.filter((c) => c.expiringSoon).length,
       pendingRequests,
       recentAudit,
       children,

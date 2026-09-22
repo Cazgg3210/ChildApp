@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
+import { VerificationBadge, type VerificationStatus } from "@/components/feature/verification-badge";
 import { toast } from "sonner";
 import { addDays, addHours, addMonths, addYears, setHours, setMinutes } from "date-fns";
 import { Building2, Check, Loader2, Search, Users, X } from "lucide-react";
@@ -49,7 +50,9 @@ export function ShareWizard({ childId, childName }: { childId: string; childName
   const [recipientName, setRecipientName] = useState("");
   const [recipientEmail, setRecipientEmail] = useState("");
   const [institutionCode, setInstitutionCode] = useState("");
-  const [institution, setInstitution] = useState<{ id: string; name: string } | null | undefined>(undefined);
+  const [institution, setInstitution] = useState<
+    { id: string; name: string; verificationStatus: VerificationStatus } | null | undefined
+  >(undefined);
   const [categories, setCategories] = useState<Set<DataCategory>>(new Set(DEFAULT_CATEGORIES.BABYSITTER));
   const [capabilities, setCapabilities] = useState<Set<Capability>>(new Set(DEFAULT_CAPABILITIES.BABYSITTER));
   const [preset, setPreset] = useState<Preset>("hours4");
@@ -59,6 +62,7 @@ export function ShareWizard({ childId, childName }: { childId: string; childName
   const [singleUse, setSingleUse] = useState(false);
   const [note, setNote] = useState("");
   const [confirmed, setConfirmed] = useState(false);
+  const [noExpiryConfirmed, setNoExpiryConfirmed] = useState(false);
 
   const isInstitution = kind === "INSTITUTION";
   const displayName = isInstitution ? (institution?.name ?? recipientName) : recipientName;
@@ -218,10 +222,16 @@ export function ShareWizard({ childId, childName }: { childId: string; childName
                   </div>
                   <p className="text-xs text-muted-foreground">{t("wizard.institutionCodeHint")}</p>
                   {institution && (
-                    <p className="flex items-center gap-2 text-sm text-success">
-                      <Check className="size-4" aria-hidden />{" "}
-                      {t("wizard.institutionFound", { name: institution.name })}
-                    </p>
+                    <div className="space-y-1">
+                      <p className="flex flex-wrap items-center gap-2 text-sm text-success">
+                        <Check className="size-4" aria-hidden />{" "}
+                        {t("wizard.institutionFound", { name: institution.name })}
+                        <VerificationBadge status={institution.verificationStatus} />
+                      </p>
+                      {institution.verificationStatus !== "VERIFIED" && (
+                        <p className="text-xs text-muted-foreground">{t("wizard.institutionUnverifiedHint")}</p>
+                      )}
+                    </div>
                   )}
                   {institution === null && (
                     <p className="flex items-center gap-2 text-sm text-destructive">
@@ -440,6 +450,16 @@ export function ShareWizard({ childId, childName }: { childId: string; childName
                   {expiresAt ? formatDateTime(new Date(expiresAt), locale) : t("preview.never")}
                 </p>
                 {expiresAt && <p className="mt-1 text-muted-foreground">{t("preview.autoExpire")}</p>}
+                {!expiresAt && (kind === "BABYSITTER" || kind === "OTHER") && (
+                  <label className="mt-3 flex items-start gap-3 rounded-xl border border-critical/40 bg-critical-soft/50 p-3 text-sm font-medium tap-target">
+                    <Checkbox
+                      checked={noExpiryConfirmed}
+                      onCheckedChange={(v) => setNoExpiryConfirmed(Boolean(v))}
+                      className="mt-0.5"
+                    />
+                    {t("preview.noExpiryRisk", { name: displayName })}
+                  </label>
+                )}
                 <p className="mt-2 flex flex-wrap gap-2">
                   {pin && (
                     <span className="rounded-full bg-secondary px-2 py-0.5 text-xs">{t("preview.pinProtected")}</span>
@@ -484,7 +504,16 @@ export function ShareWizard({ childId, childName }: { childId: string; childName
                 {tc("next")}
               </Button>
             ) : (
-              <Button type="button" size="lg" onClick={submit} disabled={pending || !confirmed}>
+              <Button
+                type="button"
+                size="lg"
+                onClick={submit}
+                disabled={
+                  pending ||
+                  !confirmed ||
+                  (!expiresAt && (kind === "BABYSITTER" || kind === "OTHER") && !noExpiryConfirmed)
+                }
+              >
                 {pending && <Loader2 className="animate-spin" aria-hidden />}
                 {isInstitution ? t("wizard.createInstitution") : t("wizard.create")}
               </Button>

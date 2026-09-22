@@ -43,6 +43,10 @@ const schema = z.object({
   ALLOW_DEMO_SEED: envBoolean(false),
   /** Enables POST /api/v1/admin/seed (hosted demos). Leave empty to disable the endpoint. */
   SEED_TOKEN: z.string().min(16).optional(),
+  /** When true, sharing / inviting / creating institutions requires a confirmed email. */
+  REQUIRE_EMAIL_VERIFICATION: envBoolean(false),
+  /** Enables POST /api/v1/admin/institutions/:id/verification (manual institution verification). */
+  PLATFORM_ADMIN_TOKEN: z.string().min(16).optional(),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("info"),
 });
 

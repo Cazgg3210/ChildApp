@@ -175,7 +175,7 @@ export function ProfileItemDialog({
             <div className="space-y-1.5">
               <Label htmlFor="provenance">{t("fields.provenanceStatus")}</Label>
               <NativeSelect id="provenance" name="provenance" defaultValue={item?.provenance ?? "SELF_DECLARED"}>
-                {(["SELF_DECLARED", "OBSERVED", "DOCUMENTED", "VERIFIED"] as const).map((p) => (
+                {(["SELF_DECLARED", "OBSERVED", "DOCUMENTED"] as const).map((p) => (
                   <option key={p} value={p}>
                     {t(`provenance.${p}`)}
                   </option>

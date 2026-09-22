@@ -23,7 +23,7 @@ export async function registerAction(_prev: ActionState, form: FormData): Promis
   } catch (err) {
     return toActionState(err);
   }
-  redirect("/app?welcome=1");
+  redirect(formString(form, "intent") === "institution" ? "/institution/new?welcome=1" : "/app?welcome=1");
 }
 
 export async function loginAction(_prev: ActionState, form: FormData): Promise<ActionState> {

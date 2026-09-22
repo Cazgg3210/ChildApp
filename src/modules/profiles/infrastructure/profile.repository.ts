@@ -70,6 +70,11 @@ export const profileRepository = {
     });
   },
 
+  /** Bumps updatedAt without changing content (re-confirmation). */
+  touch(itemId: string, tx?: Tx) {
+    return (tx ?? prisma).profileItem.update({ where: { id: itemId }, data: { updatedAt: new Date() } });
+  },
+
   softDelete(itemId: string, tx?: Tx) {
     return (tx ?? prisma).profileItem.update({ where: { id: itemId }, data: { deletedAt: new Date() } });
   },

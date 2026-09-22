@@ -135,6 +135,103 @@ export async function addMemberAction(institutionId: string, _prev: ActionState,
   }
 }
 
+const detailsSchema = z.object({
+  name: z.string().trim().min(2).max(120),
+  legalName: z.string().trim().max(160).optional().nullable(),
+  contactName: z.string().trim().max(120).optional().nullable(),
+  phone: z.string().trim().max(40).optional().nullable(),
+  address: z.string().trim().max(240).optional().nullable(),
+  website: z.string().trim().max(200).optional().nullable(),
+});
+
+export async function updateInstitutionAction(
+  institutionId: string,
+  _prev: ActionState,
+  form: FormData,
+): Promise<ActionState> {
+  try {
+    const { actor } = await requireUserActor();
+    const input = detailsSchema.parse({
+      name: formString(form, "name"),
+      legalName: formString(form, "legalName") || null,
+      contactName: formString(form, "contactName") || null,
+      phone: formString(form, "phone") || null,
+      address: formString(form, "address") || null,
+      website: formString(form, "website") || null,
+    });
+    await institutionService.updateDetails(actor, institutionId, input, await getRequestMeta());
+    revalidatePath(`/institution/${institutionId}`, "layout");
+    return { ok: true };
+  } catch (err) {
+    return toActionState(err);
+  }
+}
+
+export async function requestVerificationAction(institutionId: string): Promise<ActionState> {
+  try {
+    const { actor } = await requireUserActor();
+    await institutionService.requestVerification(actor, institutionId, await getRequestMeta());
+    revalidatePath(`/institution/${institutionId}`, "layout");
+    return { ok: true };
+  } catch (err) {
+    return toActionState(err);
+  }
+}
+
+export async function createGroupAction(institutionId: string, _prev: ActionState, form: FormData): Promise<ActionState> {
+  try {
+    const { actor } = await requireUserActor();
+    await institutionService.createGroup(actor, institutionId, formString(form, "name"), await getRequestMeta());
+    revalidatePath(`/institution/${institutionId}`, "layout");
+    return { ok: true };
+  } catch (err) {
+    return toActionState(err);
+  }
+}
+
+export async function deleteGroupAction(institutionId: string, groupId: string): Promise<ActionState> {
+  try {
+    const { actor } = await requireUserActor();
+    await institutionService.deleteGroup(actor, institutionId, groupId, await getRequestMeta());
+    revalidatePath(`/institution/${institutionId}`, "layout");
+    return { ok: true };
+  } catch (err) {
+    return toActionState(err);
+  }
+}
+
+export async function setGroupMemberAction(
+  institutionId: string,
+  groupId: string,
+  memberId: string,
+  on: boolean,
+): Promise<ActionState> {
+  try {
+    const { actor } = await requireUserActor();
+    await institutionService.setGroupMember(actor, institutionId, groupId, memberId, on, await getRequestMeta());
+    revalidatePath(`/institution/${institutionId}`, "layout");
+    return { ok: true };
+  } catch (err) {
+    return toActionState(err);
+  }
+}
+
+export async function setGroupChildAction(
+  institutionId: string,
+  groupId: string,
+  relationId: string,
+  on: boolean,
+): Promise<ActionState> {
+  try {
+    const { actor } = await requireUserActor();
+    await institutionService.setGroupChild(actor, institutionId, groupId, relationId, on, await getRequestMeta());
+    revalidatePath(`/institution/${institutionId}`, "layout");
+    return { ok: true };
+  } catch (err) {
+    return toActionState(err);
+  }
+}
+
 export async function removeMemberAction(institutionId: string, userId: string): Promise<ActionState> {
   try {
     const { actor } = await requireUserActor();

@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toDateInputValue } from "@/shared/utils/dates";
+import { childrenService } from "@/modules/children/application/children.service";
 import { loadGuardianChild } from "../../_lib/load-child";
 import { IdentityForm } from "./identity-form";
 import { GuardiansPanel } from "./guardians-panel";
@@ -8,9 +9,13 @@ import { DeleteChildButton } from "./delete-child";
 
 export default async function IdentityPage({ params }: PageProps<"/app/children/[id]/profile/identity">) {
   const { id } = await params;
-  const { child, user, access } = await loadGuardianChild(id);
-  const [t, tp] = await Promise.all([getTranslations("children"), getTranslations("profile")]);
+  const { child, user, access, actor } = await loadGuardianChild(id);
   const isOwner = access.via === "guardian" && access.role === "OWNER";
+  const [t, tp, invitations] = await Promise.all([
+    getTranslations("children"),
+    getTranslations("profile"),
+    isOwner ? childrenService.listInvitations(actor, id) : Promise.resolve([]),
+  ]);
 
   return (
     <div className="grid gap-6 lg:grid-cols-3">
@@ -44,6 +49,12 @@ export default async function IdentityPage({ params }: PageProps<"/app/children/
             email: g.user.email,
             role: g.role,
             relationshipLabel: g.relationshipLabel,
+          }))}
+          invitations={invitations.map((i) => ({
+            id: i.id,
+            email: i.email,
+            role: i.role,
+            expiresAt: i.expiresAt.toISOString(),
           }))}
         />
         {isOwner && <DeleteChildButton childId={child.id} name={child.preferredName ?? child.firstName} />}

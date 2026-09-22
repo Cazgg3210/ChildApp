@@ -1,3 +1,4 @@
+import nodemailer, { type Transporter } from "nodemailer";
 import { env } from "@/shared/config/env";
 import { logger } from "@/shared/logging/logger";
 
@@ -13,8 +14,9 @@ export interface Mailer {
 }
 
 /**
- * Development mailer: prints the message to the server log. Verification and
- * password-reset links are therefore visible in `npm run dev` output.
+ * Development mailer: prints the message to the server log. Verification,
+ * password-reset and invitation links are therefore visible in `npm run dev`
+ * output.
  */
 class ConsoleMailer implements Mailer {
   async send(message: MailMessage): Promise<void> {
@@ -25,19 +27,37 @@ class ConsoleMailer implements Mailer {
   }
 }
 
-/** Placeholder for a real transport (SMTP / Resend). Not needed for the MVP demo. */
+/** SMTP transport (any provider: Resend, Postmark, SES, Gmail…) configured with SMTP_URL. */
 class SmtpMailer implements Mailer {
+  private transporter: Transporter;
+
+  constructor(url: string) {
+    this.transporter = nodemailer.createTransport(url);
+  }
+
   async send(message: MailMessage): Promise<void> {
-    if (!env().SMTP_URL) throw new Error("SMTP_URL is not configured");
-    // Intentionally unimplemented in the MVP: wire nodemailer here.
-    logger.warn({ to: message.to }, "[mail] SMTP transport not implemented; falling back to console");
-    await new ConsoleMailer().send(message);
+    const info = await this.transporter.sendMail({
+      from: env().MAIL_FROM,
+      to: message.to,
+      subject: message.subject,
+      text: message.text,
+      html: message.html,
+    });
+    logger.info({ to: message.to, subject: message.subject, messageId: info.messageId }, "[mail] sent");
   }
 }
 
 let instance: Mailer | undefined;
 
 export function mailer(): Mailer {
-  if (!instance) instance = env().MAILER_PROVIDER === "smtp" ? new SmtpMailer() : new ConsoleMailer();
+  if (!instance) {
+    const e = env();
+    if (e.MAILER_PROVIDER === "smtp") {
+      if (!e.SMTP_URL) throw new Error("MAILER_PROVIDER=smtp requires SMTP_URL");
+      instance = new SmtpMailer(e.SMTP_URL);
+    } else {
+      instance = new ConsoleMailer();
+    }
+  }
   return instance;
 }

@@ -30,13 +30,17 @@ export type CarePassContext =
  * Resolves everything the Care Pass needs for the current request, memoized.
  * Reads the signed PIN / seen cookies issued by the care actions.
  */
-export const resolveCarePass = cache(async (token: string): Promise<CarePassContext> => {
+export const resolveCarePass = cache(async (token: string, opts: { justOpened?: boolean } = {}): Promise<CarePassContext> => {
   const store = await cookies();
   const probe = await sharingService.resolveToken(token, { allowExhausted: true });
   if (!probe.ok) return { state: "denied", reason: probe.reason };
   const { link, grant, child } = probe;
 
-  const seen = sharingService.isPinCookieValid(link.id, store.get(sharingService.seenCookieName(link.id))?.value);
+  // "seen" = this device already consumed an opening (signed cookie), or the
+  // /open exchange just redirected here (cookie-less browsers).
+  const seen =
+    sharingService.isPinCookieValid(link.id, store.get(sharingService.seenCookieName(link.id))?.value) ||
+    Boolean(opts.justOpened);
   const resolved = seen ? probe : await sharingService.resolveToken(token);
   if (!resolved.ok) return { state: "denied", reason: resolved.reason };
 

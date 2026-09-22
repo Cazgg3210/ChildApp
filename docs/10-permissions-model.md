@@ -69,6 +69,18 @@ Sobre el contexto: `now`, `category`, `capability`, `pinVerified`, `institutionI
 
 "Vigente" = `status = ACTIVE ∧ startsAt ≤ now ∧ (expiresAt = null ∨ now < expiresAt)`; para links además `ShareLink.status = ACTIVE ∧ (maxUses = null ∨ useCount < maxUses)`. Para `PENDING` (institución aún no aceptó) → `ACCESS_PENDING`.
 
+## Salas (grupos) en instituciones
+
+Una institución puede definir `InstitutionGroup` (salas/clases) y asignar miembros y niños (`InstitutionGroupMember`, `InstitutionGroupChild`). Regla, aplicada en `loadFacts` (autorización) y en `institutionService.listChildren`:
+
+- Sin salas: todos los miembros ven todos los niños compartidos (comportamiento anterior).
+- Con ≥ 1 sala: un `MEMBER` solo alcanza los niños asignados a alguna de sus salas; los niños sin sala solo son visibles para `ADMIN`.
+- `ADMIN` siempre ve todo y es el único que administra salas.
+
+## Invitaciones de tutores
+
+`child.manage_guardians` (solo OWNER) crea una `GuardianInvitation`; la persona se convierte en `ChildGuardian` únicamente al aceptarla desde una cuenta con el correo invitado. Una invitación pendiente no otorga ningún acceso.
+
 ## Categorías de datos
 
 `IDENTITY` (siempre incluida: nombre, edad; foto solo si `PHOTO`), `PHOTO`, `EMERGENCY`, `ALLERGIES`, `MEDICATION`, `HEALTH`, `NUTRITION`, `SLEEP`, `BATHROOM`, `COMMUNICATION`, `COMFORT`, `PLAY`, `SOCIAL`, `DOCUMENTS`.

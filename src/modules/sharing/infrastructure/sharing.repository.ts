@@ -92,11 +92,18 @@ export const sharingRepository = {
     return (tx ?? prisma).accessGrant.update({ where: { id }, data: { status: "ACTIVE" } });
   },
 
-  recordLinkUse(linkId: string) {
-    return prisma.shareLink.update({
-      where: { id: linkId },
-      data: { useCount: { increment: 1 }, lastUsedAt: new Date() },
-    });
+  /**
+   * Atomically counts one opening. Returns false when the link is not ACTIVE or
+   * its use budget is already spent, so two concurrent openings of a single-use
+   * link cannot both succeed.
+   */
+  async consumeLinkUse(linkId: string): Promise<boolean> {
+    const updated = await prisma.$executeRaw`
+      UPDATE "ShareLink"
+      SET "useCount" = "useCount" + 1, "lastUsedAt" = NOW(), "updatedAt" = NOW()
+      WHERE "id" = ${linkId} AND "status" = 'ACTIVE'
+        AND ("maxUses" IS NULL OR "useCount" < "maxUses")`;
+    return updated === 1;
   },
 
   incrementPinAttempts(linkId: string) {

@@ -1,32 +1,23 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { AlertTriangle, ArrowRight, Check, ClipboardList, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChildAvatar } from "@/components/feature/child-avatar";
 import { ProfileItemCard } from "@/components/feature/profile-item-card";
 import { carePassViewerState, resolveCarePass } from "@/modules/care/presentation/care-pass-context";
-import { categoryOf } from "@/modules/profiles/domain/catalog";
-import { CRITICAL_CATEGORIES, type DataCategory } from "@/shared/domain/care-vocabulary";
+import { partitionForCarePass } from "@/modules/profiles/domain/care-pass-layout";
 import { ageFromBirthDate, formatDateTime, formatRelative } from "@/shared/utils/dates";
 import { DeniedView } from "./denied-view";
 import { PinForm } from "./pin-form";
 import { AcknowledgeForm } from "./acknowledge-form";
-import { CarePassOpener } from "./care-pass-opener";
 
-const SECTION_ORDER: DataCategory[] = [
-  "NUTRITION",
-  "SLEEP",
-  "BATHROOM",
-  "COMFORT",
-  "COMMUNICATION",
-  "HEALTH",
-  "PLAY",
-  "SOCIAL",
-];
-
-export default async function CarePassPage({ params }: PageProps<"/s/[token]">) {
-  const { token } = await params;
-  const ctx = await resolveCarePass(token);
+export default async function CarePassPage({ params, searchParams }: PageProps<"/s/[token]">) {
+  const [{ token }, sp] = await Promise.all([params, searchParams]);
+  const justOpened = sp.opened === "1";
+  const ctx = await resolveCarePass(token, { justOpened });
+  // Every opening goes through the server-side consume step first (docs/adr/ADR-005).
+  if (ctx.state === "ok" && !ctx.seen) redirect(`/s/${token}/open`);
   const [t, tc, ts, locale] = await Promise.all([
     getTranslations("care"),
     getTranslations("common"),
@@ -42,23 +33,13 @@ export default async function CarePassPage({ params }: PageProps<"/s/[token]">) 
   const { lastAck, session, changes } = await carePassViewerState(ctx);
   const name = child.preferredName ?? child.firstName;
   const age = ageFromBirthDate(child.dateOfBirth);
-  const critical = items.filter(
-    (i) => i.criticality === "CRITICAL" && CRITICAL_CATEGORIES.includes(categoryOf(i.section, i.itemType)),
-  );
-  const rest = items.filter((i) => !critical.includes(i));
-  const byCategory = new Map<DataCategory, typeof items>();
-  for (const item of rest) {
-    const cat = categoryOf(item.section, item.itemType);
-    byCategory.set(cat, [...(byCategory.get(cat) ?? []), item]);
-  }
+  const { highlighted: critical, groups } = partitionForCarePass(items);
   const canAck = capabilities.includes("ACKNOWLEDGE");
   const canSession = capabilities.includes("RUN_CARE_SESSION");
   const ackIsCurrent = lastAck && lastAck.profileVersion >= child.profileVersion;
 
   return (
     <div className="space-y-5 pt-2">
-      <CarePassOpener token={token} />
-
       <header className="flex items-center gap-4">
         <ChildAvatar name={`${child.firstName}`} seed={child.id} size="lg" />
         <div className="min-w-0">
@@ -112,13 +93,13 @@ export default async function CarePassPage({ params }: PageProps<"/s/[token]">) 
         )}
       </section>
 
-      {SECTION_ORDER.filter((c) => byCategory.has(c)).map((cat) => (
+      {groups.map(({ category: cat, items: groupItems }) => (
         <section key={cat} aria-labelledby={`cat-${cat}`}>
           <h2 id={`cat-${cat}`} className="mb-2 text-sm font-bold uppercase tracking-widest text-muted-foreground">
             {ts(`categories.${cat}`)}
           </h2>
           <div className="space-y-2">
-            {byCategory.get(cat)!.map((item) => (
+            {groupItems.map((item) => (
               <ProfileItemCard key={item.id} item={item} compact showProvenance={false} />
             ))}
           </div>

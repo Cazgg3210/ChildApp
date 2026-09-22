@@ -6,9 +6,12 @@ import { PageHeader } from "@/components/feature/page-header";
 import { requireUser } from "@/modules/identity/application/session";
 import { SettingsForm } from "./settings-form";
 import { resendVerificationAction } from "@/modules/identity/presentation/account-actions";
+import { accountService } from "@/modules/identity/application/account.service";
+import { DeleteAccountButton } from "./delete-account";
 
 export default async function SettingsPage() {
   const [user, t] = await Promise.all([requireUser(), getTranslations("settings")]);
+  const { soleAdminOf } = await accountService.deletionBlockers(user.id);
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <PageHeader title={t("title")} />
@@ -51,9 +54,12 @@ export default async function SettingsPage() {
               </a>
             </Button>
           </div>
-          <div>
-            <p className="font-medium">{t("deleteAccount")}</p>
-            <p className="text-muted-foreground">{t("deleteHint")}</p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-medium">{t("deleteAccount")}</p>
+              <p className="text-muted-foreground">{t("deleteHint")}</p>
+            </div>
+            <DeleteAccountButton soleAdminOf={soleAdminOf.map((i) => i.name)} />
           </div>
         </CardContent>
       </Card>

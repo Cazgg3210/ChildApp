@@ -9,7 +9,7 @@ import { auditService } from "@/modules/audit/application/audit.service";
 import { notificationService } from "@/modules/notifications/application/notification.service";
 import { analyticsService } from "@/modules/analytics/application/analytics.service";
 import type { RequestMeta } from "@/shared/security/request-context";
-import { categoryOf, defaultCriticality, isItemTypeOf } from "../domain/catalog";
+import { DECLARATION_CONFLICTS, categoryOf, defaultCriticality, isDeclaration, isItemTypeOf, type DeclarationType } from "../domain/catalog";
 import {
   collapseChanges,
   computeChanges,
@@ -132,6 +132,29 @@ async function applyVersionedChange(
   return result;
 }
 
+/**
+ * Keeps declarations and data consistent inside the mutation transaction:
+ *  - adding an allergy/medication retires a conflicting "none declared" fact;
+ *  - adding a declaration while contradicting data exists is refused.
+ */
+async function reconcileDeclarations(childId: string, rows: NewProfileItem[], tx: Tx) {
+  const current = await profileRepository.listActive(childId, tx);
+  for (const row of rows) {
+    if (isDeclaration(row.itemType)) {
+      const conflicts = DECLARATION_CONFLICTS[row.itemType];
+      if (current.some((i) => conflicts.includes(i.itemType)) || rows.some((r) => conflicts.includes(r.itemType))) {
+        throw new AppError("INVALID_STATE", "Cannot declare none while related information exists.");
+      }
+      for (const dup of current.filter((i) => i.itemType === row.itemType)) await profileRepository.softDelete(dup.id, tx);
+      continue;
+    }
+    for (const [declaration, conflicts] of Object.entries(DECLARATION_CONFLICTS) as [DeclarationType, readonly string[]][]) {
+      if (!conflicts.includes(row.itemType)) continue;
+      for (const stale of current.filter((i) => i.itemType === declaration)) await profileRepository.softDelete(stale.id, tx);
+    }
+  }
+}
+
 async function notifyOtherGuardians(
   childId: string,
   actorUserId: string | null,
@@ -170,15 +193,29 @@ export const profileService = {
       childId,
       actor,
       async (tx) => {
-        created = await profileRepository.create(
-          childId,
-          { ...data, createdById: actor.type === "user" ? actor.userId : null },
-          tx,
-        );
+        await reconcileDeclarations(childId, [data], tx);
+        created = await profileRepository.create(childId, { ...data, createdById: actor.type === "user" ? actor.userId : null }, tx);
       },
       { meta, sourceInstitutionId: data.sourceInstitutionId },
     );
     return { item: created!, ...result };
+  },
+
+  /**
+   * Explicit "none declared" fact ("Sin alergias conocidas — confirmado por
+   * tutor"). Rejected while contradicting data exists.
+   */
+  async declareNone(actor: Actor, childId: string, kind: DeclarationType, meta?: RequestMeta) {
+    return this.addItem(actor, childId, { section: "HEALTH", itemType: kind, label: kind, criticality: "INFORMATIONAL" }, meta);
+  },
+
+  /** Re-confirms a safety fact without changing it (refreshes updatedAt for Care Readiness). */
+  async reconfirmItem(actor: Actor, childId: string, itemId: string, meta?: RequestMeta) {
+    await authorizationService.assert(actor, "profile.update", childId);
+    const existing = await profileRepository.findActive(childId, itemId);
+    if (!existing) throw new AppError("NOT_FOUND", "Profile item not found");
+    await profileRepository.touch(itemId);
+    await auditService.record({ type: "PROFILE_UPDATED", actor, childId, resourceType: "ProfileItem", resourceId: itemId, context: { reconfirmed: true }, meta });
   },
 
   async addItems(actor: Actor, childId: string, inputs: ProfileItemInput[], meta?: RequestMeta) {
@@ -189,12 +226,9 @@ export const profileService = {
       childId,
       actor,
       async (tx) => {
+        await reconcileDeclarations(childId, rows, tx);
         for (const row of rows) {
-          await profileRepository.create(
-            childId,
-            { ...row, createdById: actor.type === "user" ? actor.userId : null },
-            tx,
-          );
+          await profileRepository.create(childId, { ...row, createdById: actor.type === "user" ? actor.userId : null }, tx);
         }
       },
       { meta },

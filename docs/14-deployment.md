@@ -64,12 +64,14 @@ Dokploy pone Traefik + Let's Encrypt delante; no se usa el Caddy del kit. La ima
 1. **Project** → _Create Project_ "ChildApp".
 2. **Database** → _PostgreSQL_ (nombre `childapp-db`, usuario `ccp`, contraseña generada) → _Deploy_. Copia la **Internal Connection URL** (`postgresql://ccp:...@childapp-db:5432/...`).
 3. **Application** → _Provider: GitHub_ (conecta la cuenta) o _Git_ con `https://github.com/Cazgg3210/ChildApp.git`, rama `main`. _Build Type: Dockerfile_ (ruta `Dockerfile`, contexto `.`).
-4. **Environment**: `NODE_ENV=production`, `DATABASE_URL=<Internal Connection URL>?schema=public`, `AUTH_SECRET` (`openssl rand -base64 48`), `APP_URL=https://<dominio>`, `AUTH_TRUST_HOST=true`, `STORAGE_PROVIDER=local`, `STORAGE_LOCAL_DIR=/data/storage`. Para la demo: `SEED_DEMO=true`, `ALLOW_DEMO_SEED=true`, `SEED_TOKEN=<openssl rand -hex 24>`.
+4. **Environment**: `NODE_ENV=production`, `DATABASE_URL=<Internal Connection URL>?schema=public`, `AUTH_SECRET` (`openssl rand -base64 48`), `APP_URL=https://<dominio>`, `AUTH_TRUST_HOST=true`, `STORAGE_PROVIDER=local`, `STORAGE_LOCAL_DIR=/data/storage`. Para la demo: `SEED_DEMO=true`, `ALLOW_DEMO_SEED=true`, `SEED_TOKEN=<openssl rand -hex 24>`. Para piloto real: `MAILER_PROVIDER=smtp`, `SMTP_URL=smtps://...`, `MAIL_FROM`, `REQUIRE_EMAIL_VERIFICATION=true`, `PLATFORM_ADMIN_TOKEN=<openssl rand -hex 24>`.
 5. **Advanced → Volumes**: volumen `childapp-storage` montado en `/data/storage`.
 6. **Domains**: añade el dominio (o el `*.traefik.me` que genera Dokploy para probar), _Container Port_ `3000`, HTTPS activado (Let's Encrypt).
 7. **Deploy**. Comprueba `https://<dominio>/api/v1/health`.
 8. **Demo (opcional)**: `curl -X POST https://<dominio>/api/v1/admin/seed -H "X-Seed-Token: <SEED_TOKEN>"` → devuelve cuentas, código del kínder y enlaces de Care Pass. Después puedes borrar `SEED_TOKEN` para cerrar el endpoint.
 9. **Auto deploy**: en _General → Auto Deploy_ (webhook de GitHub) cada push a `main` reconstruye y redespliega.
+10. **Verificar una institución** (cuando pida verificación desde _Ajustes_): `curl -X POST https://<dominio>/api/v1/admin/institutions/<id>/verification -H "X-Admin-Token: <PLATFORM_ADMIN_TOKEN>" -H "Content-Type: application/json" -d '{"status":"VERIFIED"}'`. El id aparece en la URL del portal de la institución.
+11. **Purga de cuentas eliminadas** (cron semanal, opcional): `docker exec <contenedor> npx tsx scripts/purge-deleted-accounts.ts` borra definitivamente las cuentas con más de 30 días desde la solicitud.
 
 ## DigitalOcean App Platform / EasyPanel
 

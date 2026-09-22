@@ -8,13 +8,14 @@ import { FieldError, FormError, SubmitButton } from "@/components/feature/form-f
 import { registerAction } from "@/modules/identity/presentation/actions";
 import { idle } from "@/shared/http/action-state";
 
-export function RegisterForm({ locale }: { locale: string }) {
+export function RegisterForm({ locale, intent }: { locale: string; intent: "family" | "institution" }) {
   const t = useTranslations("auth");
   const [state, action] = useActionState(registerAction, idle);
 
   return (
     <form action={action} className="space-y-4" noValidate>
       <input type="hidden" name="locale" value={locale} />
+      <input type="hidden" name="intent" value={intent} />
       <FormError state={state} />
       <div className="space-y-1.5">
         <Label htmlFor="name">{t("fields.name")}</Label>

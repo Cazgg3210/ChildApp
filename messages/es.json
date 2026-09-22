@@ -93,7 +93,38 @@
     "institutionsBody": "Recibe perfiles completos y actualizados por las familias, con consentimiento verificable y confirmaciones de lectura de la información crítica. Sin formularios en papel.",
     "institutionsCta": "Crear una institución",
     "trustNote": "La información se comparte solo con quien tú autorizas, durante el tiempo que tú defines, y cada acceso queda registrado.",
-    "footer": "Child Care Passport · MVP"
+    "footer": "Child Care Passport · MVP",
+    "whoTitle": "¿Quién puede ver qué?",
+    "whoSubtitle": "Tú eliges por tipo de acceso. Lo crítico siempre va primero; lo demás, solo si lo compartes.",
+    "who": {
+      "family": {
+        "title": "Abuelos y familia",
+        "body": "Emergencia, alergias, medicamentos, comida, sueño y confort. Sin fecha de vencimiento o con la que definas."
+      },
+      "babysitter": {
+        "title": "Niñera",
+        "body": "Solo lo necesario para esta noche, con PIN si quieres, y el enlace deja de funcionar cuando termina."
+      },
+      "institution": {
+        "title": "Guardería o escuela",
+        "body": "Lo que necesita el equipo, con confirmación de lectura de lo crítico. Ellos proponen; tú decides."
+      }
+    },
+    "assuranceTitle": "Lo que te garantizamos",
+    "assurance": {
+      "revoke": "Revoca cualquier acceso en un clic; el enlace deja de funcionar al instante.",
+      "expire": "Cada acceso puede expirar solo, sin que tengas que acordarte.",
+      "log": "Cada consulta queda registrada: quién, qué y cuándo.",
+      "ack": "Quien cuida confirma que leyó lo crítico antes de empezar.",
+      "change": "Si cambia algo importante, quienes cuidan lo ven marcado como nuevo.",
+      "truth": "La familia es la única fuente de verdad: nadie edita el perfil por ti."
+    },
+    "institutionsPoints": {
+      "ready": "Sabes qué niños tienen alergias, medicamentos y contacto al día.",
+      "rooms": "Cada maestra ve solo a los niños de su sala.",
+      "propose": "Propones observaciones; la familia las acepta o rechaza.",
+      "consent": "Consentimiento con fecha y registro de lectura para cada niño."
+    }
   },
   "auth": {
     "login": {
@@ -105,7 +136,8 @@
       "forgot": "¿Olvidaste tu contraseña?",
       "resetDone": "Tu contraseña fue actualizada. Inicia sesión con la nueva.",
       "verified": "Tu correo fue confirmado.",
-      "invalidCredentials": "El correo o la contraseña no son correctos."
+      "invalidCredentials": "El correo o la contraseña no son correctos.",
+      "deleted": "Tu cuenta fue eliminada. Gracias por confiar en nosotros."
     },
     "register": {
       "title": "Crea tu cuenta",
@@ -113,7 +145,9 @@
       "submit": "Crear cuenta",
       "hasAccount": "¿Ya tienes cuenta?",
       "login": "Iniciar sesión",
-      "consent": "Al crear la cuenta aceptas que tú eres el responsable de la información de tus hijos y de con quién la compartes."
+      "consent": "Al crear la cuenta aceptas que tú eres el responsable de la información de tus hijos y de con quién la compartes.",
+      "institutionTitle": "Crea la cuenta de tu institución",
+      "institutionSubtitle": "Primero tu cuenta personal; en el siguiente paso registras la guardería, kínder o academia."
     },
     "forgot": {
       "title": "Recuperar contraseña",
@@ -176,7 +210,8 @@
     "recentActivity": "Actividad reciente",
     "recentEmpty": "Cuando alguien consulte o cambie información, aparecerá aquí.",
     "review": "Revisar",
-    "openChild": "Abrir perfil"
+    "openChild": "Abrir perfil",
+    "invitations": "{count, plural, =1 {{inviter} te invitó a ser tutor de {name}.} other {Tienes # invitaciones para ser tutor.}}"
   },
   "children": {
     "title": "Hijos",
@@ -209,7 +244,8 @@
       "addContact": "Agregar contacto de emergencia",
       "noAllergies": "Sin alergias conocidas",
       "skipHint": "Puedes omitir este paso y completarlo después.",
-      "napLabel": "Siesta"
+      "napLabel": "Siesta",
+      "noMedications": "Sin medicamentos"
     },
     "fields": {
       "firstName": "Nombre",
@@ -234,23 +270,52 @@
       "activity": "Actividad reciente",
       "lastUpdated": "Última actualización {when}",
       "shareCare": "Compartir cuidado",
-      "quickActions": "Acciones rápidas"
+      "quickActions": "Acciones rápidas",
+      "enrichment": "Perfil enriquecido"
     },
     "guardians": {
       "title": "Tutores",
       "owner": "Tutor principal",
       "coGuardian": "Co-tutor",
       "add": "Agregar tutor",
-      "addHint": "La persona debe tener una cuenta con ese correo.",
+      "addHint": "Le enviaremos una invitación por correo. Se une al perfil solo cuando la acepte con su cuenta.",
       "relationship": "Relación (p. ej. Madre, Tutor legal)",
       "remove": "Quitar",
       "cannotRemoveLastOwner": "Debe quedar al menos un tutor principal.",
-      "you": "(tú)"
+      "you": "(tú)",
+      "invited": "Invitación enviada",
+      "sendInvite": "Enviar invitación",
+      "pending": "Invitaciones pendientes",
+      "invitePending": "Pendiente de aceptar",
+      "cancelInvite": "Cancelar invitación"
     },
     "delete": {
       "title": "Eliminar perfil",
       "body": "Se revocarán todos los accesos y el perfil dejará de estar visible. Esta acción se puede deshacer contactando soporte durante 30 días.",
       "confirm": "Eliminar perfil de {name}"
+    },
+    "invitations": {
+      "title": "Invitación para cuidar de {name}",
+      "body": "{inviter} te invita como {role}.",
+      "expires": "Válida hasta {when}",
+      "accept": "Aceptar invitación",
+      "decline": "Rechazar",
+      "accepted": "Ya eres tutor. ¡Bienvenido!",
+      "declined": "Invitación rechazada.",
+      "invalid": "Este enlace de invitación no es válido.",
+      "wrongAccount": "Esta invitación es para otro correo",
+      "wrongAccountHint": "Inicia sesión con {email} para aceptarla.",
+      "backHome": "Ir al inicio",
+      "listTitle": "Invitaciones",
+      "listHint": "Perfiles a los que te invitaron como tutor.",
+      "empty": "No tienes invitaciones pendientes.",
+      "status": {
+        "PENDING": "Pendiente",
+        "ACCEPTED": "Ya fue aceptada.",
+        "DECLINED": "Fue rechazada.",
+        "REVOKED": "Fue cancelada por quien la envió.",
+        "EXPIRED": "Expiró. Pide una nueva invitación."
+      }
     }
   },
   "profile": {
@@ -352,7 +417,9 @@
       "MUSIC": "Música",
       "ACTIVITY": "Actividad",
       "INTEREST": "Interés",
-      "OBSERVATION": "Observación"
+      "OBSERVATION": "Observación",
+      "NO_KNOWN_ALLERGIES": "Sin alergias conocidas",
+      "NO_MEDICATIONS": "Sin medicamentos"
     },
     "criticality": {
       "CRITICAL": "Crítico",
@@ -433,6 +500,35 @@
       "nothingFound": "No encontramos datos que estructurar. Intenta con frases más concretas.",
       "saveSelected": "Guardar seleccionados",
       "disclaimer": "El asistente no diagnostica ni evalúa. Solo organiza lo que tú escribes."
+    },
+    "readiness": {
+      "title": "Listo para cuidar",
+      "hint": "Lo mínimo que cualquier cuidador necesita saber. Decir «ninguna» también cuenta.",
+      "ready": "Listo para cuidar",
+      "notReady": "Falta información de seguridad",
+      "review": "Revisar",
+      "checks": {
+        "allergies": "Alergias",
+        "medications": "Medicamentos",
+        "emergencyContact": "Contacto de emergencia"
+      },
+      "states": {
+        "UNKNOWN": "sin información",
+        "NONE_DECLARED": "ninguna, confirmado",
+        "HAS_DATA": "registrado",
+        "NEEDS_REVIEW": "más de un año sin confirmar"
+      },
+      "declareNoAllergies": "No tiene alergias",
+      "declareNoMedications": "No toma medicamentos",
+      "reconfirm": "Sigue vigente",
+      "update": "Actualizar",
+      "add": "Agregar",
+      "declared": "Confirmado. Quedó registrado con fecha.",
+      "reconfirmed": "Confirmado como vigente.",
+      "enrichment": "Perfil enriquecido",
+      "enrichmentHint": "Rutinas, comunicación, confort e intereses: opcional, pero ayuda a cuidar mejor.",
+      "complete": "Completar",
+      "declaredBy": "Confirmado por la familia el {when}"
     }
   },
   "sharing": {
@@ -492,7 +588,8 @@
       "singleUseHint": "El enlace deja de funcionar tras abrirse una vez.",
       "note": "Nota para el cuidador (opcional)",
       "create": "Generar enlace y QR",
-      "createInstitution": "Enviar invitación a la institución"
+      "createInstitution": "Enviar invitación a la institución",
+      "institutionUnverifiedHint": "Esta institución aún no ha sido verificada por Child Care Passport. Confirma con ellos el código antes de compartir."
     },
     "categories": {
       "IDENTITY": "Nombre y edad",
@@ -526,7 +623,8 @@
       "never": "No expira (puedes revocarlo cuando quieras)",
       "pinProtected": "Protegido con PIN",
       "singleUse": "Un solo uso",
-      "confirm": "Confirmo que quiero compartir esta información"
+      "confirm": "Confirmo que quiero compartir esta información",
+      "noExpiryRisk": "Entiendo que el acceso de {name} no expira solo y que debo revocarlo manualmente cuando termine el cuidado."
     },
     "result": {
       "title": "Listo para compartir",
@@ -562,7 +660,10 @@
       "categories": "Puede ver",
       "acknowledged": "Confirmó lectura {when}",
       "notAcknowledged": "No ha confirmado lectura"
-    }
+    },
+    "verifyFirstTitle": "Confirma tu correo antes de compartir",
+    "verifyFirstBody": "Para proteger la información de tus hijos, solo las cuentas con correo confirmado pueden compartir. Revisa la bandeja de {email}.",
+    "verifyFirstResend": "Reenviar confirmación"
   },
   "care": {
     "pass": {
@@ -706,7 +807,13 @@
       "inviteCodeHint": "Las familias usan este código para compartir el perfil de su hijo con la institución.",
       "recent": "Actividad reciente",
       "emptyTitle": "Todavía no hay niños compartidos",
-      "emptyBody": "Pide a las familias que compartan el perfil usando el código {code}."
+      "emptyBody": "Pide a las familias que compartan el perfil usando el código {code}.",
+      "readyProfiles": "Listos para cuidar",
+      "readyHint": "Alergias, medicamentos y contacto de emergencia al día",
+      "needsReview": "Perfiles por revisar",
+      "needsReviewHint": "Falta información de seguridad o lleva más de un año sin confirmarse",
+      "expiringConsents": "Consentimientos por vencer",
+      "expiringHint": "Próximos 30 días"
     },
     "children": {
       "title": "Niños",
@@ -723,7 +830,8 @@
         "critical": "Alergias críticas",
         "updated": "Última actualización",
         "consent": "Consentimiento",
-        "ack": "Lectura"
+        "ack": "Lectura",
+        "readiness": "Listo para cuidar"
       },
       "empty": "No hay niños que coincidan con el filtro.",
       "consentUntil": "Hasta {when}",
@@ -784,6 +892,56 @@
       },
       "titleLabel": "Puesto (p. ej. Maestra)",
       "remove": "Quitar"
+    },
+    "settings": {
+      "title": "Ajustes",
+      "subtitle": "Datos de la institución y verificación.",
+      "details": "Datos de la institución",
+      "detailsHint": "Las familias ven el nombre y el estado de verificación al compartir un perfil.",
+      "saved": "Cambios guardados",
+      "fields": {
+        "name": "Nombre",
+        "legalName": "Razón social",
+        "contactName": "Persona responsable",
+        "phone": "Teléfono",
+        "address": "Dirección",
+        "website": "Sitio web"
+      }
+    },
+    "verification": {
+      "title": "Verificación",
+      "request": "Solicitar verificación",
+      "requested": "Solicitud enviada. Te avisaremos cuando esté lista.",
+      "requirements": "Completa razón social, persona responsable y teléfono para solicitarla.",
+      "status": {
+        "UNVERIFIED": "Sin verificar",
+        "VERIFICATION_PENDING": "Verificación en curso",
+        "VERIFIED": "Verificada",
+        "SUSPENDED": "Suspendida"
+      },
+      "explain": {
+        "UNVERIFIED": "Las familias verán que la institución no ha sido verificada. Completa los datos y solicita la verificación.",
+        "VERIFICATION_PENDING": "Estamos revisando los datos de la institución. Suele tomar uno o dos días hábiles.",
+        "VERIFIED": "Child Care Passport confirmó la identidad de la institución. Las familias ven la insignia al compartir.",
+        "SUSPENDED": "La institución fue suspendida. Contacta a soporte."
+      }
+    },
+    "groups": {
+      "title": "Salas",
+      "subtitle": "Organiza al equipo y a los niños por sala o grupo. Cada miembro solo ve a los niños de sus salas; los administradores ven todo.",
+      "name": "Nombre de la sala",
+      "namePlaceholder": "Sala Azul, Maternal B, Preescolar 2…",
+      "create": "Crear sala",
+      "created": "Sala creada",
+      "deleteConfirm": "¿Eliminar la sala {name}? Los niños y el equipo no se eliminan, solo la asignación.",
+      "team": "Equipo",
+      "children": "Niños",
+      "adminSeesAll": "administra, ve todo",
+      "noChildren": "Aún no hay niños compartidos.",
+      "emptyTitle": "Todavía no hay salas",
+      "emptyBody": "Mientras no haya salas, todo el equipo ve a todos los niños compartidos.",
+      "scopingNote": "Con salas activas, cada miembro del equipo solo ve a los niños asignados a sus salas. Los niños sin sala solo son visibles para administradores.",
+      "unassigned": "{count, plural, =1 {1 niño sin sala} other {# niños sin sala}}: {names}"
     }
   },
   "proposals": {
@@ -846,7 +1004,18 @@
       "DOCUMENT_UPLOADED": "Documento subido",
       "DOCUMENT_VIEWED": "Consultó un documento",
       "DOCUMENT_DELETED": "Documento eliminado",
-      "DATA_EXPORTED": "Datos exportados"
+      "DATA_EXPORTED": "Datos exportados",
+      "GUARDIAN_INVITED": "Invitación de tutor enviada",
+      "GUARDIAN_INVITATION_ACCEPTED": "Invitación de tutor aceptada",
+      "GUARDIAN_INVITATION_DECLINED": "Invitación de tutor rechazada",
+      "GUARDIAN_INVITATION_REVOKED": "Invitación de tutor cancelada",
+      "ACCOUNT_DELETION_REQUESTED": "Eliminación de cuenta solicitada",
+      "INSTITUTION_UPDATED": "Datos de la institución actualizados",
+      "INSTITUTION_VERIFICATION_REQUESTED": "Verificación solicitada",
+      "INSTITUTION_VERIFIED": "Institución verificada",
+      "INSTITUTION_GROUP_CREATED": "Sala creada",
+      "INSTITUTION_GROUP_UPDATED": "Sala actualizada",
+      "INSTITUTION_GROUP_DELETED": "Sala eliminada"
     }
   },
   "notifications": {
@@ -867,7 +1036,10 @@
       "ACKNOWLEDGEMENT_COMPLETED": "{actorName} confirmó la lectura de la información crítica de {childName}",
       "INSTITUTION_REQUEST": "{actorName} quiere compartir el perfil de {childName} con tu institución",
       "INSTITUTION_CONNECTED": "{institutionName} aceptó el perfil de {childName}",
-      "SHARE_OPENED": "Un enlace de cuidado fue abierto"
+      "SHARE_OPENED": "Un enlace de cuidado fue abierto",
+      "GUARDIAN_INVITED": "{actorName} te invitó a ser tutor de {childName}",
+      "GUARDIAN_INVITATION_ACCEPTED": "{actorName} aceptó la invitación y ya es tutor de {childName}",
+      "INSTITUTION_VERIFIED": "{institutionName} fue verificada"
     }
   },
   "documents": {
@@ -902,11 +1074,24 @@
     "export": "Exportar mis datos",
     "exportHint": "Descarga un JSON con los perfiles, accesos, consentimientos y registros de tus hijos.",
     "deleteAccount": "Eliminar cuenta",
-    "deleteHint": "Disponible próximamente. Escríbenos para eliminar tu cuenta y la información de tus hijos.",
+    "deleteHint": "Se revocan todos los accesos y se retiran los perfiles de los que eres el único tutor principal.",
     "emailVerified": "Correo confirmado",
     "emailUnverified": "Correo sin confirmar",
     "resendVerification": "Reenviar confirmación",
-    "verificationSent": "Te enviamos un nuevo enlace de confirmación."
+    "verificationSent": "Te enviamos un nuevo enlace de confirmación.",
+    "deletion": {
+      "cta": "Eliminar mi cuenta",
+      "title": "Eliminar cuenta",
+      "body": "Esta acción es definitiva pasados 30 días. Antes de continuar, exporta tus datos si los necesitas.",
+      "blocked": "Eres la única persona administradora de {names}. Agrega otro administrador o elimina la institución antes de continuar.",
+      "consequences": {
+        "children": "Los perfiles de los que eres el único tutor principal se retiran y todos sus accesos se revocan.",
+        "access": "Se cierran tus sesiones y se cancelan las invitaciones que enviaste.",
+        "grace": "Tus datos se conservan 30 días por si te arrepientes; después se eliminan de forma permanente."
+      },
+      "typeToConfirm": "Escribe ELIMINAR para confirmar",
+      "confirm": "Eliminar definitivamente"
+    }
   },
   "errors": {
     "VALIDATION_ERROR": "Revisa los campos marcados.",

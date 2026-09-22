@@ -41,6 +41,7 @@ export default async function NotificationsPage() {
               childId?: string;
               institutionId?: string;
               proposalId?: string;
+              invitationId?: string;
               actorName?: string;
               childName?: string;
               institutionName?: string;
@@ -53,8 +54,9 @@ export default async function NotificationsPage() {
               decision: data.decision ?? "",
             };
             const title = t.has(`types.${n.type}`) ? t(`types.${n.type}`, values) : n.title;
-            const href =
-              data.proposalId && data.childId
+            const href = data.invitationId
+              ? "/app/invitations"
+              : data.proposalId && data.childId
                 ? `/app/children/${data.childId}/proposals`
                 : data.childId
                   ? `/app/children/${data.childId}/activity`

@@ -7,10 +7,11 @@ import type { Actor } from "@/modules/identity/domain/types";
 import { authorizationService } from "@/modules/authorization/application/authorization.service";
 import { auditService } from "@/modules/audit/application/audit.service";
 import { storage } from "../infrastructure/storage";
+import { ALLOWED_DOCUMENT_TYPES, extensionFor, sniffMime } from "@/shared/security/mime";
 
 const MAX_BYTES = 10 * 1024 * 1024;
-const ALLOWED_TYPES = new Set(["application/pdf", "image/jpeg", "image/png", "image/webp", "image/heic"]);
 const SIGNED_URL_TTL = 5 * 60;
+
 
 export const documentService = {
   async upload(
@@ -25,10 +26,13 @@ export const documentService = {
     if (!title) throw new AppError("VALIDATION_ERROR", "Title is required.");
     if (input.file.size === 0 || input.file.size > MAX_BYTES)
       throw new AppError("VALIDATION_ERROR", "File must be between 1 byte and 10 MB.");
-    if (!ALLOWED_TYPES.has(input.file.type)) throw new AppError("VALIDATION_ERROR", "Only PDF and images are allowed.");
-    const ext = input.file.type === "application/pdf" ? "pdf" : input.file.type.split("/")[1];
+    if (!ALLOWED_DOCUMENT_TYPES.has(input.file.type)) throw new AppError("VALIDATION_ERROR", "Only PDF and images are allowed.");
+    const ext = extensionFor(input.file.type);
     const key = `children/${childId}/documents/${randomUUID()}.${ext}`;
-    await storage().put(key, Buffer.from(await input.file.arrayBuffer()), input.file.type);
+    const bytes = Buffer.from(await input.file.arrayBuffer());
+    const sniffed = sniffMime(bytes);
+    if (!sniffed || sniffed !== input.file.type) throw new AppError("VALIDATION_ERROR", "The file content does not match its type.");
+    await storage().put(key, bytes, input.file.type);
     const doc = await prisma.document.create({
       data: {
         childId,

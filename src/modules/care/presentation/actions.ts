@@ -6,11 +6,9 @@ import { z } from "zod";
 import { AppError } from "@/shared/errors/app-error";
 import { env } from "@/shared/config/env";
 import { getRequestMeta } from "@/shared/security/request-context";
-import { CRITICAL_CATEGORIES } from "@/shared/domain/care-vocabulary";
 import { fail, type ActionState } from "@/shared/http/action-state";
 import { toActionState } from "@/shared/http/action-errors";
 import { sharingService } from "@/modules/sharing/application/sharing.service";
-import { auditService } from "@/modules/audit/application/audit.service";
 import { CareEventType } from "@/generated/prisma/enums";
 import { careService } from "../application/care.service";
 import { resolveCarePass } from "./care-pass-context";
@@ -43,37 +41,6 @@ export async function verifyPinAction(token: string, _prev: ActionState, form: F
       });
     }
     revalidatePath(`/s/${token}`, "layout");
-    return { ok: true };
-  } catch (err) {
-    return toActionState(err);
-  }
-}
-
-/**
- * Counts the opening once per device session (seen cookie) and audits what
- * the caregiver can see. Called from the client on first render.
- */
-export async function openCarePassAction(token: string): Promise<ActionState> {
-  try {
-    const ctx = await okContext(token);
-    if (ctx.seen) return { ok: true };
-    const meta = await getRequestMeta();
-    await sharingService.recordOpen(ctx.linkId, ctx.actor, ctx.child.id, ctx.categories, meta);
-    const critical = ctx.categories.some((c) => CRITICAL_CATEGORIES.includes(c));
-    await auditService.record({
-      type: critical ? "CRITICAL_DATA_VIEWED" : "PROFILE_VIEWED",
-      actor: ctx.actor,
-      childId: ctx.child.id,
-      resourceType: "ChildProfile",
-      resourceId: ctx.child.id,
-      dataCategories: ctx.categories,
-      meta,
-    });
-    const store = await cookies();
-    store.set(sharingService.seenCookieName(ctx.linkId), sharingService.issueSeenCookie(ctx.linkId), {
-      ...cookieOpts,
-      maxAge: 12 * 60 * 60,
-    });
     return { ok: true };
   } catch (err) {
     return toActionState(err);

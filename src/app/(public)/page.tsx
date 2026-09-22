@@ -1,6 +1,20 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { ArrowRight, Eye, Lock, Share2, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  BellRing,
+  Building2,
+  CheckCircle2,
+  Eye,
+  History,
+  Lock,
+  Share2,
+  ShieldCheck,
+  Sparkles,
+  TimerOff,
+  Users,
+  UserRound,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
@@ -13,6 +27,20 @@ export default async function LandingPage() {
     { icon: Share2, key: "share" as const },
   ];
   const steps = ["one", "two", "three"] as const;
+  const who = [
+    { icon: Users, key: "family" as const },
+    { icon: UserRound, key: "babysitter" as const },
+    { icon: Building2, key: "institution" as const },
+  ];
+  const assurance = [
+    { icon: Lock, key: "revoke" as const },
+    { icon: TimerOff, key: "expire" as const },
+    { icon: History, key: "log" as const },
+    { icon: CheckCircle2, key: "ack" as const },
+    { icon: BellRing, key: "change" as const },
+    { icon: ShieldCheck, key: "truth" as const },
+  ];
+  const institutionPoints = ["ready", "rooms", "propose", "consent"] as const;
 
   return (
     <div className="flex flex-1 flex-col">
@@ -71,12 +99,50 @@ export default async function LandingPage() {
         </ol>
       </section>
 
+      <section className="border-y bg-card">
+        <div className="mx-auto w-full max-w-6xl px-4 py-16">
+          <h2 className="text-2xl font-semibold sm:text-3xl">{t("whoTitle")}</h2>
+          <p className="mt-2 max-w-2xl text-muted-foreground">{t("whoSubtitle")}</p>
+          <ul className="mt-8 grid gap-4 md:grid-cols-3">
+            {who.map(({ icon: Icon, key }) => (
+              <li key={key} className="rounded-2xl border bg-background p-5">
+                <span className="mb-3 inline-flex size-10 items-center justify-center rounded-xl bg-accent text-accent-foreground">
+                  <Icon className="size-5" aria-hidden />
+                </span>
+                <h3 className="font-semibold">{t(`who.${key}.title`)}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t(`who.${key}.body`)}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="mx-auto w-full max-w-6xl px-4 py-16">
+        <h2 className="text-2xl font-semibold sm:text-3xl">{t("assuranceTitle")}</h2>
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {assurance.map(({ icon: Icon, key }) => (
+            <li key={key} className="flex gap-3 rounded-2xl border bg-card p-4">
+              <Icon className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
+              <p className="text-sm leading-relaxed">{t(`assurance.${key}`)}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       <section className="mx-auto w-full max-w-6xl px-4 pb-16">
         <Card className="bg-primary text-primary-foreground">
           <CardContent className="flex flex-col gap-6 py-10 md:flex-row md:items-center md:justify-between">
             <div className="max-w-2xl">
               <h2 className="text-2xl font-semibold">{t("institutionsTitle")}</h2>
               <p className="mt-2 leading-relaxed text-primary-foreground/85">{t("institutionsBody")}</p>
+              <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                {institutionPoints.map((key) => (
+                  <li key={key} className="flex items-start gap-2 text-sm text-primary-foreground/90">
+                    <CheckCircle2 className="mt-0.5 size-4 shrink-0" aria-hidden />
+                    {t(`institutionsPoints.${key}`)}
+                  </li>
+                ))}
+              </ul>
             </div>
             <Button asChild size="lg" variant="secondary" className="h-12 shrink-0 px-6 text-base">
               <Link href="/register?intent=institution">

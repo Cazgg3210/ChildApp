@@ -12,6 +12,9 @@ export const NotificationTypes = [
   "INSTITUTION_REQUEST",
   "INSTITUTION_CONNECTED",
   "SHARE_OPENED",
+  "GUARDIAN_INVITED",
+  "GUARDIAN_INVITATION_ACCEPTED",
+  "INSTITUTION_VERIFIED",
 ] as const;
 
 export type NotificationType = (typeof NotificationTypes)[number];

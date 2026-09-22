@@ -25,7 +25,9 @@ export default async function InstitutionLayout({ children, params }: LayoutProp
     { href: `${base}/requests`, label: t("requests.title"), icon: "inbox", badge: pending },
     { href: `${base}/alerts`, label: t("alerts.title"), icon: "alert" },
     { href: `${base}/proposals`, label: t("proposals.title"), icon: "proposals" },
+    { href: `${base}/groups`, label: t("groups.title"), icon: "door" },
     { href: `${base}/members`, label: t("members.title"), icon: "building" },
+    { href: `${base}/settings`, label: t("settings.title"), icon: "settings" },
   ];
   return (
     <AppShell user={user} items={items} area="institution" unread={unread} showParentLink subtitle={institution.name}>

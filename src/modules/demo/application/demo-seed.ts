@@ -72,6 +72,22 @@ export async function runDemoSeed(): Promise<DemoSeedResult> {
     emailVerifiedAt: new Date(),
     isDemo: true,
   });
+  const andrea: UserActor = userActor({
+    ...users.coGuardian,
+    locale: "es",
+    timezone: "America/Mexico_City",
+    emailVerifiedAt: new Date(),
+    isDemo: true,
+  });
+  /** Guardianship is never granted silently: the seed goes through invite → accept. */
+  const coGuardian = async (childId: string) => {
+    const { invitation } = await childrenService.inviteGuardian(luis, childId, {
+      email: users.coGuardian.email,
+      role: "OWNER",
+      relationshipLabel: "Madre",
+    });
+    await childrenService.acceptInvitation(andrea, invitation.id);
+  };
 
   // --- Mateo --------------------------------------------------------------
   const mateo = await childrenService.create(luis, {
@@ -82,7 +98,7 @@ export async function runDemoSeed(): Promise<DemoSeedResult> {
     primaryLanguage: "es",
     secondaryLanguages: ["en"],
   });
-  await childrenService.addGuardian(luis, mateo.id, users.coGuardian.email, "OWNER", "Madre");
+  await coGuardian(mateo.id);
 
   await profileService.addItems(luis, mateo.id, [
     {
@@ -243,16 +259,36 @@ export async function runDemoSeed(): Promise<DemoSeedResult> {
         label: "Andrea Molina",
         data: { relationship: "Madre", phone: "55 1234 5678" },
       },
-      { section: "HEALTH", itemType: "ALLERGY", label: "Ninguna conocida", criticality: "INFORMATIONAL" },
+      // Explicit declarations: "none" is a fact, not a gap (Care Readiness).
+      { section: "HEALTH", itemType: "NO_KNOWN_ALLERGIES", label: "NO_KNOWN_ALLERGIES" },
+      { section: "HEALTH", itemType: "NO_MEDICATIONS", label: "NO_MEDICATIONS" },
       { section: "SLEEP", itemType: "SCHEDULE", label: "Siesta", data: { time: "12:30" } },
       { section: "BATHROOM", itemType: "DIAPER", label: "Usa pañal", details: "Cambio cada 3 horas aproximadamente." },
     ],
   });
-  await childrenService.addGuardian(luis, valentina.id, users.coGuardian.email, "OWNER", "Madre");
+  await coGuardian(valentina.id);
 
-  // --- Institution: Kinder Arcoíris -----------------------------------------
+  // --- Institution: Kinder Arcoíris (verified, with rooms) -------------------
   const kinder = await institutionService.create(mariana, { name: "Kinder Arcoíris", type: "KINDERGARTEN" });
-  await institutionService.addMember(mariana, kinder.id, users.teacher.email, "MEMBER", "Maestra de Preescolar 2");
+  await institutionService.updateDetails(mariana, kinder.id, {
+    legalName: "Centro Educativo Arcoíris S.C.",
+    contactName: "Mariana Ruiz",
+    phone: "55 5555 0200",
+    address: "Av. Universidad 1200, Coyoacán, CDMX",
+    website: "https://kinderarcoiris.example.com",
+  });
+  await institutionService.requestVerification(mariana, kinder.id);
+  await institutionService.setVerificationStatus(kinder.id, "VERIFIED");
+  const teacherMember = await institutionService.addMember(
+    mariana,
+    kinder.id,
+    users.teacher.email,
+    "MEMBER",
+    "Maestra de Preescolar 2",
+  );
+  const salaAzul = await institutionService.createGroup(mariana, kinder.id, "Sala Azul");
+  const salaVerde = await institutionService.createGroup(mariana, kinder.id, "Sala Verde");
+  await institutionService.setGroupMember(mariana, kinder.id, salaAzul.id, teacherMember.id, true);
 
   // --- Shares ----------------------------------------------------------------
   const now = new Date();
@@ -308,6 +344,101 @@ export async function runDemoSeed(): Promise<DemoSeedResult> {
   });
   const relation = await prisma.childInstitution.findUniqueOrThrow({ where: { accessGrantId: kinderShare.grant.id } });
   await institutionService.acceptRequest(mariana, kinder.id, relation.id);
+  await institutionService.setGroupChild(mariana, kinder.id, salaAzul.id, relation.id, true);
+
+  // --- Other families in the kinder (so the institution dashboard tells a story) ----
+  const otherFamilies: {
+    parent: { email: string; name: string };
+    child: { firstName: string; lastName: string; years: number };
+    items: Parameters<typeof profileService.addItems>[2];
+    group: string | null;
+    staleAllergy?: boolean;
+  }[] = [
+    {
+      parent: { email: "paola@example.com", name: "Paola Jiménez" },
+      child: { firstName: "Emilia", lastName: "Torres Jiménez", years: 3.6 },
+      group: salaAzul.id,
+      items: [
+        { section: "EMERGENCY", itemType: "CONTACT", label: "Paola Jiménez", data: { relationship: "Madre", phone: "55 2222 1010" } },
+        { section: "HEALTH", itemType: "NO_KNOWN_ALLERGIES", label: "NO_KNOWN_ALLERGIES" },
+        { section: "HEALTH", itemType: "NO_MEDICATIONS", label: "NO_MEDICATIONS" },
+        { section: "SLEEP", itemType: "COMFORT_OBJECT", label: "Conejo de peluche (Coco)" },
+        { section: "PLAY", itemType: "INTEREST", label: "Pintar con los dedos", criticality: "INFORMATIONAL" },
+      ],
+    },
+    {
+      parent: { email: "diego@example.com", name: "Diego Ramírez" },
+      child: { firstName: "Santiago", lastName: "Ramírez Vega", years: 4.1 },
+      group: salaVerde.id,
+      staleAllergy: true,
+      items: [
+        { section: "EMERGENCY", itemType: "CONTACT", label: "Diego Ramírez", data: { relationship: "Padre", phone: "55 3333 2020" } },
+        {
+          section: "NUTRITION",
+          itemType: "FOOD_ALLERGY",
+          label: "Lactosa",
+          details: "Intolerancia fuerte: evitar leche y derivados. Leche deslactosada en su mochila.",
+          data: { severity: "moderate", reaction: "Dolor abdominal y vómito" },
+        },
+        { section: "HEALTH", itemType: "NO_MEDICATIONS", label: "NO_MEDICATIONS" },
+        { section: "COMMUNICATION", itemType: "LANGUAGE", label: "Español e inglés en casa" },
+      ],
+    },
+    {
+      parent: { email: "fernanda@example.com", name: "Fernanda López" },
+      child: { firstName: "Regina", lastName: "López Mora", years: 3.2 },
+      group: null,
+      items: [
+        { section: "HEALTH", itemType: "MEDICATION", label: "Salbutamol (inhalador)", details: "Solo en crisis; 2 disparos con espaciador.", data: { dose: "2 disparos", schedule: "En crisis" } },
+        { section: "SLEEP", itemType: "SCHEDULE", label: "Siesta", data: { time: "13:30" } },
+      ],
+    },
+  ];
+  for (const family of otherFamilies) {
+    const parentUser = await prisma.user.create({
+      data: {
+        email: family.parent.email,
+        name: family.parent.name,
+        passwordHash,
+        emailVerifiedAt: new Date(),
+        isDemo: true,
+        locale: "es",
+      },
+      select: { id: true, email: true, name: true },
+    });
+    const parent = userActor({
+      ...parentUser,
+      locale: "es",
+      timezone: "America/Mexico_City",
+      emailVerifiedAt: new Date(),
+      isDemo: true,
+    });
+    const child = await childrenService.create(parent, {
+      firstName: family.child.firstName,
+      lastName: family.child.lastName,
+      dateOfBirth: subDays(now, Math.round(family.child.years * 365)),
+      initialItems: family.items,
+    });
+    const share = await sharingService.create(parent, child.id, {
+      recipientKind: "INSTITUTION",
+      recipientName: kinder.name,
+      institutionCode: kinder.inviteCode,
+      dataCategories: ["EMERGENCY", "ALLERGIES", "MEDICATION", "NUTRITION", "SLEEP", "COMMUNICATION", "COMFORT"],
+      capabilities: ["ACKNOWLEDGE", "PROPOSE_CHANGES"],
+      expiresAt: addMonths(now, family.group === salaVerde.id ? 1 : 9),
+      singleUse: false,
+    });
+    const rel = await prisma.childInstitution.findUniqueOrThrow({ where: { accessGrantId: share.grant.id } });
+    await institutionService.acceptRequest(mariana, kinder.id, rel.id);
+    if (family.group) await institutionService.setGroupChild(mariana, kinder.id, family.group, rel.id, true);
+    if (family.staleAllergy) {
+      // Backdated so the institution sees a "needs review" example.
+      await prisma.profileItem.updateMany({
+        where: { childId: child.id, itemType: "FOOD_ALLERGY" },
+        data: { updatedAt: subDays(now, 400) },
+      });
+    }
+  }
 
   // Valentina is only shared with grandma.
   await sharingService.create(luis, valentina.id, {

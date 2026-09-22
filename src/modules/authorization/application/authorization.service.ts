@@ -56,7 +56,12 @@ async function loadFacts(actor: Actor, childId: string): Promise<AccessFacts> {
       }),
       prisma.institutionMember.findMany({
         where: { userId: actor.userId },
-        select: { institutionId: true, role: true },
+        select: {
+          institutionId: true,
+          role: true,
+          groups: { select: { groupId: true } },
+          institution: { select: { _count: { select: { groups: true } } } },
+        },
       }),
     ]);
     facts.guardianRole = guardian?.role ?? null;
@@ -68,13 +73,22 @@ async function loadFacts(actor: Actor, childId: string): Promise<AccessFacts> {
           subjectType: "INSTITUTION",
           subjectInstitutionId: { in: memberships.map((m) => m.institutionId) },
         },
-        include: { shareLink: true },
+        include: { shareLink: true, childInstitution: { select: { groups: { select: { groupId: true } } } } },
       });
-      facts.institutionGrants = institutionGrants.map((g) => ({
-        institutionId: g.subjectInstitutionId!,
-        institutionRole: memberships.find((m) => m.institutionId === g.subjectInstitutionId)!.role,
-        grant: toGrantView(g),
-      }));
+      for (const g of institutionGrants) {
+        const membership = memberships.find((m) => m.institutionId === g.subjectInstitutionId)!;
+        // Rooms: once an institution has groups, MEMBERs only reach the children of their own groups.
+        if (membership.role === "MEMBER" && membership.institution._count.groups > 0) {
+          const mine = new Set(membership.groups.map((x) => x.groupId));
+          const childGroups = g.childInstitution?.groups ?? [];
+          if (!childGroups.some((x) => mine.has(x.groupId))) continue;
+        }
+        facts.institutionGrants.push({
+          institutionId: g.subjectInstitutionId!,
+          institutionRole: membership.role,
+          grant: toGrantView(g),
+        });
+      }
     }
   }
   return facts;

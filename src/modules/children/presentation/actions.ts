@@ -8,8 +8,9 @@ import { formString, formStrings, type ActionState } from "@/shared/http/action-
 import { toActionState } from "@/shared/http/action-errors";
 import { childrenService } from "../application/children.service";
 import { profileService } from "@/modules/profiles/application/profile.service";
+import { DECLARATION_TYPES } from "@/modules/profiles/domain/catalog";
 import {
-  addGuardianSchema,
+  inviteGuardianSchema,
   childBasicsSchema,
   createChildSchema,
   profileItemInputSchema,
@@ -63,26 +64,78 @@ export async function deleteChildAction(childId: string): Promise<ActionState> {
   redirect("/app/children");
 }
 
-export async function addGuardianAction(childId: string, _prev: ActionState, form: FormData): Promise<ActionState> {
+export async function inviteGuardianAction(childId: string, _prev: ActionState, form: FormData): Promise<ActionState> {
   try {
     const { actor } = await requireUserActor();
-    const input = addGuardianSchema.parse({
+    const input = inviteGuardianSchema.parse({
       email: formString(form, "email"),
       role: formString(form, "role") || "CO_GUARDIAN",
       relationshipLabel: formString(form, "relationshipLabel") || undefined,
     });
-    await childrenService.addGuardian(
-      actor,
-      childId,
-      input.email,
-      input.role,
-      input.relationshipLabel,
-      await getRequestMeta(),
-    );
+    await childrenService.inviteGuardian(actor, childId, input, await getRequestMeta());
   } catch (err) {
     return toActionState(err);
   }
-  revalidatePath(`/app/children/${childId}`);
+  revalidatePath(`/app/children/${childId}`, "layout");
+  return { ok: true };
+}
+
+export async function revokeInvitationAction(childId: string, invitationId: string): Promise<ActionState> {
+  try {
+    const { actor } = await requireUserActor();
+    await childrenService.revokeInvitation(actor, childId, invitationId, await getRequestMeta());
+  } catch (err) {
+    return toActionState(err);
+  }
+  revalidatePath(`/app/children/${childId}`, "layout");
+  return { ok: true };
+}
+
+export async function acceptInvitationAction(invitationId: string): Promise<ActionState<{ childId: string }>> {
+  try {
+    const { actor } = await requireUserActor();
+    const { childId } = await childrenService.acceptInvitation(actor, invitationId, await getRequestMeta());
+    revalidatePath("/app", "layout");
+    return { ok: true, data: { childId } };
+  } catch (err) {
+    return toActionState(err);
+  }
+}
+
+export async function declineInvitationAction(invitationId: string): Promise<ActionState> {
+  try {
+    const { actor } = await requireUserActor();
+    await childrenService.declineInvitation(actor, invitationId, await getRequestMeta());
+    revalidatePath("/app", "layout");
+    return { ok: true };
+  } catch (err) {
+    return toActionState(err);
+  }
+}
+
+export async function declareNoneAction(childId: string, kind: string): Promise<ActionState> {
+  try {
+    const { actor } = await requireUserActor();
+    const declaration = DECLARATION_TYPES.find((d) => d === kind);
+    if (!declaration) throw new Error("Unknown declaration");
+    await profileService.declareNone(actor, childId, declaration, await getRequestMeta());
+  } catch (err) {
+    return toActionState(err);
+  }
+  revalidatePath(`/app/children/${childId}`, "layout");
+  revalidatePath("/app");
+  return { ok: true };
+}
+
+export async function reconfirmItemAction(childId: string, itemId: string): Promise<ActionState> {
+  try {
+    const { actor } = await requireUserActor();
+    await profileService.reconfirmItem(actor, childId, itemId, await getRequestMeta());
+  } catch (err) {
+    return toActionState(err);
+  }
+  revalidatePath(`/app/children/${childId}`, "layout");
+  revalidatePath("/app");
   return { ok: true };
 }
 

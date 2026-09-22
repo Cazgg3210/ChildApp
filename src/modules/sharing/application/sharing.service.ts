@@ -6,7 +6,7 @@ import { generateSecureToken, hashToken, signValue, verifySignedValue } from "@/
 import { hashPin, verifyPin } from "@/shared/security/password";
 import { rateLimiter } from "@/shared/security/rate-limit";
 import type { RequestMeta } from "@/shared/security/request-context";
-import type { Capability, DataCategory } from "@/shared/domain/care-vocabulary";
+import { CRITICAL_CATEGORIES, type Capability, type DataCategory } from "@/shared/domain/care-vocabulary";
 import type { Actor, UserActor } from "@/modules/identity/domain/types";
 import { authorizationService, toGrantView } from "@/modules/authorization/application/authorization.service";
 import {
@@ -20,6 +20,7 @@ import { analyticsService } from "@/modules/analytics/application/analytics.serv
 import { notificationService } from "@/modules/notifications/application/notification.service";
 import { consentService, purposeFor } from "@/modules/consent/application/consent.service";
 import { institutionRepository } from "@/modules/institutions/infrastructure/institution.repository";
+import { identityService } from "@/modules/identity/application/identity.service";
 import type { CareShareInput } from "../domain/share-input";
 import { sharingRepository, type GrantWithRelations } from "../infrastructure/sharing.repository";
 
@@ -56,6 +57,7 @@ export const sharingService = {
    */
   async create(actor: UserActor, childId: string, input: CareShareInput, meta?: RequestMeta): Promise<CreatedShare> {
     await authorizationService.assert(actor, "share.create", childId);
+    await identityService.assertVerified(actor.userId);
     const now = new Date();
     const startsAt = input.startsAt ?? now;
     const expiresAt = input.expiresAt ?? null;
@@ -370,9 +372,38 @@ export const sharingService = {
     return signValue(`${linkId}|${Date.now() + PIN_COOKIE_TTL_MS}`, env().AUTH_SECRET);
   },
 
-  /** Counts an opening (single-use links become exhausted after this). */
-  async recordOpen(linkId: string, actor: Actor, childId: string, categories: DataCategory[], meta?: RequestMeta) {
-    await sharingRepository.recordLinkUse(linkId);
+  /**
+   * Consume-and-exchange for a link opening: validates, atomically spends one
+   * use (single-use links cannot be opened twice, even concurrently), audits
+   * what the viewer can see and returns the signed "seen" cookie value that
+   * lets this device keep reading the pass.
+   */
+  async consumeOpen(token: string, meta?: RequestMeta) {
+    const resolved = await this.resolveToken(token);
+    if (!resolved.ok) return resolved;
+    const { link, grant, child } = resolved;
+    const actor: Actor = { type: "link", grantId: grant.id, linkId: link.id, childId: child.id, recipientName: grant.recipientName };
+    const consumed = await sharingRepository.consumeLinkUse(link.id);
+    if (!consumed) {
+      await auditService.record({ type: "SHARE_LINK_DENIED", actor, childId: child.id, resourceType: "ShareLink", resourceId: link.id, context: { reason: "ACCESS_EXHAUSTED" }, meta });
+      return { ok: false as const, reason: "ACCESS_EXHAUSTED" as const };
+    }
+    await this.auditOpen(link.id, actor, child.id, resolved.categories, meta);
+    return { ok: true as const, linkId: link.id, seenCookie: this.issueSeenCookie(link.id), maxAge: PIN_COOKIE_TTL_MS / 1000 };
+  },
+
+  /** Audit trail for an opening: link opened + what categories were exposed. */
+  async auditOpen(linkId: string, actor: Actor, childId: string, categories: DataCategory[], meta?: RequestMeta) {
+    const critical = categories.some((c) => CRITICAL_CATEGORIES.includes(c));
+    await auditService.record({
+      type: critical ? "CRITICAL_DATA_VIEWED" : "PROFILE_VIEWED",
+      actor,
+      childId,
+      resourceType: "ChildProfile",
+      resourceId: childId,
+      dataCategories: categories,
+      meta,
+    });
     await auditService.record({
       type: "SHARE_LINK_OPENED",
       actor,

@@ -5,6 +5,7 @@ import { ProfileItemCard } from "@/components/feature/profile-item-card";
 import { DeleteItemButton, ProfileItemDialog } from "@/components/feature/profile-item-dialog";
 import { EmptyState } from "@/components/feature/page-header";
 import { VisibilityPanel } from "@/components/feature/visibility-panel";
+import { ReadinessCard } from "@/components/feature/readiness-card";
 import { profileService } from "@/modules/profiles/application/profile.service";
 import { sharingService } from "@/modules/sharing/application/sharing.service";
 import { SECTION_GROUPS, categoryOf, isSectionGroup } from "@/modules/profiles/domain/catalog";
@@ -80,6 +81,9 @@ export default async function ProfileGroupPage({ params }: PageProps<"/app/child
         })}
       </div>
       <aside className="space-y-4">
+        {(group === "health" || group === "emergency") && (
+          <ReadinessCard childId={id} items={items} editable showEnrichment={false} />
+        )}
         <VisibilityPanel visibility={visibility} guardians={child.guardians.map((g) => g.user.name)} />
         {aiEnabled && (
           <AssistantPanel childId={id} sections={[...sections]} icon={<Sparkles className="size-4" aria-hidden />} />

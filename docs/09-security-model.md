@@ -25,6 +25,10 @@ Todo el producto se trata como una plataforma de **información sensible de meno
 - Verificación de email: `AuthToken` (`EMAIL_VERIFICATION`, 24 h, un solo uso, hash en BD). En demo el enlace se imprime en consola (`ConsoleMailer`).
 - Reset de contraseña: `AuthToken` (`PASSWORD_RESET`, 1 h, un solo uso). Al resetear se incrementa `sessionVersion` → todas las sesiones caducan.
 - Respuestas de "olvidé mi contraseña" son idénticas exista o no el email (evita enumeración).
+- Rate limit de login en dos niveles: por IP (60 intentos / 15 min) y por IP+email (10 / 15 min), de modo que un atacante no puede bloquear a una víctima desde otra red.
+- `REQUIRE_EMAIL_VERIFICATION=true` (producción): compartir, invitar tutores y crear instituciones exigen correo confirmado (`EMAIL_NOT_VERIFIED`).
+- Tutores: nadie queda asociado a un niño sin aceptar. `GuardianInvitation` (token hasheado, 7 días, un uso) y la aceptación exige una cuenta con el mismo correo.
+- Eliminación de cuenta: solicitud → anonimización inmediata + revocación de todo + cierre de sesiones; purga definitiva a los 30 días (`scripts/purge-deleted-accounts.ts`).
 
 ## Autorización
 
@@ -62,7 +66,19 @@ Uso: define qué eventos de auditoría se emiten (`CRITICAL_DATA_VIEWED` cuando 
 
 ## Cabeceras HTTP
 
-`next.config.ts` añade: `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` restrictiva, `X-Robots-Tag: noindex` en `/s/*`, `/app/*`, `/institution/*`, `/api/*`.
+`next.config.ts` añade: `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` restrictiva, `X-Robots-Tag: noindex` en `/s/*`, `/app/*`, `/institution/*`, `/api/*`, y una `Content-Security-Policy` (`default-src 'self'`, `frame-ancestors 'none'`, `object-src 'none'`, fuentes de Google permitidas; `unsafe-eval` solo en desarrollo).
+
+## Documentos
+
+Cada carga se valida por contenido (`src/shared/security/mime.ts`: magic bytes de PDF/JPEG/PNG/WebP/HEIC) además del tipo declarado; si no coinciden se rechaza. Solo se aceptan esos formatos.
+
+## Visibilidad en Care Pass e instituciones
+
+La categoría compartida decide si un dato se muestra; la criticidad solo decide orden y estilo (`partitionForCarePass`). Todo dato de EMERGENCY/ALLERGIES/MEDICATION va al bloque destacado aunque sea INFORMATIONAL; nada autorizado se omite.
+
+## Enlaces de un solo uso
+
+El consumo es atómico en BD (`UPDATE ... WHERE useCount < maxUses`) en `/s/<token>/open`; con N aperturas concurrentes exactamente una entra y el resto recibe `ACCESS_EXHAUSTED`.
 
 ## Auditoría
 

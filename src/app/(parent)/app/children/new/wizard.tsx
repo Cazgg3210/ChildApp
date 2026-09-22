@@ -37,6 +37,7 @@ export function CreateChildWizard() {
     primaryLanguage: "es",
   });
   const [noAllergies, setNoAllergies] = useState(false);
+  const [noMedications, setNoMedications] = useState(false);
   const [allergies, setAllergies] = useState<Entry[]>([]);
   const [medications, setMedications] = useState<Entry[]>([]);
   const [contacts, setContacts] = useState<Entry[]>([{ label: "", a: "", b: "" }]);
@@ -52,6 +53,8 @@ export function CreateChildWizard() {
 
   const buildItems = (): ProfileItemPayload[] => {
     const items: ProfileItemPayload[] = [];
+    if (noAllergies) items.push({ section: "HEALTH", itemType: "NO_KNOWN_ALLERGIES", label: "NO_KNOWN_ALLERGIES" });
+    if (noMedications) items.push({ section: "HEALTH", itemType: "NO_MEDICATIONS", label: "NO_MEDICATIONS" });
     for (const a of allergies.filter((e) => e.label.trim())) {
       items.push({
         section: "HEALTH",
@@ -243,17 +246,31 @@ export function CreateChildWizard() {
                   )}
                 </div>
                 <div>
-                  <Label className="mb-2 block">{tp("itemTypes.MEDICATION")}</Label>
-                  <EntryList
-                    entries={medications}
-                    onChange={setMedications}
-                    addLabel={t("create.addMedication")}
-                    placeholder={tp("itemTypes.MEDICATION")}
-                    extra={[
-                      { key: "a", kind: "text", label: tp("fields.dose") },
-                      { key: "b", kind: "text", label: tp("fields.schedule") },
-                    ]}
-                  />
+                  <div className="mb-2 flex items-center justify-between">
+                    <Label>{tp("itemTypes.MEDICATION")}</Label>
+                    <label className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Checkbox
+                        checked={noMedications}
+                        onCheckedChange={(v) => {
+                          setNoMedications(Boolean(v));
+                          if (v) setMedications([]);
+                        }}
+                      />
+                      {t("create.noMedications")}
+                    </label>
+                  </div>
+                  {!noMedications && (
+                    <EntryList
+                      entries={medications}
+                      onChange={setMedications}
+                      addLabel={t("create.addMedication")}
+                      placeholder={tp("itemTypes.MEDICATION")}
+                      extra={[
+                        { key: "a", kind: "text", label: tp("fields.dose") },
+                        { key: "b", kind: "text", label: tp("fields.schedule") },
+                      ]}
+                    />
+                  )}
                 </div>
                 <div>
                   <Label className="mb-2 block">{tp("itemTypes.CONTACT")}</Label>

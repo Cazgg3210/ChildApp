@@ -46,17 +46,22 @@ export const identityService = {
     return user;
   },
 
-  /** Used by the Auth.js Credentials provider. Rate limited per email. */
-  async authenticateWithPassword(email: string, password: string) {
+  /**
+   * Used by the Auth.js Credentials provider. Two limits: a global one per IP
+   * and one per IP+email, so an attacker cannot lock a victim out by exhausting
+   * a per-email bucket from elsewhere.
+   */
+  async authenticateWithPassword(email: string, password: string, ipAddress = "unknown") {
     const normalized = email.trim().toLowerCase();
-    await rateLimiter.consume(`login:${normalized}`, 10, 15 * 60 * 1000);
+    await rateLimiter.consume(`login:ip:${ipAddress}`, 60, 15 * 60 * 1000);
+    await rateLimiter.consume(`login:${ipAddress}:${normalized}`, 10, 15 * 60 * 1000);
     const user = await userRepository.findByEmail(normalized);
     const ok = user ? await verifyPassword(password, user.passwordHash) : false;
     if (!user || !ok) {
       await auditService.record({ type: "LOGIN_FAILED", actor: systemActor, context: { email: normalized } });
       return null;
     }
-    await rateLimiter.reset(`login:${normalized}`);
+    await rateLimiter.reset(`login:${ipAddress}:${normalized}`);
     await auditService.record({
       type: "LOGIN_SUCCEEDED",
       actor: { type: "user", userId: user.id, email: user.email, name: user.name },
@@ -143,6 +148,17 @@ export const identityService = {
 
   getUserById(id: string) {
     return userRepository.findById(id);
+  },
+
+  /**
+   * Gate for actions that reach other people (sharing, inviting, creating an
+   * institution). Off by default for local demos; REQUIRE_EMAIL_VERIFICATION=true
+   * in production (docs/09-security-model.md).
+   */
+  async assertVerified(userId: string) {
+    if (!env().REQUIRE_EMAIL_VERIFICATION) return;
+    const user = await userRepository.findById(userId);
+    if (!user?.emailVerifiedAt) throw new AppError("EMAIL_NOT_VERIFIED", "Confirm your email to continue.");
   },
 
   updateProfile(userId: string, data: { name?: string; locale?: string; timezone?: string }) {

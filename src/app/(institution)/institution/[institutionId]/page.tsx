@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader, Stat, EmptyState } from "@/components/feature/page-header";
 import { AuditRow } from "@/components/feature/audit-row";
 import { CopyButton } from "@/components/feature/copy-button";
+import { VerificationBadge } from "@/components/feature/verification-badge";
 import { institutionService } from "@/modules/institutions/application/institution.service";
 import { loadInstitution } from "./_lib/load-institution";
 import { ChildrenTable } from "./children/children-table";
@@ -21,20 +22,52 @@ export default async function InstitutionDashboardPage({ params }: PageProps<"/i
 
   return (
     <div className="space-y-8">
-      <PageHeader title={institution.name} eyebrow={t(`create.types.${institution.type}`)} />
+      <PageHeader
+        title={
+          <span className="flex flex-wrap items-center gap-3">
+            {institution.name}
+            <VerificationBadge status={institution.verificationStatus} />
+          </span>
+        }
+        eyebrow={t(`create.types.${institution.type}`)}
+        actions={
+          institution.verificationStatus === "UNVERIFIED" ? (
+            <Link href={`${base}/settings`} className="text-sm text-primary underline-offset-4 hover:underline">
+              {t("verification.request")} →
+            </Link>
+          ) : undefined
+        }
+      />
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <Stat label={t("dashboard.children")} value={data.childrenCount} />
+        <Stat
+          label={t("dashboard.readyProfiles")}
+          value={`${data.readyProfiles}/${data.childrenCount}`}
+          hint={t("dashboard.readyHint")}
+          tone={data.childrenCount > 0 && data.readyProfiles === data.childrenCount ? "success" : "default"}
+        />
+        <Stat
+          label={t("dashboard.needsReview")}
+          value={data.needsReview}
+          hint={t("dashboard.needsReviewHint")}
+          tone={data.needsReview > 0 ? "important" : "default"}
+        />
         <Stat
           label={t("dashboard.criticalAlerts")}
           value={data.criticalAlerts}
           tone={data.criticalAlerts > 0 ? "critical" : "default"}
         />
-        <Stat label={t("dashboard.updatedProfiles")} value={data.updatedProfiles} hint={t("dashboard.updatedHint")} />
         <Stat
           label={t("dashboard.pendingAcks")}
           value={data.pendingAcks}
           tone={data.pendingAcks > 0 ? "important" : "success"}
+        />
+        <Stat
+          label={t("dashboard.expiringConsents")}
+          value={data.expiringConsents}
+          hint={t("dashboard.expiringHint")}
+          tone={data.expiringConsents > 0 ? "important" : "default"}
         />
       </div>
 

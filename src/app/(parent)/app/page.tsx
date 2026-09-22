@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
-import { AlertCircle, ArrowRight, Building2, Clock, Plus, Users } from "lucide-react";
+import { AlertCircle, ArrowRight, Building2, Clock, Mail, Plus, Users } from "lucide-react";
+import { ReadinessPill } from "@/components/feature/readiness-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -13,14 +14,16 @@ import { AuditRow } from "@/components/feature/audit-row";
 
 export default async function DashboardPage(props: PageProps<"/app">) {
   const user = await requireUser();
-  const [t, tc, locale, data, sp] = await Promise.all([
+  const [t, tc, locale, data, sp, invitations] = await Promise.all([
     getTranslations("dashboard"),
     getTranslations("common"),
     getLocale(),
     childrenService.dashboard(user.id),
     props.searchParams,
+    childrenService.listInvitationsForUser(user.email),
   ]);
-  const hour = new Date().getHours();
+  const hour =
+    Number(new Intl.DateTimeFormat("en-US", { hour: "numeric", hour12: false, timeZone: user.timezone }).format(new Date())) % 24;
   const period = hour < 12 ? "morning" : hour < 19 ? "afternoon" : "evening";
   const firstName = user.name.split(" ")[0];
   const childName = (id: string) => {
@@ -39,6 +42,24 @@ export default async function DashboardPage(props: PageProps<"/app">) {
         <Alert>
           <AlertCircle />
           <AlertDescription>{t("unverifiedEmail")}</AlertDescription>
+        </Alert>
+      )}
+
+      {invitations.length > 0 && (
+        <Alert className="border-primary/40 bg-primary/5">
+          <Mail />
+          <AlertDescription className="flex flex-wrap items-center justify-between gap-2">
+            <span>
+              {t("invitations", {
+                count: invitations.length,
+                name: invitations[0].child.preferredName ?? invitations[0].child.firstName,
+                inviter: invitations[0].invitedBy.name,
+              })}
+            </span>
+            <Button asChild size="sm">
+              <Link href="/app/invitations">{t("review")}</Link>
+            </Button>
+          </AlertDescription>
         </Alert>
       )}
 
@@ -71,7 +92,7 @@ export default async function DashboardPage(props: PageProps<"/app">) {
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
             {data.children.map(
-              ({ child, activeCaregivers, connectedInstitutions, changesThisWeek, criticalChangedAt }) => {
+              ({ child, activeCaregivers, connectedInstitutions, changesThisWeek, criticalChangedAt, readiness }) => {
                 const age = ageFromBirthDate(child.dateOfBirth);
                 return (
                   <Link
@@ -83,7 +104,10 @@ export default async function DashboardPage(props: PageProps<"/app">) {
                       <CardContent className="flex gap-4 pt-6">
                         <ChildAvatar name={`${child.firstName} ${child.lastName}`} seed={child.id} size="lg" />
                         <div className="min-w-0 flex-1">
-                          <p className="text-lg font-semibold">{child.preferredName ?? child.firstName}</p>
+                          <p className="flex flex-wrap items-center gap-2 text-lg font-semibold">
+                            {child.preferredName ?? child.firstName}
+                            <ReadinessPill readiness={readiness} />
+                          </p>
                           <p className="text-sm text-muted-foreground">
                             {age.years >= 2
                               ? tc("years", { count: age.years })
@@ -134,14 +158,18 @@ export default async function DashboardPage(props: PageProps<"/app">) {
               {data.pendingProposals === 0 &&
                 data.pendingInstitutions.length === 0 &&
                 data.expiringGrants.length === 0 && <p className="text-muted-foreground">{t("alertsEmpty")}</p>}
-              {data.pendingProposals > 0 && (
-                <div className="flex items-center justify-between gap-2 rounded-xl bg-important-soft p-3">
-                  <span>{t("pendingProposals", { count: data.pendingProposals })}</span>
-                  <Button asChild size="sm" variant="secondary">
-                    <Link href={`/app/children/${data.children[0].child.id}/proposals`}>{t("review")}</Link>
-                  </Button>
-                </div>
-              )}
+              {data.children
+                .filter((c) => c.pendingProposals > 0)
+                .map((c) => (
+                  <div key={c.child.id} className="flex items-center justify-between gap-2 rounded-xl bg-important-soft p-3">
+                    <span>
+                      {c.child.preferredName ?? c.child.firstName}: {t("pendingProposals", { count: c.pendingProposals })}
+                    </span>
+                    <Button asChild size="sm" variant="secondary">
+                      <Link href={`/app/children/${c.child.id}/proposals`}>{t("review")}</Link>
+                    </Button>
+                  </div>
+                ))}
               {data.pendingInstitutions.map((p) => (
                 <div key={`${p.childId}-${p.name}`} className="rounded-xl bg-muted p-3 text-muted-foreground">
                   {childName(p.childId)}: {t("pendingInstitution", { name: p.name })}

@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
-import { Phone } from "lucide-react";
+import { CheckCircle2, Phone } from "lucide-react";
+import { isDeclaration } from "@/modules/profiles/domain/catalog";
 import type { ProfileItem } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
 import { CriticalityBadge, ProvenanceBadge } from "./badges";
@@ -37,6 +38,26 @@ export function ProfileItemCard({
   const data = itemData(item);
   const phone = data.phone;
   const typeLabel = t.has(`itemTypes.${item.itemType}`) ? t(`itemTypes.${item.itemType}`) : item.itemType;
+
+  // Explicit "none declared" facts read as a confirmation, not as a data row.
+  if (isDeclaration(item.itemType)) {
+    return (
+      <article className={cn("flex items-center justify-between gap-3 rounded-2xl border border-success/40 bg-success-soft/50 p-4", className)}>
+        <div className="flex items-center gap-3">
+          <CheckCircle2 className="size-5 shrink-0 text-success" aria-hidden />
+          <div>
+            <h4 className="font-semibold leading-snug">{typeLabel}</h4>
+            {showProvenance && (
+              <p className="text-xs text-muted-foreground">
+                {t("readiness.declaredBy", { when: new Date(item.updatedAt).toLocaleDateString() })}
+              </p>
+            )}
+          </div>
+        </div>
+        {actions}
+      </article>
+    );
+  }
 
   return (
     <article className={cn("rounded-2xl border p-4", toneByCriticality[item.criticality], className)}>

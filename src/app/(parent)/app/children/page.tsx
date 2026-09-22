@@ -6,10 +6,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ChildAvatar } from "@/components/feature/child-avatar";
 import { EmptyState, PageHeader } from "@/components/feature/page-header";
 import { Progress } from "@/components/ui/progress";
+import { ReadinessPill } from "@/components/feature/readiness-card";
+import { careReadiness, enrichment } from "@/modules/profiles/domain/readiness";
 import { requireUser } from "@/modules/identity/application/session";
 import { childrenService } from "@/modules/children/application/children.service";
 import { profileRepository } from "@/modules/profiles/infrastructure/profile.repository";
-import { completeness } from "@/modules/profiles/application/profile.service";
 import { ageFromBirthDate, formatRelative } from "@/shared/utils/dates";
 
 export default async function ChildrenPage() {
@@ -52,7 +53,9 @@ export default async function ChildrenPage() {
         <ul className="grid gap-4 md:grid-cols-2">
           {children.map((child) => {
             const age = ageFromBirthDate(child.dateOfBirth);
-            const pct = completeness(items.filter((i) => i.childId === child.id)).percent;
+            const childItems = items.filter((i) => i.childId === child.id);
+            const readiness = careReadiness(childItems);
+            const pct = enrichment(childItems).percent;
             return (
               <li key={child.id}>
                 <Link
@@ -63,8 +66,11 @@ export default async function ChildrenPage() {
                     <CardContent className="flex items-center gap-4 pt-6">
                       <ChildAvatar name={`${child.firstName} ${child.lastName}`} seed={child.id} size="lg" />
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-lg font-semibold">
-                          {child.firstName} {child.lastName}
+                        <p className="flex flex-wrap items-center gap-2 text-lg font-semibold">
+                          <span className="truncate">
+                            {child.firstName} {child.lastName}
+                          </span>
+                          <ReadinessPill readiness={readiness} />
                         </p>
                         <p className="text-sm text-muted-foreground">
                           {age.years >= 2
@@ -73,8 +79,8 @@ export default async function ChildrenPage() {
                           · {tp("lastUpdated", { when: formatRelative(child.updatedAt, locale) })}
                         </p>
                         <div className="mt-2 flex items-center gap-2">
-                          <Progress value={pct} className="h-1.5 flex-1" aria-label={tp("completeness")} />
-                          <span className="text-xs text-muted-foreground">{pct}%</span>
+                          <Progress value={pct} className="h-1.5 flex-1" aria-label={tp("enrichment")} />
+                          <span className="text-xs text-muted-foreground">{tp("enrichment")} {pct}%</span>
                         </div>
                       </div>
                       <ArrowRight className="size-5 text-muted-foreground" aria-hidden />

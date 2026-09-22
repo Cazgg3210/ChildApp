@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { AlertTriangle } from "lucide-react";
 import { ChildAvatar } from "@/components/feature/child-avatar";
 import { StatusPill } from "@/components/feature/badges";
+import { ReadinessPill } from "@/components/feature/readiness-card";
 import { ageFromBirthDate, formatDate, formatRelative } from "@/shared/utils/dates";
 import type { institutionService } from "@/modules/institutions/application/institution.service";
 
@@ -30,6 +31,7 @@ export async function ChildrenTable({
           <tr>
             <th className="px-4 py-2 font-medium">{t("columns.child")}</th>
             <th className="px-4 py-2 font-medium">{t("columns.age")}</th>
+            <th className="px-4 py-2 font-medium">{t("columns.readiness")}</th>
             <th className="px-4 py-2 font-medium">{t("columns.critical")}</th>
             <th className="px-4 py-2 font-medium">{t("columns.updated")}</th>
             <th className="px-4 py-2 font-medium">{t("columns.consent")}</th>
@@ -51,13 +53,23 @@ export async function ChildrenTable({
                     className="flex items-center gap-3 font-medium hover:underline"
                   >
                     <ChildAvatar name={name} seed={row.child.id} size="sm" />
-                    {name}
+                    <span>
+                      {name}
+                      {row.groups.length > 0 && (
+                        <span className="block text-xs font-normal text-muted-foreground">
+                          {row.groups.map((g) => g.name).join(", ")}
+                        </span>
+                      )}
+                    </span>
                   </Link>
                 </td>
                 <td className="text-muted-foreground md:px-4 md:py-3">
                   {age.years >= 2
                     ? tc("years", { count: age.years })
                     : tc("ageYearsMonths", { years: age.years, months: age.months })}
+                </td>
+                <td className="md:px-4 md:py-3">
+                  <ReadinessPill readiness={row.readiness} />
                 </td>
                 <td className="md:px-4 md:py-3">
                   {row.criticalAllergies.length > 0 ? (

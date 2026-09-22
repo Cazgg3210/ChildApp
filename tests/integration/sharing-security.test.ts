@@ -110,17 +110,36 @@ describe("Care Share security", () => {
       capabilities: [],
       singleUse: true,
     });
-    const first = await sharingService.resolveToken(tokenOf(share.url));
-    expect(first.ok).toBe(true);
-    if (!first.ok) return;
-    await sharingService.recordOpen(
-      first.link.id,
-      { type: "link", grantId: first.grant.id, linkId: first.link.id, childId: child.id, recipientName: "Coach" },
-      child.id,
-      first.categories,
-    );
-    expect(await sharingService.resolveToken(tokenOf(share.url))).toEqual({ ok: false, reason: "ACCESS_EXHAUSTED" });
-    expect((await sharingService.resolveToken(tokenOf(share.url), { allowExhausted: true })).ok).toBe(true);
+    const token = tokenOf(share.url);
+    // Ten concurrent openings of a single-use link: exactly one wins (atomic consume).
+    const results = await Promise.all(Array.from({ length: 10 }, () => sharingService.consumeOpen(token)));
+    expect(results.filter((r) => r.ok)).toHaveLength(1);
+    expect(results.filter((r) => !r.ok && r.reason === "ACCESS_EXHAUSTED")).toHaveLength(9);
+    expect(await sharingService.resolveToken(token)).toEqual({ ok: false, reason: "ACCESS_EXHAUSTED" });
+    // The device that opened it keeps reading (signed seen cookie).
+    const winner = results.find((r) => r.ok)!;
+    expect(winner.ok && sharingService.isPinCookieValid(winner.linkId, winner.seenCookie)).toBe(true);
+    expect((await sharingService.resolveToken(token, { allowExhausted: true })).ok).toBe(true);
+  });
+
+  it("multi-use links count every opening and audit it", async () => {
+    const luis = await makeUser("Luis");
+    const child = await makeChildWithProfile(luis);
+    const share = await sharingService.create(luis, child.id, {
+      recipientKind: "FAMILY",
+      recipientName: "Rosa",
+      dataCategories: ["EMERGENCY", "ALLERGIES"],
+      capabilities: [],
+      singleUse: false,
+    });
+    const token = tokenOf(share.url);
+    for (let i = 0; i < 3; i++) expect((await sharingService.consumeOpen(token)).ok).toBe(true);
+    const link = await prisma.shareLink.findUniqueOrThrow({ where: { id: share.grant.shareLink!.id } });
+    expect(link.useCount).toBe(3);
+    const opened = await prisma.auditEvent.count({ where: { childId: child.id, type: "SHARE_LINK_OPENED" } });
+    const viewed = await prisma.auditEvent.count({ where: { childId: child.id, type: "CRITICAL_DATA_VIEWED" } });
+    expect(opened).toBe(3);
+    expect(viewed).toBe(3);
   });
 
   it("PIN: wrong attempts are counted and the link locks after 5", async () => {
@@ -249,7 +268,8 @@ describe("Privilege escalation", () => {
     const luis = await makeUser("Luis");
     const andrea = await makeUser("Andrea");
     const child = await makeChildWithProfile(luis);
-    await childrenService.addGuardian(luis, child.id, andrea.email, "CO_GUARDIAN");
+    const { invitation } = await childrenService.inviteGuardian(luis, child.id, { email: andrea.email, role: "CO_GUARDIAN" });
+    await childrenService.acceptInvitation(andrea, invitation.id);
     await expectAppError(childrenService.removeGuardian(andrea, child.id, luis.userId), "ACCESS_DENIED");
     await expectAppError(childrenService.remove(andrea, child.id), "ACCESS_DENIED");
     // But a co-guardian can update the profile.

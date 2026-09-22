@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireUserActor } from "@/modules/identity/application/session";
 import { institutionRepository } from "@/modules/institutions/infrastructure/institution.repository";
+import type { InstitutionVerificationStatus } from "@/generated/prisma/enums";
 import { getRequestMeta } from "@/shared/security/request-context";
 import type { ActionState } from "@/shared/http/action-state";
 import { toActionState } from "@/shared/http/action-errors";
@@ -45,11 +46,16 @@ export async function createCareShareAction(
 
 export async function lookupInstitutionAction(
   code: string,
-): Promise<ActionState<{ id: string; name: string; type: string } | null>> {
+): Promise<ActionState<{ id: string; name: string; type: string; verificationStatus: InstitutionVerificationStatus } | null>> {
   try {
     await requireUserActor();
     const found = await institutionRepository.findByInviteCode(code);
-    return { ok: true, data: found ? { id: found.id, name: found.name, type: found.type } : null };
+    return {
+      ok: true,
+      data: found
+        ? { id: found.id, name: found.name, type: found.type, verificationStatus: found.verificationStatus }
+        : null,
+    };
   } catch (err) {
     return toActionState(err);
   }

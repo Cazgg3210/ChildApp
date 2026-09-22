@@ -8,7 +8,8 @@ export const profileItemInputSchema = z.object({
   details: z.string().trim().max(2000).optional().nullable(),
   data: z.record(z.string(), z.unknown()).optional().nullable(),
   criticality: z.enum(["CRITICAL", "IMPORTANT", "INFORMATIONAL"]).optional(),
-  provenance: z.enum(["SELF_DECLARED", "OBSERVED", "DOCUMENTED", "VERIFIED"]).optional(),
+  // VERIFIED is never accepted from user input: it is granted by the system (V2 professional credentials).
+  provenance: z.enum(["SELF_DECLARED", "OBSERVED", "DOCUMENTED"]).optional(),
   sourceType: z.enum(["GUARDIAN", "FAMILY", "CAREGIVER", "INSTITUTION", "PROFESSIONAL", "DOCUMENT"]).optional(),
   sourceLabel: z.string().trim().max(120).optional().nullable(),
 });
@@ -26,7 +27,7 @@ export const createChildSchema = childBasicsSchema.extend({
   initialItems: z.array(profileItemInputSchema).max(40).default([]),
 });
 
-export const addGuardianSchema = z.object({
+export const inviteGuardianSchema = z.object({
   email: z.string().trim().toLowerCase().email(),
   role: z.enum(["OWNER", "CO_GUARDIAN"]).default("CO_GUARDIAN"),
   relationshipLabel: z.string().trim().max(60).optional(),

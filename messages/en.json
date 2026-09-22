@@ -93,7 +93,38 @@
     "institutionsBody": "Receive complete, family-maintained profiles with verifiable consent and read confirmations for critical information. No paper forms.",
     "institutionsCta": "Create an institution",
     "trustNote": "Information is shared only with the people you authorize, for the time you define, and every access is logged.",
-    "footer": "Child Care Passport · MVP"
+    "footer": "Child Care Passport · MVP",
+    "whoTitle": "Who can see what?",
+    "whoSubtitle": "You choose per kind of access. Critical information always comes first; the rest only if you share it.",
+    "who": {
+      "family": {
+        "title": "Grandparents and family",
+        "body": "Emergency, allergies, medication, food, sleep and comfort. No expiration, or the one you set."
+      },
+      "babysitter": {
+        "title": "Babysitter",
+        "body": "Only what tonight needs, with a PIN if you want, and the link stops working when it is over."
+      },
+      "institution": {
+        "title": "Daycare or school",
+        "body": "What the team needs, with read confirmation of the critical parts. They propose; you decide."
+      }
+    },
+    "assuranceTitle": "What we guarantee",
+    "assurance": {
+      "revoke": "Revoke any access in one click; the link stops working instantly.",
+      "expire": "Every access can expire on its own, without you having to remember.",
+      "log": "Every view is logged: who, what and when.",
+      "ack": "Caregivers confirm they read the critical information before starting.",
+      "change": "When something important changes, caregivers see it flagged as new.",
+      "truth": "The family is the only source of truth: nobody edits the profile for you."
+    },
+    "institutionsPoints": {
+      "ready": "Know which children have allergies, medication and contacts up to date.",
+      "rooms": "Each teacher sees only the children of their room.",
+      "propose": "Propose observations; the family accepts or rejects them.",
+      "consent": "Dated consent and a reading log for every child."
+    }
   },
   "auth": {
     "login": {
@@ -105,7 +136,8 @@
       "forgot": "Forgot your password?",
       "resetDone": "Your password was updated. Sign in with the new one.",
       "verified": "Your email is confirmed.",
-      "invalidCredentials": "Email or password is incorrect."
+      "invalidCredentials": "Email or password is incorrect.",
+      "deleted": "Your account has been deleted. Thank you for trusting us."
     },
     "register": {
       "title": "Create your account",
@@ -113,7 +145,9 @@
       "submit": "Create account",
       "hasAccount": "Already have an account?",
       "login": "Sign in",
-      "consent": "By creating an account you confirm you are responsible for your children's information and for whom you share it with."
+      "consent": "By creating an account you confirm you are responsible for your children's information and for whom you share it with.",
+      "institutionTitle": "Create your institution account",
+      "institutionSubtitle": "Your personal account first; you register the daycare, kindergarten or academy in the next step."
     },
     "forgot": {
       "title": "Recover password",
@@ -176,7 +210,8 @@
     "recentActivity": "Recent activity",
     "recentEmpty": "When someone views or changes information, it will show up here.",
     "review": "Review",
-    "openChild": "Open profile"
+    "openChild": "Open profile",
+    "invitations": "{count, plural, =1 {{inviter} invited you to be a guardian of {name}.} other {You have # guardian invitations.}}"
   },
   "children": {
     "title": "Children",
@@ -209,7 +244,8 @@
       "addContact": "Add emergency contact",
       "noAllergies": "No known allergies",
       "skipHint": "You can skip this step and complete it later.",
-      "napLabel": "Nap"
+      "napLabel": "Nap",
+      "noMedications": "No medication"
     },
     "fields": {
       "firstName": "First name",
@@ -234,23 +270,52 @@
       "activity": "Recent activity",
       "lastUpdated": "Last updated {when}",
       "shareCare": "Share care",
-      "quickActions": "Quick actions"
+      "quickActions": "Quick actions",
+      "enrichment": "Enriched profile"
     },
     "guardians": {
       "title": "Guardians",
       "owner": "Primary guardian",
       "coGuardian": "Co-guardian",
       "add": "Add guardian",
-      "addHint": "The person must have an account with that email.",
+      "addHint": "We will email them an invitation. They join the profile only after accepting it with their account.",
       "relationship": "Relationship (e.g. Mother, Legal guardian)",
       "remove": "Remove",
       "cannotRemoveLastOwner": "At least one primary guardian must remain.",
-      "you": "(you)"
+      "you": "(you)",
+      "invited": "Invitation sent",
+      "sendInvite": "Send invitation",
+      "pending": "Pending invitations",
+      "invitePending": "Waiting for acceptance",
+      "cancelInvite": "Cancel invitation"
     },
     "delete": {
       "title": "Delete profile",
       "body": "All access will be revoked and the profile will no longer be visible. This can be undone by contacting support within 30 days.",
       "confirm": "Delete {name}'s profile"
+    },
+    "invitations": {
+      "title": "Invitation to care for {name}",
+      "body": "{inviter} invites you as {role}.",
+      "expires": "Valid until {when}",
+      "accept": "Accept invitation",
+      "decline": "Decline",
+      "accepted": "You are now a guardian. Welcome!",
+      "declined": "Invitation declined.",
+      "invalid": "This invitation link is not valid.",
+      "wrongAccount": "This invitation is for another email",
+      "wrongAccountHint": "Sign in with {email} to accept it.",
+      "backHome": "Go home",
+      "listTitle": "Invitations",
+      "listHint": "Profiles you were invited to as a guardian.",
+      "empty": "You have no pending invitations.",
+      "status": {
+        "PENDING": "Pending",
+        "ACCEPTED": "Already accepted.",
+        "DECLINED": "Declined.",
+        "REVOKED": "Cancelled by the sender.",
+        "EXPIRED": "Expired. Ask for a new invitation."
+      }
     }
   },
   "profile": {
@@ -352,7 +417,9 @@
       "MUSIC": "Music",
       "ACTIVITY": "Activity",
       "INTEREST": "Interest",
-      "OBSERVATION": "Observation"
+      "OBSERVATION": "Observation",
+      "NO_KNOWN_ALLERGIES": "No known allergies",
+      "NO_MEDICATIONS": "No medication"
     },
     "criticality": {
       "CRITICAL": "Critical",
@@ -433,6 +500,35 @@
       "nothingFound": "We found nothing to structure. Try more concrete sentences.",
       "saveSelected": "Save selected",
       "disclaimer": "The assistant does not diagnose or assess. It only organizes what you write."
+    },
+    "readiness": {
+      "title": "Ready for care",
+      "hint": "The minimum any caregiver needs to know. Saying \"none\" counts too.",
+      "ready": "Ready for care",
+      "notReady": "Safety information missing",
+      "review": "Review",
+      "checks": {
+        "allergies": "Allergies",
+        "medications": "Medication",
+        "emergencyContact": "Emergency contact"
+      },
+      "states": {
+        "UNKNOWN": "no information",
+        "NONE_DECLARED": "none, confirmed",
+        "HAS_DATA": "recorded",
+        "NEEDS_REVIEW": "over a year without confirmation"
+      },
+      "declareNoAllergies": "No allergies",
+      "declareNoMedications": "No medication",
+      "reconfirm": "Still current",
+      "update": "Update",
+      "add": "Add",
+      "declared": "Confirmed and dated.",
+      "reconfirmed": "Confirmed as current.",
+      "enrichment": "Enriched profile",
+      "enrichmentHint": "Routines, communication, comfort and interests: optional, but they help care better.",
+      "complete": "Complete",
+      "declaredBy": "Confirmed by the family on {when}"
     }
   },
   "sharing": {
@@ -492,7 +588,8 @@
       "singleUseHint": "The link stops working after it is opened once.",
       "note": "Note for the caregiver (optional)",
       "create": "Generate link and QR",
-      "createInstitution": "Send invitation to the institution"
+      "createInstitution": "Send invitation to the institution",
+      "institutionUnverifiedHint": "This institution has not been verified by Child Care Passport yet. Confirm the code with them before sharing."
     },
     "categories": {
       "IDENTITY": "Name and age",
@@ -526,7 +623,8 @@
       "never": "Does not expire (you can revoke it any time)",
       "pinProtected": "PIN protected",
       "singleUse": "Single use",
-      "confirm": "I confirm I want to share this information"
+      "confirm": "I confirm I want to share this information",
+      "noExpiryRisk": "I understand that {name}'s access never expires on its own and that I must revoke it manually when the care ends."
     },
     "result": {
       "title": "Ready to share",
@@ -562,7 +660,10 @@
       "categories": "Can see",
       "acknowledged": "Confirmed reading {when}",
       "notAcknowledged": "Has not confirmed reading"
-    }
+    },
+    "verifyFirstTitle": "Confirm your email before sharing",
+    "verifyFirstBody": "To protect your children's information, only accounts with a confirmed email can share. Check the inbox of {email}.",
+    "verifyFirstResend": "Resend confirmation"
   },
   "care": {
     "pass": {
@@ -706,7 +807,13 @@
       "inviteCodeHint": "Families use this code to share their child's profile with the institution.",
       "recent": "Recent activity",
       "emptyTitle": "No children shared yet",
-      "emptyBody": "Ask families to share the profile using the code {code}."
+      "emptyBody": "Ask families to share the profile using the code {code}.",
+      "readyProfiles": "Ready for care",
+      "readyHint": "Allergies, medication and emergency contact up to date",
+      "needsReview": "Profiles to review",
+      "needsReviewHint": "Safety information missing or unconfirmed for over a year",
+      "expiringConsents": "Consents expiring",
+      "expiringHint": "Next 30 days"
     },
     "children": {
       "title": "Children",
@@ -723,7 +830,8 @@
         "critical": "Critical allergies",
         "updated": "Last updated",
         "consent": "Consent",
-        "ack": "Reviewed"
+        "ack": "Reviewed",
+        "readiness": "Ready for care"
       },
       "empty": "No children match the filter.",
       "consentUntil": "Until {when}",
@@ -784,6 +892,56 @@
       },
       "titleLabel": "Title (e.g. Teacher)",
       "remove": "Remove"
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Institution details and verification.",
+      "details": "Institution details",
+      "detailsHint": "Families see the name and verification status when sharing a profile.",
+      "saved": "Changes saved",
+      "fields": {
+        "name": "Name",
+        "legalName": "Legal name",
+        "contactName": "Responsible person",
+        "phone": "Phone",
+        "address": "Address",
+        "website": "Website"
+      }
+    },
+    "verification": {
+      "title": "Verification",
+      "request": "Request verification",
+      "requested": "Request sent. We will let you know when it is done.",
+      "requirements": "Fill in legal name, responsible person and phone to request it.",
+      "status": {
+        "UNVERIFIED": "Unverified",
+        "VERIFICATION_PENDING": "Verification in progress",
+        "VERIFIED": "Verified",
+        "SUSPENDED": "Suspended"
+      },
+      "explain": {
+        "UNVERIFIED": "Families will see that the institution is not verified. Complete the details and request verification.",
+        "VERIFICATION_PENDING": "We are reviewing the institution's details. It usually takes one or two business days.",
+        "VERIFIED": "Child Care Passport confirmed the institution's identity. Families see the badge when sharing.",
+        "SUSPENDED": "The institution was suspended. Contact support."
+      }
+    },
+    "groups": {
+      "title": "Rooms",
+      "subtitle": "Organize the team and the children by room or group. Each member only sees the children of their rooms; administrators see everything.",
+      "name": "Room name",
+      "namePlaceholder": "Blue Room, Toddlers B, Preschool 2…",
+      "create": "Create room",
+      "created": "Room created",
+      "deleteConfirm": "Delete the room {name}? Children and team are kept, only the assignment is removed.",
+      "team": "Team",
+      "children": "Children",
+      "adminSeesAll": "administrator, sees all",
+      "noChildren": "No children shared yet.",
+      "emptyTitle": "No rooms yet",
+      "emptyBody": "Without rooms, the whole team sees every shared child.",
+      "scopingNote": "With rooms in place, each team member only sees the children assigned to their rooms. Unassigned children are visible to administrators only.",
+      "unassigned": "{count, plural, =1 {1 child without a room} other {# children without a room}}: {names}"
     }
   },
   "proposals": {
@@ -846,7 +1004,18 @@
       "DOCUMENT_UPLOADED": "Document uploaded",
       "DOCUMENT_VIEWED": "Viewed a document",
       "DOCUMENT_DELETED": "Document deleted",
-      "DATA_EXPORTED": "Data exported"
+      "DATA_EXPORTED": "Data exported",
+      "GUARDIAN_INVITED": "Guardian invitation sent",
+      "GUARDIAN_INVITATION_ACCEPTED": "Guardian invitation accepted",
+      "GUARDIAN_INVITATION_DECLINED": "Guardian invitation declined",
+      "GUARDIAN_INVITATION_REVOKED": "Guardian invitation cancelled",
+      "ACCOUNT_DELETION_REQUESTED": "Account deletion requested",
+      "INSTITUTION_UPDATED": "Institution details updated",
+      "INSTITUTION_VERIFICATION_REQUESTED": "Verification requested",
+      "INSTITUTION_VERIFIED": "Institution verified",
+      "INSTITUTION_GROUP_CREATED": "Room created",
+      "INSTITUTION_GROUP_UPDATED": "Room updated",
+      "INSTITUTION_GROUP_DELETED": "Room deleted"
     }
   },
   "notifications": {
@@ -867,7 +1036,10 @@
       "ACKNOWLEDGEMENT_COMPLETED": "{actorName} confirmed reading {childName}'s critical information",
       "INSTITUTION_REQUEST": "{actorName} wants to share {childName}'s profile with your institution",
       "INSTITUTION_CONNECTED": "{institutionName} accepted {childName}'s profile",
-      "SHARE_OPENED": "A care link was opened"
+      "SHARE_OPENED": "A care link was opened",
+      "GUARDIAN_INVITED": "{actorName} invited you to be a guardian of {childName}",
+      "GUARDIAN_INVITATION_ACCEPTED": "{actorName} accepted the invitation and is now a guardian of {childName}",
+      "INSTITUTION_VERIFIED": "{institutionName} has been verified"
     }
   },
   "documents": {
@@ -902,11 +1074,24 @@
     "export": "Export my data",
     "exportHint": "Download a JSON with your children's profiles, access, consents and logs.",
     "deleteAccount": "Delete account",
-    "deleteHint": "Coming soon. Contact us to delete your account and your children's information.",
+    "deleteHint": "Every access is revoked and the profiles where you are the only primary guardian are retired.",
     "emailVerified": "Email confirmed",
     "emailUnverified": "Email not confirmed",
     "resendVerification": "Resend confirmation",
-    "verificationSent": "We sent you a new confirmation link."
+    "verificationSent": "We sent you a new confirmation link.",
+    "deletion": {
+      "cta": "Delete my account",
+      "title": "Delete account",
+      "body": "This becomes permanent after 30 days. Export your data first if you need it.",
+      "blocked": "You are the only administrator of {names}. Add another administrator or delete the institution first.",
+      "consequences": {
+        "children": "Profiles where you are the only primary guardian are retired and all their access is revoked.",
+        "access": "Your sessions are closed and the invitations you sent are cancelled.",
+        "grace": "Your data is kept for 30 days in case you change your mind; then it is permanently deleted."
+      },
+      "typeToConfirm": "Type ELIMINAR to confirm",
+      "confirm": "Delete permanently"
+    }
   },
   "errors": {
     "VALIDATION_ERROR": "Please review the highlighted fields.",

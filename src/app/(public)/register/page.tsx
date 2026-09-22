@@ -5,15 +5,16 @@ import { AuthCard } from "@/components/layout/auth-card";
 import { getCurrentUser } from "@/modules/identity/application/session";
 import { RegisterForm } from "./register-form";
 
-export default async function RegisterPage() {
-  const user = await getCurrentUser();
-  if (user) redirect("/app");
+export default async function RegisterPage(props: PageProps<"/register">) {
+  const [user, sp] = await Promise.all([getCurrentUser(), props.searchParams]);
+  const intent = sp.intent === "institution" ? "institution" : "family";
+  if (user) redirect(intent === "institution" ? "/institution/new" : "/app");
   const [t, locale] = await Promise.all([getTranslations("auth"), getLocale()]);
 
   return (
     <AuthCard
-      title={t("register.title")}
-      description={t("register.subtitle")}
+      title={intent === "institution" ? t("register.institutionTitle") : t("register.title")}
+      description={intent === "institution" ? t("register.institutionSubtitle") : t("register.subtitle")}
       footer={
         <>
           {t("register.hasAccount")}{" "}
@@ -23,7 +24,7 @@ export default async function RegisterPage() {
         </>
       }
     >
-      <RegisterForm locale={locale} />
+      <RegisterForm locale={locale} intent={intent} />
     </AuthCard>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { SessionControls } from "./session-controls";
 export default async function CareSessionPage({ params }: PageProps<"/s/[token]/session">) {
   const { token } = await params;
   const ctx = await resolveCarePass(token);
+  if (ctx.state === "ok" && !ctx.seen) redirect(`/s/${token}/open`);
   const [t, locale] = await Promise.all([getTranslations("care.session"), getLocale()]);
   if (ctx.state === "denied") return <DeniedView reason={ctx.reason} />;
   if (ctx.state === "pin_required")

@@ -16,7 +16,9 @@ Principio operativo: **mostrar solamente información necesaria + autorizada + v
 | Sin etiquetas                        | Sección Social como observaciones contextuales; IA sin diagnóstico, clasificación ni inferencia.                                                                                       |
 | Seguridad de datos                   | Tokens hasheados, storage privado con URLs firmadas, logs con redacción, cabeceras de seguridad, `noindex` en todo lo privado.                                                         |
 | Portabilidad                         | Exportación JSON completa (`/api/v1/me/export`).                                                                                                                                       |
-| Retención                            | Soft delete; políticas de borrado/anonimización por región en V1.                                                                                                                      |
+| Retención                            | Soft delete; eliminación de cuenta en dos pasos: solicitud (anonimiza, revoca accesos, retira los perfiles de los que la persona es único tutor principal) y purga definitiva a los 30 días. |
+| "Ninguna" es un dato                 | Declaraciones explícitas `NO_KNOWN_ALLERGIES` / `NO_MEDICATIONS` con fecha; Care Readiness distingue "no hay alergias" de "nadie lo ha dicho". Las declaraciones caducan al año (re-confirmación). |
+| Sin presión a sobre-compartir        | Care Readiness (3 comprobaciones de seguridad) separado de "perfil enriquecido" (secciones opcionales); nunca un 100 % que exija llenar todo.                                          |
 
 ## Clasificación de datos
 

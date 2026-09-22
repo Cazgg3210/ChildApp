@@ -6,25 +6,13 @@ import { ChildAvatar } from "@/components/feature/child-avatar";
 import { ProfileItemCard } from "@/components/feature/profile-item-card";
 import { StatusPill } from "@/components/feature/badges";
 import { institutionService } from "@/modules/institutions/application/institution.service";
-import { categoryOf } from "@/modules/profiles/domain/catalog";
+import { partitionForCarePass } from "@/modules/profiles/domain/care-pass-layout";
 import { AppError } from "@/shared/errors/app-error";
 import { getRequestMeta } from "@/shared/security/request-context";
-import { CRITICAL_CATEGORIES, type DataCategory } from "@/shared/domain/care-vocabulary";
 import { ageFromBirthDate, formatDate, formatRelative } from "@/shared/utils/dates";
 import { loadInstitution } from "../../_lib/load-institution";
 import { AcknowledgeButton } from "./acknowledge-button";
 import { ProposeDialog } from "./propose-dialog";
-
-const ORDER: DataCategory[] = [
-  "HEALTH",
-  "NUTRITION",
-  "SLEEP",
-  "BATHROOM",
-  "COMMUNICATION",
-  "COMFORT",
-  "PLAY",
-  "SOCIAL",
-];
 
 export default async function InstitutionChildPage({
   params,
@@ -48,15 +36,7 @@ export default async function InstitutionChildPage({
   const { child, grant, items, capabilities, acknowledgements, proposals, lastUpdated } = data;
   const name = child.preferredName ?? child.firstName;
   const age = ageFromBirthDate(child.dateOfBirth);
-  const critical = items.filter(
-    (i) => i.criticality === "CRITICAL" && CRITICAL_CATEGORIES.includes(categoryOf(i.section, i.itemType)),
-  );
-  const rest = items.filter((i) => !critical.includes(i));
-  const byCategory = new Map<DataCategory, typeof items>();
-  for (const item of rest) {
-    const cat = categoryOf(item.section, item.itemType);
-    byCategory.set(cat, [...(byCategory.get(cat) ?? []), item]);
-  }
+  const { highlighted: critical, groups } = partitionForCarePass(items);
   const myAck = acknowledgements.find((a) => a.actorUserId === user.id && a.profileVersion >= child.profileVersion);
 
   return (
@@ -92,13 +72,13 @@ export default async function InstitutionChildPage({
           )}
         </section>
 
-        {ORDER.filter((c) => byCategory.has(c)).map((cat) => (
+        {groups.map(({ category: cat, items: groupItems }) => (
           <section key={cat}>
             <h2 className="mb-2 text-sm font-bold uppercase tracking-widest text-muted-foreground">
               {ts(`categories.${cat}`)}
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
-              {byCategory.get(cat)!.map((item) => (
+              {groupItems.map((item) => (
                 <ProfileItemCard key={item.id} item={item} compact />
               ))}
             </div>

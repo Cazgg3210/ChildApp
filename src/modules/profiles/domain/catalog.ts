@@ -6,7 +6,7 @@ import type { CriticalityValue, DataCategory, ProfileSectionValue } from "@/shar
  */
 export const ITEM_TYPES = {
   EMERGENCY: ["CONTACT", "HOSPITAL", "DOCTOR", "EMERGENCY_NUMBER"],
-  HEALTH: ["ALLERGY", "MEDICATION", "CONDITION", "VACCINE", "SPECIAL_NEED", "MEDICAL_INSTRUCTION"],
+  HEALTH: ["ALLERGY", "MEDICATION", "CONDITION", "VACCINE", "SPECIAL_NEED", "MEDICAL_INSTRUCTION", "NO_KNOWN_ALLERGIES", "NO_MEDICATIONS"],
   NUTRITION: ["RESTRICTED_FOOD", "FOOD_ALLERGY", "INTOLERANCE", "ALLOWED_FOOD", "PREFERENCE", "FEEDING_ROUTINE"],
   SLEEP: ["SCHEDULE", "ROUTINE", "DURATION", "COMFORT_OBJECT", "NEED"],
   BATHROOM: ["TOILET_TRAINING", "DIAPER", "FREQUENCY", "INSTRUCTION"],
@@ -17,6 +17,18 @@ export const ITEM_TYPES = {
 } as const satisfies Record<ProfileSectionValue, readonly string[]>;
 
 export type ItemType = (typeof ITEM_TYPES)[ProfileSectionValue][number];
+
+/** Explicit "none declared" facts: they distinguish "no allergies" from "nobody filled this in". */
+export const DECLARATION_TYPES = ["NO_KNOWN_ALLERGIES", "NO_MEDICATIONS"] as const;
+export type DeclarationType = (typeof DECLARATION_TYPES)[number];
+export function isDeclaration(itemType: string): itemType is DeclarationType {
+  return (DECLARATION_TYPES as readonly string[]).includes(itemType);
+}
+/** Types that contradict a declaration (adding one silently retires the declaration). */
+export const DECLARATION_CONFLICTS: Record<DeclarationType, readonly string[]> = {
+  NO_KNOWN_ALLERGIES: ["ALLERGY", "FOOD_ALLERGY"],
+  NO_MEDICATIONS: ["MEDICATION"],
+};
 
 export function isItemTypeOf(section: ProfileSectionValue, itemType: string): itemType is ItemType {
   return (ITEM_TYPES[section] as readonly string[]).includes(itemType);
@@ -60,8 +72,8 @@ export function defaultCriticality(itemType: string): CriticalityValue {
  */
 export function categoryOf(section: ProfileSectionValue, itemType: string): DataCategory {
   if (section === "HEALTH") {
-    if (itemType === "ALLERGY") return "ALLERGIES";
-    if (itemType === "MEDICATION") return "MEDICATION";
+    if (itemType === "ALLERGY" || itemType === "NO_KNOWN_ALLERGIES") return "ALLERGIES";
+    if (itemType === "MEDICATION" || itemType === "NO_MEDICATIONS") return "MEDICATION";
     return "HEALTH";
   }
   if (section === "NUTRITION" && itemType === "FOOD_ALLERGY") return "ALLERGIES";

@@ -125,6 +125,21 @@ enum InstitutionRole {
   MEMBER
 }
 
+enum InstitutionVerificationStatus {
+  UNVERIFIED
+  VERIFICATION_PENDING
+  VERIFIED
+  SUSPENDED
+}
+
+enum GuardianInvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  REVOKED
+  EXPIRED
+}
+
 enum ChildInstitutionStatus {
   PENDING
   ACTIVE
@@ -158,21 +173,22 @@ enum ActorType {
 // ---------------------------------------------------------------------------
 
 model User {
-  id               String    @id @default(cuid())
-  email            String    @unique
-  passwordHash     String?
-  name             String
-  image            String?
-  emailVerifiedAt  DateTime?
-  locale           String    @default("es")
-  timezone         String    @default("America/Mexico_City")
-  country          String    @default("MX")
-  regulatoryRegion String    @default("MX")
-  sessionVersion   Int       @default(1)
-  isDemo           Boolean   @default(false)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  deletedAt        DateTime?
+  id                  String    @id @default(cuid())
+  email               String    @unique
+  passwordHash        String?
+  name                String
+  image               String?
+  emailVerifiedAt     DateTime?
+  locale              String    @default("es")
+  timezone            String    @default("America/Mexico_City")
+  country             String    @default("MX")
+  regulatoryRegion    String    @default("MX")
+  sessionVersion      Int       @default(1)
+  isDemo              Boolean   @default(false)
+  deletionRequestedAt DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  deletedAt           DateTime?
 
   accounts                  Account[]
   authTokens                AuthToken[]
@@ -193,6 +209,8 @@ model User {
   profileVersions           ChildProfileVersion[]
   institutionsCreated       Institution[]
   childInstitutionsAccepted ChildInstitution[]
+  guardianInvitationsSent   GuardianInvitation[]  @relation("InvitationInvitedBy")
+  guardianInvitationsUsed   GuardianInvitation[]  @relation("InvitationAcceptedBy")
 
   @@index([deletedAt])
 }
@@ -259,6 +277,7 @@ model Child {
   profileVersions  ChildProfileVersion[]
   accessGrants     AccessGrant[]
   consents         Consent[]
+  guardianInvites  GuardianInvitation[]
   institutions     ChildInstitution[]
   careSessions     CareSession[]
   acknowledgements Acknowledgement[]
@@ -283,6 +302,30 @@ model ChildGuardian {
 
   @@unique([childId, userId])
   @@index([userId])
+}
+
+/// Invitation → acceptance flow for co-guardians: nobody gains guardian access
+/// from a typed email alone; the invitee must be signed in with that email.
+model GuardianInvitation {
+  id                String                   @id @default(cuid())
+  childId           String
+  invitedById       String
+  email             String
+  role              GuardianRole             @default(CO_GUARDIAN)
+  relationshipLabel String?
+  tokenHash         String                   @unique
+  status            GuardianInvitationStatus @default(PENDING)
+  expiresAt         DateTime
+  acceptedById      String?
+  acceptedAt        DateTime?
+  createdAt         DateTime                 @default(now())
+
+  child      Child @relation(fields: [childId], references: [id], onDelete: Cascade)
+  invitedBy  User  @relation("InvitationInvitedBy", fields: [invitedById], references: [id])
+  acceptedBy User? @relation("InvitationAcceptedBy", fields: [acceptedById], references: [id])
+
+  @@index([childId, status])
+  @@index([email, status])
 }
 
 // ---------------------------------------------------------------------------
@@ -340,18 +383,26 @@ model ChildProfileVersion {
 // ---------------------------------------------------------------------------
 
 model Institution {
-  id          String          @id @default(cuid())
-  name        String
-  type        InstitutionType @default(OTHER)
-  country     String          @default("MX")
-  timezone    String          @default("America/Mexico_City")
-  inviteCode  String          @unique
-  createdById String
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id                 String                        @id @default(cuid())
+  name               String
+  type               InstitutionType               @default(OTHER)
+  country            String                        @default("MX")
+  timezone           String                        @default("America/Mexico_City")
+  inviteCode         String                        @unique
+  verificationStatus InstitutionVerificationStatus @default(UNVERIFIED)
+  verifiedAt         DateTime?
+  legalName          String?
+  address            String?
+  phone              String?
+  website            String?
+  contactName        String?
+  createdById        String
+  createdAt          DateTime                      @default(now())
+  updatedAt          DateTime                      @updatedAt
 
   createdBy       User                @relation(fields: [createdById], references: [id])
   members         InstitutionMember[]
+  groups          InstitutionGroup[]
   children        ChildInstitution[]
   accessGrants    AccessGrant[]
   changeProposals ChangeProposal[]
@@ -367,11 +418,49 @@ model InstitutionMember {
   title         String?
   createdAt     DateTime        @default(now())
 
-  institution Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institution Institution              @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  user        User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  groups      InstitutionGroupMember[]
 
   @@unique([institutionId, userId])
   @@index([userId])
+}
+
+/// Rooms / classes. When an institution has groups, MEMBERs only see the
+/// children assigned to their groups (docs/10-permissions-model.md).
+model InstitutionGroup {
+  id            String   @id @default(cuid())
+  institutionId String
+  name          String
+  createdAt     DateTime @default(now())
+
+  institution Institution              @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  members     InstitutionGroupMember[]
+  children    InstitutionGroupChild[]
+
+  @@unique([institutionId, name])
+}
+
+model InstitutionGroupMember {
+  groupId  String
+  memberId String
+
+  group  InstitutionGroup  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  member InstitutionMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@id([groupId, memberId])
+  @@index([memberId])
+}
+
+model InstitutionGroupChild {
+  groupId            String
+  childInstitutionId String
+
+  group            InstitutionGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  childInstitution ChildInstitution @relation(fields: [childInstitutionId], references: [id], onDelete: Cascade)
+
+  @@id([groupId, childInstitutionId])
+  @@index([childInstitutionId])
 }
 
 model ChildInstitution {
@@ -385,10 +474,11 @@ model ChildInstitution {
   acceptedById  String?
   endedAt       DateTime?
 
-  child       Child       @relation(fields: [childId], references: [id], onDelete: Cascade)
-  institution Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
-  accessGrant AccessGrant @relation(fields: [accessGrantId], references: [id], onDelete: Cascade)
-  acceptedBy  User?       @relation(fields: [acceptedById], references: [id])
+  child       Child                   @relation(fields: [childId], references: [id], onDelete: Cascade)
+  institution Institution             @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  accessGrant AccessGrant             @relation(fields: [accessGrantId], references: [id], onDelete: Cascade)
+  acceptedBy  User?                   @relation(fields: [acceptedById], references: [id])
+  groups      InstitutionGroupChild[]
 
   @@unique([childId, institutionId])
   @@index([institutionId, status])

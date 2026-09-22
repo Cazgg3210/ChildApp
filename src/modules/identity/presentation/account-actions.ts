@@ -3,8 +3,12 @@
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { requireUser } from "../application/session";
+import { redirect } from "next/navigation";
+import { requireUser, requireUserActor } from "../application/session";
 import { identityService } from "../application/identity.service";
+import { accountService } from "../application/account.service";
+import { signOut } from "../application/auth";
+import { getRequestMeta } from "@/shared/security/request-context";
 import { formString, type ActionState } from "@/shared/http/action-state";
 import { toActionState } from "@/shared/http/action-errors";
 
@@ -30,6 +34,20 @@ export async function updateAccountAction(_prev: ActionState, form: FormData): P
   } catch (err) {
     return toActionState(err);
   }
+}
+
+export async function requestDeletionAction(_prev: ActionState, form: FormData): Promise<ActionState> {
+  try {
+    const { actor } = await requireUserActor();
+    if (formString(form, "confirm").trim().toUpperCase() !== "ELIMINAR") {
+      return { ok: false, code: "VALIDATION_ERROR", message: "Type ELIMINAR to confirm.", fieldErrors: { confirm: "ELIMINAR" } };
+    }
+    await accountService.requestDeletion(actor, await getRequestMeta());
+    await signOut({ redirect: false });
+  } catch (err) {
+    return toActionState(err);
+  }
+  redirect("/login?deleted=1");
 }
 
 export async function resendVerificationAction(): Promise<void> {

@@ -2,9 +2,7 @@ import type { NextRequest } from "next/server";
 import { apiHandler } from "@/shared/http/api";
 import { AppError } from "@/shared/errors/app-error";
 import { metaFromRequest } from "@/shared/http/api-auth";
-import { CRITICAL_CATEGORIES } from "@/shared/domain/care-vocabulary";
 import { sharingService } from "@/modules/sharing/application/sharing.service";
-import { auditService } from "@/modules/audit/application/audit.service";
 import { profileService, filterItemsByCategories } from "@/modules/profiles/application/profile.service";
 import { ageFromBirthDate } from "@/shared/utils/dates";
 
@@ -24,24 +22,8 @@ export const GET = apiHandler(async (req: NextRequest, ctx: RouteContext<"/api/v
     const check = await sharingService.verifyPin(token, pin, meta);
     if (!check.ok) throw new AppError(check.reason);
   }
-  const actor = {
-    type: "link" as const,
-    grantId: resolved.grant.id,
-    linkId: resolved.link.id,
-    childId: resolved.child.id,
-    recipientName: resolved.grant.recipientName,
-  };
-  await sharingService.recordOpen(resolved.link.id, actor, resolved.child.id, resolved.categories, meta);
-  const critical = resolved.categories.some((c) => CRITICAL_CATEGORIES.includes(c));
-  await auditService.record({
-    type: critical ? "CRITICAL_DATA_VIEWED" : "PROFILE_VIEWED",
-    actor,
-    childId: resolved.child.id,
-    resourceType: "ChildProfile",
-    resourceId: resolved.child.id,
-    dataCategories: resolved.categories,
-    meta,
-  });
+  const opened = await sharingService.consumeOpen(token, meta);
+  if (!opened.ok) throw new AppError(opened.reason);
   const items = filterItemsByCategories(
     await profileService.listItemsUnchecked(resolved.child.id),
     resolved.categories,

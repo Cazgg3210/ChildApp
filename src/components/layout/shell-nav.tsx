@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
-import { Bell, Building2, FileCheck2, Home, Inbox, ShieldAlert, UserRound, Users } from "lucide-react";
+import { Bell, Building2, DoorOpen, FileCheck2, Home, Inbox, Settings, ShieldAlert, UserRound, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ICONS = {
@@ -15,6 +15,8 @@ const ICONS = {
   inbox: Inbox,
   alert: ShieldAlert,
   proposals: FileCheck2,
+  door: DoorOpen,
+  settings: Settings,
 } satisfies Record<string, LucideIcon>;
 
 export interface NavItem {

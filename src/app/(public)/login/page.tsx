@@ -32,6 +32,11 @@ export default async function LoginPage(props: PageProps<"/login">) {
           <AlertTitle>{t("login.resetDone")}</AlertTitle>
         </Alert>
       )}
+      {sp.deleted === "1" && (
+        <Alert className="mb-4">
+          <AlertTitle>{t("login.deleted")}</AlertTitle>
+        </Alert>
+      )}
       {sp.verified === "1" && (
         <Alert className="mb-4">
           <AlertTitle>{t("login.verified")}</AlertTitle>
