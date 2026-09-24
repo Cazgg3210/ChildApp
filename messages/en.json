@@ -52,7 +52,8 @@
     "careSessions": "Care sessions",
     "proposals": "Proposals",
     "documents": "Documents",
-    "openMenu": "Open menu"
+    "openMenu": "Open menu",
+    "admin": "Administration"
   },
   "landing": {
     "eyebrow": "For families, caregivers and institutions",
@@ -181,7 +182,8 @@
       "parent": "Guardian (Luis)",
       "coGuardian": "Co-guardian (Andrea)",
       "institutionAdmin": "Institution admin (Mariana)",
-      "teacher": "Teacher (Sofía)"
+      "teacher": "Teacher (Sofía)",
+      "platformAdmin": "Platform admin"
     }
   },
   "dashboard": {
@@ -1015,7 +1017,12 @@
       "INSTITUTION_VERIFIED": "Institution verified",
       "INSTITUTION_GROUP_CREATED": "Room created",
       "INSTITUTION_GROUP_UPDATED": "Room updated",
-      "INSTITUTION_GROUP_DELETED": "Room deleted"
+      "INSTITUTION_GROUP_DELETED": "Room deleted",
+      "PLATFORM_SETTINGS_UPDATED": "Platform settings updated",
+      "PLATFORM_ADMIN_GRANTED": "Platform administrator role granted",
+      "PLATFORM_ADMIN_REVOKED": "Platform administrator role revoked",
+      "DEMO_SEEDED": "Demo data loaded",
+      "DEMO_RESET": "Demo data reset"
     }
   },
   "notifications": {
@@ -1116,5 +1123,178 @@
     "INVALID_STATE": "This action is no longer possible.",
     "FEATURE_DISABLED": "This feature is not available.",
     "INTERNAL_ERROR": "Something went wrong. Please try again."
+  },
+  "admin": {
+    "nav": {
+      "subtitle": "Platform administration",
+      "overview": "Overview",
+      "institutions": "Institutions",
+      "users": "Users",
+      "audit": "Audit",
+      "mail": "Mail",
+      "settings": "Settings",
+      "demo": "Demo"
+    },
+    "common": {
+      "on": "On",
+      "off": "Off",
+      "viewAll": "View all"
+    },
+    "overview": {
+      "title": "Platform",
+      "subtitle": "Overall status, institutions awaiting verification and recent system-wide activity.",
+      "users": "Accounts",
+      "usersWeek": "{count, plural, =0 {no sign-ups this week} =1 {1 new this week} other {# new this week}}",
+      "children": "Child profiles",
+      "institutions": "Institutions",
+      "activeGrants": "Active accesses",
+      "activeLinks": "{count, plural, =1 {1 active link} other {# active links}}",
+      "sessionsWeek": "Care sessions (7 days)",
+      "pendingVerification": "Pending verifications",
+      "noPending": "No verification requests pending.",
+      "recentAudit": "Recent activity across the platform"
+    },
+    "institutions": {
+      "title": "Institutions",
+      "subtitle": "Verify, suspend and review each institution's legal details.",
+      "searchPlaceholder": "Name, legal name or code",
+      "empty": "No institutions match.",
+      "members": "members",
+      "children": "children",
+      "rooms": "rooms",
+      "verifiedAt": "verified on {when}",
+      "fields": {
+        "legalName": "Legal name",
+        "contact": "Contact",
+        "address": "Address",
+        "website": "Website",
+        "createdBy": "Created by",
+        "code": "Code"
+      },
+      "verify": "Verify",
+      "unverify": "Remove verification",
+      "unverifyConfirm": "Remove verification? Families will no longer see the badge.",
+      "suspend": "Suspend",
+      "suspendConfirm": "Suspend this institution? Its administrators cannot request verification until it is lifted.",
+      "lift": "Lift suspension",
+      "updated": "Status updated"
+    },
+    "users": {
+      "title": "Users",
+      "subtitle": "Platform accounts: guardians, institution staff and administrators.",
+      "searchPlaceholder": "Name or email",
+      "empty": "No users match.",
+      "filters": {
+        "all": "All",
+        "admins": "Administrators",
+        "unverified": "Email not confirmed",
+        "demo": "Demo",
+        "deleted": "Deleted"
+      },
+      "badges": {
+        "admin": "Platform admin",
+        "demo": "Demo",
+        "deleted": "Deleted",
+        "unverified": "Email not confirmed"
+      },
+      "since": "since {when}",
+      "children": "children",
+      "institutions": "institutions",
+      "markVerified": "Mark email confirmed",
+      "resend": "Resend confirmation",
+      "verified": "Email marked as confirmed",
+      "resent": "Confirmation resent",
+      "grantAdmin": "Make platform admin",
+      "revokeAdmin": "Remove platform admin",
+      "grantConfirm": "This person will be able to administer the whole platform (institutions, users, settings). Continue?",
+      "revokeConfirm": "Remove the platform administrator role?",
+      "roleUpdated": "Role updated"
+    },
+    "audit": {
+      "title": "Global audit",
+      "subtitle": "Every event in the system. Read-only; the log is immutable.",
+      "actorPlaceholder": "Search by actor",
+      "allTypes": "All types",
+      "anyTime": "Any time",
+      "last24h": "Last 24 h",
+      "last7d": "Last 7 days",
+      "last30d": "Last 30 days",
+      "empty": "No events match those filters."
+    },
+    "mail": {
+      "title": "Outgoing mail",
+      "subtitle": "Email confirmations, invitations and password resets are sent with this configuration.",
+      "config": "Configuration",
+      "configHint": "What is saved here takes precedence over the server's environment variables. The password is stored encrypted.",
+      "provider": "Provider",
+      "console": "Console (testing only)",
+      "consoleHint": "Emails are printed to the server log and reach nobody. Useful for development and demos.",
+      "smtpHint": "Any SMTP provider: Resend, Postmark, Brevo, Amazon SES, Google Workspace…",
+      "host": "SMTP server",
+      "port": "Port",
+      "user": "Username",
+      "password": "Password",
+      "passwordHint": "Stored encrypted and never shown again.",
+      "passwordKeep": "A password is stored. Leave empty to keep it.",
+      "secure": "Secure connection (SSL/TLS, usually port 465)",
+      "from": "Sender",
+      "saved": "Mail configuration saved",
+      "useEnvironment": "Use environment variables",
+      "resetConfirm": "Discard the saved configuration and go back to the server's environment variables?",
+      "reset": "The environment configuration will be used",
+      "test": "Test email",
+      "testHint": "Sends a message with the current configuration to check delivery.",
+      "sendTest": "Send test",
+      "testSent": "Test email sent ({provider}). Check the inbox and spam folder."
+    },
+    "settings": {
+      "title": "Platform settings",
+      "subtitle": "Policies and features active on this deployment.",
+      "source": {
+        "database": "Set in the panel",
+        "environment": "Set by environment variables"
+      },
+      "security": "Security",
+      "securityHint": "Rules that protect children's information.",
+      "requireEmailVerification": "Require confirmed email",
+      "requireEmailVerificationHint": "Only accounts with a confirmed email can share, invite guardians or create institutions. Requires SMTP mail.",
+      "features": "Features",
+      "featuresHint": "Turn modules on or off without redeploying.",
+      "flags": {
+        "ai": "Profile assistant",
+        "aiHint": "Structures free-text notes into profile data (the guardian always reviews before saving).",
+        "portal": "Institution portal",
+        "portalHint": "Daycares, kindergartens and academies can receive shared profiles.",
+        "docs": "Document verification",
+        "docsHint": "Reserved for the next version."
+      },
+      "envAdmins": "Administrators defined by environment",
+      "envAdminsHint": "Emails in PLATFORM_ADMIN_EMAILS. They are administrators even without the role in the database.",
+      "saved": "Settings saved",
+      "useEnvironment": "Use environment variables",
+      "reset": "The environment configuration will be used"
+    },
+    "demo": {
+      "title": "Demo data",
+      "subtitle": "Sample accounts and profiles to present the platform to families and institutions.",
+      "status": "Status",
+      "seeded": "Loaded",
+      "notSeeded": "Not loaded",
+      "disabled": "Disabled",
+      "enabledHint": "This deployment allows loading demo data (SEED_DEMO).",
+      "disabledHint": "This deployment does not allow demo data (SEED_DEMO / ALLOW_DEMO_SEED).",
+      "counts": "{users} demo accounts · {children} demo profiles.",
+      "seed": "Load demo data",
+      "done": "Done. Care Pass links are shown only once.",
+      "alreadySeeded": "Demo data was already loaded.",
+      "resetTitle": "Reset the demo",
+      "resetHint": "Deletes every demo account and what they created (children, institutions, accesses, audit) and loads the clean scenario again. Ideal before each presentation.",
+      "typeToConfirm": "Type DEMO to confirm",
+      "reset": "Reset demo",
+      "resetNeedsRealAdmin": "To reset the demo, sign in with an administrator account that is not a demo account.",
+      "linksTitle": "Care Pass links",
+      "linksHint": "Tokens are not stored in plaintext: copy them now or regenerate the link from the child's profile.",
+      "kinderCode": "Kinder code"
+    }
   }
 }

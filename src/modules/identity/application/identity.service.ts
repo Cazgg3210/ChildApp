@@ -8,6 +8,7 @@ import { auditService } from "@/modules/audit/application/audit.service";
 import { systemActor } from "../domain/types";
 import { userRepository } from "../infrastructure/user.repository";
 import { mailer } from "../infrastructure/mailer";
+import { platformSettingsService } from "@/modules/platform/application/platform-settings.service";
 
 const VERIFICATION_TTL_HOURS = 24;
 const RESET_TTL_HOURS = 1;
@@ -156,7 +157,7 @@ export const identityService = {
    * in production (docs/09-security-model.md).
    */
   async assertVerified(userId: string) {
-    if (!env().REQUIRE_EMAIL_VERIFICATION) return;
+    if (!(await platformSettingsService.security()).value.requireEmailVerification) return;
     const user = await userRepository.findById(userId);
     if (!user?.emailVerifiedAt) throw new AppError("EMAIL_NOT_VERIFIED", "Confirm your email to continue.");
   },

@@ -47,6 +47,8 @@ const schema = z.object({
   REQUIRE_EMAIL_VERIFICATION: envBoolean(false),
   /** Enables POST /api/v1/admin/institutions/:id/verification (manual institution verification). */
   PLATFORM_ADMIN_TOKEN: z.string().min(16).optional(),
+  /** Comma-separated emails that are platform administrators (/admin) without a database change. */
+  PLATFORM_ADMIN_EMAILS: z.string().default(""),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("info"),
 });
 

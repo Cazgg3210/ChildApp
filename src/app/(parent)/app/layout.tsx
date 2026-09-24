@@ -22,7 +22,14 @@ export default async function ParentLayout({ children }: LayoutProps<"/app">) {
   ];
 
   return (
-    <AppShell user={user} items={items} area="parent" unread={unread} showInstitutionLink={memberships.length > 0}>
+    <AppShell
+      user={user}
+      items={items}
+      area="parent"
+      unread={unread}
+      showInstitutionLink={memberships.length > 0}
+      showAdminLink={user.isPlatformAdmin}
+    >
       {children}
     </AppShell>
   );

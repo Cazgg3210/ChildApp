@@ -6,6 +6,7 @@ export const ACCOUNTS = {
   coGuardian: "andrea@example.com",
   institutionAdmin: "institution@example.com",
   teacher: "teacher@example.com",
+  platformAdmin: "admin@example.com",
 } as const;
 
 export async function login(page: Page, email: string, password = DEMO_PASSWORD) {

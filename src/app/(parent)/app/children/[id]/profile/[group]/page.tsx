@@ -32,7 +32,7 @@ export default async function ProfileGroupPage({ params }: PageProps<"/app/child
   const visibility = await Promise.all(
     categories.map(async (c) => ({ category: c, viewers: await sharingService.visibilityFor(id, c) })),
   );
-  const aiEnabled = isFeatureEnabled("AI_PROFILE_ASSISTANT");
+  const aiEnabled = await isFeatureEnabled("AI_PROFILE_ASSISTANT");
 
   return (
     <div className="grid gap-6 xl:grid-cols-3">

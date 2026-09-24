@@ -1,6 +1,6 @@
 import nodemailer, { type Transporter } from "nodemailer";
-import { env } from "@/shared/config/env";
 import { logger } from "@/shared/logging/logger";
+import { platformSettingsService } from "@/modules/platform/application/platform-settings.service";
 
 export interface MailMessage {
   to: string;
@@ -27,17 +27,34 @@ class ConsoleMailer implements Mailer {
   }
 }
 
-/** SMTP transport (any provider: Resend, Postmark, SES, Gmail…) configured with SMTP_URL. */
-class SmtpMailer implements Mailer {
-  private transporter: Transporter;
-
-  constructor(url: string) {
-    this.transporter = nodemailer.createTransport(url);
-  }
+/**
+ * Resolves the transport from the platform settings on every send, so an
+ * administrator can switch to SMTP from /admin without redeploying. The
+ * nodemailer transport is cached per configuration.
+ */
+class DynamicMailer implements Mailer {
+  private transporter?: { key: string; instance: Transporter };
+  private console = new ConsoleMailer();
 
   async send(message: MailMessage): Promise<void> {
-    const info = await this.transporter.sendMail({
-      from: env().MAIL_FROM,
+    const { value } = await platformSettingsService.mail();
+    if (value.provider !== "smtp") return this.console.send(message);
+    if (!value.host) throw new Error("SMTP host is not configured");
+    const password = await platformSettingsService.mailPassword();
+    const key = JSON.stringify([value.host, value.port, value.secure, value.user, password]);
+    if (this.transporter?.key !== key) {
+      this.transporter = {
+        key,
+        instance: nodemailer.createTransport({
+          host: value.host,
+          port: value.port,
+          secure: value.secure,
+          auth: value.user ? { user: value.user, pass: password } : undefined,
+        }),
+      };
+    }
+    const info = await this.transporter.instance.sendMail({
+      from: value.from || undefined,
       to: message.to,
       subject: message.subject,
       text: message.text,
@@ -50,14 +67,6 @@ class SmtpMailer implements Mailer {
 let instance: Mailer | undefined;
 
 export function mailer(): Mailer {
-  if (!instance) {
-    const e = env();
-    if (e.MAILER_PROVIDER === "smtp") {
-      if (!e.SMTP_URL) throw new Error("MAILER_PROVIDER=smtp requires SMTP_URL");
-      instance = new SmtpMailer(e.SMTP_URL);
-    } else {
-      instance = new ConsoleMailer();
-    }
-  }
+  if (!instance) instance = new DynamicMailer();
   return instance;
 }

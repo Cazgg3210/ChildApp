@@ -70,7 +70,7 @@ Dokploy pone Traefik + Let's Encrypt delante; no se usa el Caddy del kit. La ima
 7. **Deploy**. Comprueba `https://<dominio>/api/v1/health`.
 8. **Demo (opcional)**: `curl -X POST https://<dominio>/api/v1/admin/seed -H "X-Seed-Token: <SEED_TOKEN>"` → devuelve cuentas, código del kínder y enlaces de Care Pass. Después puedes borrar `SEED_TOKEN` para cerrar el endpoint.
 9. **Auto deploy**: en _General → Auto Deploy_ (webhook de GitHub) cada push a `main` reconstruye y redespliega.
-10. **Verificar una institución** (cuando pida verificación desde _Ajustes_): `curl -X POST https://<dominio>/api/v1/admin/institutions/<id>/verification -H "X-Admin-Token: <PLATFORM_ADMIN_TOKEN>" -H "Content-Type: application/json" -d '{"status":"VERIFIED"}'`. El id aparece en la URL del portal de la institución.
+10. **Panel de administración** (`/admin`): añade `PLATFORM_ADMIN_EMAILS=tu@correo.com`, regístrate con ese correo y entra a `https://<dominio>/admin`. Desde ahí se configura el correo SMTP (contraseña cifrada en BD), se verifican/suspenden instituciones, se administran usuarios y roles, se consulta la auditoría global y se carga/reinicia la demo. Alternativas: `npx tsx scripts/grant-platform-admin.ts <email>` o el endpoint `POST /api/v1/admin/institutions/<id>/verification` con `X-Admin-Token: <PLATFORM_ADMIN_TOKEN>`.
 11. **Purga de cuentas eliminadas** (cron semanal, opcional): `docker exec <contenedor> npx tsx scripts/purge-deleted-accounts.ts` borra definitivamente las cuentas con más de 30 días desde la solicitud.
 
 ## DigitalOcean App Platform / EasyPanel

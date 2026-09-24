@@ -47,6 +47,7 @@ export async function runDemoSeed(): Promise<DemoSeedResult> {
         emailVerifiedAt: new Date(),
         isDemo: true,
         locale: "es",
+        platformRole: account.labelKey === "platformAdmin" ? "PLATFORM_ADMIN" : "NONE",
       },
       select: { id: true, email: true, name: true },
     });
@@ -57,6 +58,7 @@ export async function runDemoSeed(): Promise<DemoSeedResult> {
     timezone: "America/Mexico_City",
     emailVerifiedAt: new Date(),
     isDemo: true,
+    isPlatformAdmin: false,
   });
   const mariana: UserActor = userActor({
     ...users.institutionAdmin,
@@ -64,6 +66,7 @@ export async function runDemoSeed(): Promise<DemoSeedResult> {
     timezone: "America/Mexico_City",
     emailVerifiedAt: new Date(),
     isDemo: true,
+    isPlatformAdmin: false,
   });
   const sofia: UserActor = userActor({
     ...users.teacher,
@@ -71,6 +74,7 @@ export async function runDemoSeed(): Promise<DemoSeedResult> {
     timezone: "America/Mexico_City",
     emailVerifiedAt: new Date(),
     isDemo: true,
+    isPlatformAdmin: false,
   });
   const andrea: UserActor = userActor({
     ...users.coGuardian,
@@ -78,6 +82,7 @@ export async function runDemoSeed(): Promise<DemoSeedResult> {
     timezone: "America/Mexico_City",
     emailVerifiedAt: new Date(),
     isDemo: true,
+    isPlatformAdmin: false,
   });
   /** Guardianship is never granted silently: the seed goes through invite → accept. */
   const coGuardian = async (childId: string) => {
@@ -412,6 +417,7 @@ export async function runDemoSeed(): Promise<DemoSeedResult> {
       timezone: "America/Mexico_City",
       emailVerifiedAt: new Date(),
       isDemo: true,
+      isPlatformAdmin: false,
     });
     const child = await childrenService.create(parent, {
       firstName: family.child.firstName,

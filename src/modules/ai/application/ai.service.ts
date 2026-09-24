@@ -29,7 +29,7 @@ export const aiService = {
 
   /** Structures free text into proposed profile items. The guardian always reviews before saving. */
   async structure(actor: Actor, childId: string, request: StructureRequest): Promise<ProposedItem[]> {
-    if (!isFeatureEnabled("AI_PROFILE_ASSISTANT")) throw new AppError("FEATURE_DISABLED");
+    if (!(await isFeatureEnabled("AI_PROFILE_ASSISTANT"))) throw new AppError("FEATURE_DISABLED");
     await authorizationService.assert(actor, "profile.update", childId);
     const text = request.text.trim().slice(0, 4000);
     if (!text) return [];

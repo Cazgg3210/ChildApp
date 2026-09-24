@@ -47,6 +47,11 @@ export const AuditEventTypes = [
   "DOCUMENT_VIEWED",
   "DOCUMENT_DELETED",
   "DATA_EXPORTED",
+  "PLATFORM_SETTINGS_UPDATED",
+  "PLATFORM_ADMIN_GRANTED",
+  "PLATFORM_ADMIN_REVOKED",
+  "DEMO_SEEDED",
+  "DEMO_RESET",
 ] as const;
 
 export type AuditEventType = (typeof AuditEventTypes)[number];

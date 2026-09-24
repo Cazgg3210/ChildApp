@@ -4,6 +4,7 @@ import { auth } from "./auth";
 import { identityService } from "./identity.service";
 import type { CurrentUser, UserActor } from "../domain/types";
 import { userActor } from "../domain/types";
+import { isPlatformAdmin } from "@/modules/platform/application/platform-admin.service";
 
 /**
  * Resolves the authenticated user for the current request (memoized per request).
@@ -25,6 +26,7 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
     timezone: user.timezone,
     emailVerifiedAt: user.emailVerifiedAt,
     isDemo: user.isDemo,
+    isPlatformAdmin: isPlatformAdmin(user),
   };
 });
 

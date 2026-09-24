@@ -1,4 +1,5 @@
 import { prisma } from "@/shared/db/prisma";
+import { env } from "@/shared/config/env";
 import { AppError } from "@/shared/errors/app-error";
 import type { Capability, DataCategory } from "@/shared/domain/care-vocabulary";
 import type { Actor } from "@/modules/identity/domain/types";
@@ -135,6 +136,27 @@ export const authorizationService = {
     if (!membership) return false;
     if (action === "institution.manage") return membership.role === "ADMIN";
     return true;
+  },
+
+  /** Platform operators: explicit role in the database or an email listed in PLATFORM_ADMIN_EMAILS. */
+  async canPlatformAdmin(actor: Actor): Promise<boolean> {
+    if (actor.type === "system") return true;
+    if (actor.type !== "user") return false;
+    const user = await prisma.user.findFirst({
+      where: { id: actor.userId, deletedAt: null },
+      select: { email: true, platformRole: true },
+    });
+    if (!user) return false;
+    const envAdmins = env()
+      .PLATFORM_ADMIN_EMAILS.split(",")
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean);
+    return user.platformRole === "PLATFORM_ADMIN" || envAdmins.includes(user.email.toLowerCase());
+  },
+
+  async assertPlatformAdmin(actor: Actor): Promise<void> {
+    if (actor.type === "anonymous") throw new AppError("NOT_AUTHENTICATED");
+    if (!(await this.canPlatformAdmin(actor))) throw new AppError("ACCESS_DENIED");
   },
 
   async assertInstitution(actor: Actor, action: InstitutionAction, institutionId: string): Promise<void> {

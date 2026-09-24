@@ -52,7 +52,8 @@
     "careSessions": "Sesiones de cuidado",
     "proposals": "Propuestas",
     "documents": "Documentos",
-    "openMenu": "Abrir menú"
+    "openMenu": "Abrir menú",
+    "admin": "Administración"
   },
   "landing": {
     "eyebrow": "Para familias, cuidadores e instituciones",
@@ -181,7 +182,8 @@
       "parent": "Tutor (Luis)",
       "coGuardian": "Co-tutora (Andrea)",
       "institutionAdmin": "Admin institución (Mariana)",
-      "teacher": "Maestra (Sofía)"
+      "teacher": "Maestra (Sofía)",
+      "platformAdmin": "Admin plataforma"
     }
   },
   "dashboard": {
@@ -1015,7 +1017,12 @@
       "INSTITUTION_VERIFIED": "Institución verificada",
       "INSTITUTION_GROUP_CREATED": "Sala creada",
       "INSTITUTION_GROUP_UPDATED": "Sala actualizada",
-      "INSTITUTION_GROUP_DELETED": "Sala eliminada"
+      "INSTITUTION_GROUP_DELETED": "Sala eliminada",
+      "PLATFORM_SETTINGS_UPDATED": "Ajustes de plataforma actualizados",
+      "PLATFORM_ADMIN_GRANTED": "Rol de administrador de plataforma otorgado",
+      "PLATFORM_ADMIN_REVOKED": "Rol de administrador de plataforma retirado",
+      "DEMO_SEEDED": "Datos de demostración cargados",
+      "DEMO_RESET": "Datos de demostración reiniciados"
     }
   },
   "notifications": {
@@ -1116,5 +1123,178 @@
     "INVALID_STATE": "Esta acción ya no es posible.",
     "FEATURE_DISABLED": "Esta función no está disponible.",
     "INTERNAL_ERROR": "Algo salió mal. Inténtalo de nuevo."
+  },
+  "admin": {
+    "nav": {
+      "subtitle": "Administración de plataforma",
+      "overview": "Inicio",
+      "institutions": "Instituciones",
+      "users": "Usuarios",
+      "audit": "Auditoría",
+      "mail": "Correo",
+      "settings": "Ajustes",
+      "demo": "Demo"
+    },
+    "common": {
+      "on": "Activado",
+      "off": "Desactivado",
+      "viewAll": "Ver todo"
+    },
+    "overview": {
+      "title": "Plataforma",
+      "subtitle": "Estado general, instituciones por verificar y actividad reciente de todo el sistema.",
+      "users": "Cuentas",
+      "usersWeek": "{count, plural, =0 {sin altas esta semana} =1 {1 nueva esta semana} other {# nuevas esta semana}}",
+      "children": "Perfiles de niños",
+      "institutions": "Instituciones",
+      "activeGrants": "Accesos activos",
+      "activeLinks": "{count, plural, =1 {1 enlace activo} other {# enlaces activos}}",
+      "sessionsWeek": "Sesiones de cuidado (7 días)",
+      "pendingVerification": "Verificaciones pendientes",
+      "noPending": "No hay solicitudes de verificación pendientes.",
+      "recentAudit": "Actividad reciente en toda la plataforma"
+    },
+    "institutions": {
+      "title": "Instituciones",
+      "subtitle": "Verifica, suspende y revisa los datos legales de cada institución.",
+      "searchPlaceholder": "Nombre, razón social o código",
+      "empty": "No hay instituciones que coincidan.",
+      "members": "miembros",
+      "children": "niños",
+      "rooms": "salas",
+      "verifiedAt": "verificada el {when}",
+      "fields": {
+        "legalName": "Razón social",
+        "contact": "Contacto",
+        "address": "Dirección",
+        "website": "Sitio web",
+        "createdBy": "Creada por",
+        "code": "Código"
+      },
+      "verify": "Verificar",
+      "unverify": "Quitar verificación",
+      "unverifyConfirm": "¿Quitar la verificación? Las familias dejarán de ver la insignia.",
+      "suspend": "Suspender",
+      "suspendConfirm": "¿Suspender esta institución? Sus administradores no podrán solicitar verificación hasta que se levante.",
+      "lift": "Levantar suspensión",
+      "updated": "Estado actualizado"
+    },
+    "users": {
+      "title": "Usuarios",
+      "subtitle": "Cuentas de la plataforma: tutores, personal de instituciones y administradores.",
+      "searchPlaceholder": "Nombre o correo",
+      "empty": "No hay usuarios que coincidan.",
+      "filters": {
+        "all": "Todos",
+        "admins": "Administradores",
+        "unverified": "Sin confirmar correo",
+        "demo": "Demo",
+        "deleted": "Eliminados"
+      },
+      "badges": {
+        "admin": "Admin plataforma",
+        "demo": "Demo",
+        "deleted": "Eliminada",
+        "unverified": "Correo sin confirmar"
+      },
+      "since": "desde {when}",
+      "children": "hijos",
+      "institutions": "instituciones",
+      "markVerified": "Marcar correo confirmado",
+      "resend": "Reenviar confirmación",
+      "verified": "Correo marcado como confirmado",
+      "resent": "Confirmación reenviada",
+      "grantAdmin": "Hacer admin de plataforma",
+      "revokeAdmin": "Quitar admin de plataforma",
+      "grantConfirm": "Esta persona podrá administrar toda la plataforma (instituciones, usuarios, ajustes). ¿Continuar?",
+      "revokeConfirm": "¿Quitar el rol de administrador de plataforma?",
+      "roleUpdated": "Rol actualizado"
+    },
+    "audit": {
+      "title": "Auditoría global",
+      "subtitle": "Todos los eventos del sistema. Solo lectura; el registro es inmutable.",
+      "actorPlaceholder": "Buscar por actor",
+      "allTypes": "Todos los tipos",
+      "anyTime": "Cualquier fecha",
+      "last24h": "Últimas 24 h",
+      "last7d": "Últimos 7 días",
+      "last30d": "Últimos 30 días",
+      "empty": "No hay eventos con esos filtros."
+    },
+    "mail": {
+      "title": "Correo saliente",
+      "subtitle": "Confirmaciones de correo, invitaciones y restablecimiento de contraseña se envían con esta configuración.",
+      "config": "Configuración",
+      "configHint": "Lo guardado aquí tiene prioridad sobre las variables de entorno del servidor. La contraseña se guarda cifrada.",
+      "provider": "Proveedor",
+      "console": "Consola (solo pruebas)",
+      "consoleHint": "Los correos se imprimen en el log del servidor y no llegan a nadie. Útil en desarrollo y demos.",
+      "smtpHint": "Cualquier proveedor SMTP: Resend, Postmark, Brevo, Amazon SES, Google Workspace…",
+      "host": "Servidor SMTP",
+      "port": "Puerto",
+      "user": "Usuario",
+      "password": "Contraseña",
+      "passwordHint": "Se guarda cifrada y nunca se vuelve a mostrar.",
+      "passwordKeep": "Hay una contraseña guardada. Déjalo vacío para conservarla.",
+      "secure": "Conexión segura (SSL/TLS, normalmente puerto 465)",
+      "from": "Remitente",
+      "saved": "Configuración de correo guardada",
+      "useEnvironment": "Usar variables de entorno",
+      "resetConfirm": "¿Descartar la configuración guardada y volver a las variables de entorno del servidor?",
+      "reset": "Se usará la configuración del entorno",
+      "test": "Correo de prueba",
+      "testHint": "Envía un mensaje con la configuración actual para comprobar que llega.",
+      "sendTest": "Enviar prueba",
+      "testSent": "Correo de prueba enviado ({provider}). Revisa la bandeja de entrada y el spam."
+    },
+    "settings": {
+      "title": "Ajustes de plataforma",
+      "subtitle": "Políticas y funcionalidades activas en este despliegue.",
+      "source": {
+        "database": "Definido en el panel",
+        "environment": "Definido por variables de entorno"
+      },
+      "security": "Seguridad",
+      "securityHint": "Reglas que protegen la información de los niños.",
+      "requireEmailVerification": "Exigir correo confirmado",
+      "requireEmailVerificationHint": "Solo cuentas con correo confirmado pueden compartir, invitar tutores o crear instituciones. Requiere correo SMTP configurado.",
+      "features": "Funcionalidades",
+      "featuresHint": "Activa o desactiva módulos sin redesplegar.",
+      "flags": {
+        "ai": "Asistente de perfil",
+        "aiHint": "Estructura notas de texto libre en datos del perfil (el tutor siempre revisa antes de guardar).",
+        "portal": "Portal de instituciones",
+        "portalHint": "Guarderías, kínderes y academias pueden recibir perfiles compartidos.",
+        "docs": "Verificación documental",
+        "docsHint": "Reservado para la siguiente versión."
+      },
+      "envAdmins": "Administradores definidos por entorno",
+      "envAdminsHint": "Correos en PLATFORM_ADMIN_EMAILS. Son administradores aunque no tengan el rol en la base de datos.",
+      "saved": "Ajustes guardados",
+      "useEnvironment": "Usar variables de entorno",
+      "reset": "Se usará la configuración del entorno"
+    },
+    "demo": {
+      "title": "Datos de demostración",
+      "subtitle": "Cuentas y perfiles de ejemplo para presentar la plataforma a familias e instituciones.",
+      "status": "Estado",
+      "seeded": "Cargados",
+      "notSeeded": "Sin cargar",
+      "disabled": "Deshabilitado",
+      "enabledHint": "Este despliegue permite cargar datos demo (SEED_DEMO).",
+      "disabledHint": "Este despliegue no permite cargar datos demo (SEED_DEMO / ALLOW_DEMO_SEED).",
+      "counts": "{users} cuentas demo · {children} perfiles demo.",
+      "seed": "Cargar datos de demostración",
+      "done": "Listo. Los enlaces de Care Pass se muestran una sola vez.",
+      "alreadySeeded": "Los datos demo ya estaban cargados.",
+      "resetTitle": "Reiniciar la demo",
+      "resetHint": "Borra todas las cuentas demo y lo que crearon (niños, instituciones, accesos, auditoría) y vuelve a cargar el escenario limpio. Ideal antes de cada presentación.",
+      "typeToConfirm": "Escribe DEMO para confirmar",
+      "reset": "Reiniciar demo",
+      "resetNeedsRealAdmin": "Para reiniciar la demo inicia sesión con una cuenta de administrador que no sea de demostración.",
+      "linksTitle": "Enlaces de Care Pass",
+      "linksHint": "Los tokens no se almacenan en texto plano: cópialos ahora o regenera el enlace desde el perfil del niño.",
+      "kinderCode": "Código del kínder"
+    }
   }
 }

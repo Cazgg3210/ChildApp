@@ -23,6 +23,7 @@ export async function makeUser(name: string): Promise<UserActor> {
     timezone: "UTC",
     emailVerifiedAt: new Date(),
     isDemo: true,
+    isPlatformAdmin: false,
   });
 }
 

@@ -7,7 +7,7 @@ import { isFeatureEnabled } from "@/shared/config/feature-flags";
 import { loadInstitution } from "./_lib/load-institution";
 
 export default async function InstitutionLayout({ children, params }: LayoutProps<"/institution/[institutionId]">) {
-  if (!isFeatureEnabled("INSTITUTION_PORTAL")) redirect("/app");
+  if (!(await isFeatureEnabled("INSTITUTION_PORTAL"))) redirect("/app");
   const { institutionId } = await params;
   const { user, actor, institution, role } = await loadInstitution(institutionId);
   const [t, tn, unread, pending] = await Promise.all([

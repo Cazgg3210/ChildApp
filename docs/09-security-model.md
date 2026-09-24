@@ -84,6 +84,10 @@ El consumo es atómico en BD (`UPDATE ... WHERE useCount < maxUses`) en `/s/<tok
 
 `AuditService.record()` centralizado, append-only. Campos: actor, fecha, recurso, categorías, IP, user agent, institución, sesión de cuidado, contexto. Ningún módulo escribe en `AuditEvent` por su cuenta.
 
+## Ajustes en tiempo de ejecución (/admin)
+
+`PlatformSetting` guarda correo, seguridad y funcionalidades editadas desde el panel; tienen prioridad sobre las variables de entorno y se cachean 10 s. La contraseña SMTP se cifra con AES-256-GCM y clave derivada de `AUTH_SECRET` (`src/shared/security/secretbox.ts`); nunca se devuelve al navegador. Rotar `AUTH_SECRET` obliga a reintroducirla.
+
 ## Secretos y configuración
 
 - `.env.example` documenta todas las variables. `src/shared/config/env.ts` valida con zod al arrancar y falla rápido.

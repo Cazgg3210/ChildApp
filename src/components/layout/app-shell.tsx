@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Building2, LogOut } from "lucide-react";
+import { Building2, LogOut, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { Button } from "@/components/ui/button";
@@ -19,23 +19,26 @@ export async function AppShell({
   unread = 0,
   showInstitutionLink = false,
   showParentLink = false,
+  showAdminLink = false,
   subtitle,
 }: {
   user: CurrentUser;
   items: NavItem[];
   children: React.ReactNode;
-  area: "parent" | "institution";
+  area: "parent" | "institution" | "admin";
   unread?: number;
   showInstitutionLink?: boolean;
   showParentLink?: boolean;
+  showAdminLink?: boolean;
   subtitle?: string;
 }) {
   const t = await getTranslations();
+  const home = area === "parent" ? "/app" : area === "institution" ? "/institution" : "/admin";
   return (
     <div className="flex min-h-full flex-1 flex-col md:flex-row">
       <aside className="hidden w-64 shrink-0 flex-col border-r bg-sidebar md:flex">
         <div className="flex h-14 items-center px-5">
-          <Logo href={area === "parent" ? "/app" : "/institution"} />
+          <Logo href={home} />
         </div>
         {subtitle && (
           <div className="px-5 pb-2">
@@ -58,6 +61,13 @@ export async function AppShell({
               <Link href="/app">{t("nav.children")}</Link>
             </Button>
           )}
+          {showAdminLink && (
+            <Button asChild variant="outline" size="sm" className="w-full justify-start">
+              <Link href="/admin">
+                <ShieldCheck aria-hidden /> {t("nav.admin")}
+              </Link>
+            </Button>
+          )}
           <div className="flex items-center justify-between gap-2 pt-1">
             <div className="min-w-0">
               <p className="truncate text-sm font-medium">{user.name}</p>
@@ -75,7 +85,7 @@ export async function AppShell({
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b bg-background/85 px-4 backdrop-blur md:hidden">
-          <Logo href={area === "parent" ? "/app" : "/institution"} compact />
+          <Logo href={home} compact />
           <div className="flex items-center gap-1">
             {showInstitutionLink && (
               <Button asChild variant="ghost" size="icon" aria-label={t("nav.institution")}>
@@ -87,6 +97,13 @@ export async function AppShell({
             {showParentLink && (
               <Button asChild variant="ghost" size="sm">
                 <Link href="/app">{t("nav.children")}</Link>
+              </Button>
+            )}
+            {showAdminLink && (
+              <Button asChild variant="ghost" size="icon" aria-label={t("nav.admin")}>
+                <Link href="/admin">
+                  <ShieldCheck aria-hidden />
+                </Link>
               </Button>
             )}
             <LanguageSwitcher />

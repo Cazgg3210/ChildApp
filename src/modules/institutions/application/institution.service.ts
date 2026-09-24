@@ -181,13 +181,18 @@ export const institutionService = {
   },
 
   /** Platform-side decision (admin token). Notifies the institution's administrators. */
-  async setVerificationStatus(institutionId: string, status: InstitutionVerificationStatus, meta?: RequestMeta) {
+  async setVerificationStatus(
+    institutionId: string,
+    status: InstitutionVerificationStatus,
+    meta?: RequestMeta,
+    actor: Actor = { type: "system" },
+  ) {
     const institution = await institutionRepository.findById(institutionId);
     if (!institution) throw new AppError("NOT_FOUND", "Institution not found");
     const updated = await institutionRepository.setVerification(institutionId, status);
     await auditService.record({
       type: status === "VERIFIED" ? "INSTITUTION_VERIFIED" : "INSTITUTION_UPDATED",
-      actor: { type: "system" },
+      actor,
       institutionId,
       resourceType: "Institution",
       resourceId: institutionId,

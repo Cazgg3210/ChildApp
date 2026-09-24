@@ -11,7 +11,7 @@ import { isFeatureEnabled } from "@/shared/config/feature-flags";
 
 /** Entry point: go to the first institution the user belongs to, or offer to create one. */
 export default async function InstitutionIndexPage() {
-  if (!isFeatureEnabled("INSTITUTION_PORTAL")) redirect("/app");
+  if (!(await isFeatureEnabled("INSTITUTION_PORTAL"))) redirect("/app");
   const user = await requireUser();
   const memberships = await institutionService.listForUser(user.id);
   if (memberships.length > 0) redirect(`/institution/${memberships[0].institutionId}`);

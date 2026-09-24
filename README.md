@@ -35,6 +35,7 @@ Abre <http://localhost:3000>. El seed imprime en consola los enlaces de Care Pas
 | Co-tutora (Andrea)                           | `andrea@example.com`      | `Demo1234!secure` |
 | Admin institución (Mariana, Kinder Arcoíris) | `institution@example.com` | `Demo1234!secure` |
 | Maestra (Sofía, Kinder Arcoíris)             | `teacher@example.com`     | `Demo1234!secure` |
+| Admin de plataforma (`/admin`)               | `admin@example.com`       | `Demo1234!secure` |
 
 Otras familias del kínder (para que el portal institucional tenga contexto): `paola@example.com`, `diego@example.com`, `fernanda@example.com` (misma contraseña). El kínder está **verificado** y tiene dos salas: _Sala Azul_ (Sofía, Mateo, Emilia) y _Sala Verde_ (Santiago); Regina no tiene sala (solo la ve Mariana).
 

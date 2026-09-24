@@ -3,7 +3,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
-import { Bell, Building2, DoorOpen, FileCheck2, Home, Inbox, Settings, ShieldAlert, UserRound, Users } from "lucide-react";
+import {
+  Bell,
+  Building2,
+  DoorOpen,
+  FileCheck2,
+  Home,
+  Inbox,
+  Mail,
+  ScrollText,
+  Settings,
+  ShieldAlert,
+  Sparkles,
+  UserRound,
+  Users,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ICONS = {
@@ -17,6 +31,9 @@ const ICONS = {
   proposals: FileCheck2,
   door: DoorOpen,
   settings: Settings,
+  mail: Mail,
+  audit: ScrollText,
+  demo: Sparkles,
 } satisfies Record<string, LucideIcon>;
 
 export interface NavItem {

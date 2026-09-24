@@ -77,6 +77,10 @@ Una institución puede definir `InstitutionGroup` (salas/clases) y asignar miemb
 - Con ≥ 1 sala: un `MEMBER` solo alcanza los niños asignados a alguna de sus salas; los niños sin sala solo son visibles para `ADMIN`.
 - `ADMIN` siempre ve todo y es el único que administra salas.
 
+## Administradores de plataforma
+
+Rol global `User.platformRole = PLATFORM_ADMIN` (o correo en `PLATFORM_ADMIN_EMAILS`). Es el único rol que no es relacional: opera la plataforma (`/admin`): verificar/suspender instituciones, roles de usuarios, ajustes de correo/seguridad/funcionalidades, auditoría global y demo. `authorizationService.assertPlatformAdmin(actor)` protege cada operación; no otorga acceso a los perfiles de los niños (el panel no muestra datos de cuidado). Cada acción queda auditada con el actor.
+
 ## Invitaciones de tutores
 
 `child.manage_guardians` (solo OWNER) crea una `GuardianInvitation`; la persona se convierte en `ChildGuardian` únicamente al aceptarla desde una cuenta con el correo invitado. Una invitación pendiente no otorga ningún acceso.

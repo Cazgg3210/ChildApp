@@ -19,6 +19,7 @@ export interface CurrentUser {
   timezone: string;
   emailVerifiedAt: Date | null;
   isDemo: boolean;
+  isPlatformAdmin: boolean;
 }
 
 export function userActor(user: CurrentUser): UserActor {

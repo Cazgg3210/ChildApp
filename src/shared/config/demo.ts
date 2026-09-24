@@ -4,4 +4,5 @@ export const DEMO_ACCOUNTS = [
   { email: "andrea@example.com", labelKey: "coGuardian", name: "Andrea Molina" },
   { email: "institution@example.com", labelKey: "institutionAdmin", name: "Mariana Ruiz" },
   { email: "teacher@example.com", labelKey: "teacher", name: "Sofía Hernández" },
+  { email: "admin@example.com", labelKey: "platformAdmin", name: "Admin Plataforma" },
 ] as const;
